@@ -29,14 +29,53 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/editText"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="This is a user message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/userText"
+                android:textSize="16sp"
+                android:background="@drawable/usertextbox"
+                android:layout_gravity="end"
+                android:textColor="@color/colorWhite"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:text="This is the assistant's reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/assistantText"
+                android:textSize="16sp"
+                android:background="@drawable/assistanttextbox"
+                android:layout_gravity="start"
+                android:textColor="@color/colorWhite"
+                android:layout_marginBottom="12dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
     <Button
         android:text="Send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/button" />
-        <!-- TODO: Add send icon -->
+        android:layout_alignParentEnd="true" />
+
+
+    <!-- TODO: Add send icon -->
 
 </RelativeLayout>
