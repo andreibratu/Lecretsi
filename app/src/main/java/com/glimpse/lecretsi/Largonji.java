@@ -1,19 +1,20 @@
 package com.glimpse.lecretsi;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.lang.String;
 
-class Largonji
+public class Largonji
 {
+    /**
+     *  This class will handle the coding/decoding of the algorithm
+     *  A single object should be initialised once at start of the app and be destroyed at app close
+     */
+    //TODO algorithmToNormal()
+    //TODO Tie the Largonji class to the DB
     private List<String> normalText;
     private List<String> encodedText = new ArrayList<>();
 
-    Largonji(String input){
-        assert input!=null;
-        /** Sets the 'normal message' and calls the encode function for it */
-        normalText = new ArrayList<>(Arrays.asList(input.split(" ") ) );
-        setCodedText();
-    }
+    Largonji() {}
 
     public String getNormalText(){
         String aux = null;
@@ -21,23 +22,17 @@ class Largonji
             aux += (x+" ");
         }
         assert aux!=null;
-        return aux.substring(0,aux.length()-2);//Eliminate final white space
+        return aux.substring(0,aux.length()-2); //Eliminate final white space
     }
 
-    public String getCodedText(){
+    public String getLargonjiText(){
         String aux = null;
         for(String x:encodedText){
             aux += (x+" ");
         }
         assert aux!=null;
-        return aux.substring(0,aux.length()-2);//Eliminate final white space
+        return aux.substring(0,aux.length()-2); //Eliminate final white space
 
-    }
-
-    private void setCodedText(){
-        for(String x:normalText) {
-            encodedText.add( algorithm(x) );
-        }
     }
 
     static private boolean isVowel(char x){
@@ -45,13 +40,13 @@ class Largonji
         return vowelsCase.indexOf(x) != -1;
     }
 
-    static private char addLEncode(char x){
+    private char addLEncode(char x){
         /** Add 'L' if letter is uppercase or else 'l' */
         if(java.lang.Character.isUpperCase(x)) return 'L';
         return 'l';
     }
 
-    static private String algorithm(String input){
+    private String algorithmToLargonji(String input){
         if( isVowel(input.charAt(0) ) ){
             int startOfSequenceToBeAdded=0;
             int endOfTheSequenceToBeAdded;
