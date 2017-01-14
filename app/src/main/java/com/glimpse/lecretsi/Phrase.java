@@ -9,13 +9,13 @@ public class Phrase extends SugarRecord {
      */
     //TODO Read documentation for Sugar
     private String phrase;
-    private String phraseLargonji;
+    private String largonjiPhrase;
     private long priorityKey;
     private int howManyTimesUsed;
     private Date lastTimeUsed;
     private int length;
 
-    void updateDatabase(String phrase, String phraseLargonji) {
+    public static void updateDatabase(String phrase, String phraseLargonji) {
         List<Phrase> recordExistsCheck = Phrase.find(Phrase.class, "phrase = ?", phrase);
         if(recordExistsCheck.size()!=0) {
             updatePhrase(recordExistsCheck.get(0));
@@ -26,14 +26,14 @@ public class Phrase extends SugarRecord {
         }
     }
 
-    List<Phrase> getRelevantPhrases() {
+    public List<Phrase> getRelevantPhrases() {
         return Phrase.findWithQuery(
                 Phrase.class,
                 "SELECT * from Phrase ORDER BY priorityKey DESC LIMIT 50"
         );
     }
 
-    private void updatePhrase(Phrase e) {
+    private static void updatePhrase(Phrase e) {
         e.lastTimeUsed = new Date();
         e.howManyTimesUsed += 1;
         e.calculateKey();
@@ -51,7 +51,7 @@ public class Phrase extends SugarRecord {
 
     private Phrase(String phrase, String largonjiPhrase) {
         this.phrase = phrase;
-        this.phraseLargonji = largonjiPhrase;
+        this.largonjiPhrase = largonjiPhrase;
         this.howManyTimesUsed = 1;
         this.lastTimeUsed = new Date();
         this.length = phrase.length();
