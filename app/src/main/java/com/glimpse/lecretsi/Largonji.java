@@ -1,19 +1,47 @@
 package com.glimpse.lecretsi;
 import java.lang.String;
+import java.lang.reflect.Array;
+
 import com.glimpse.lecretsi.Phrase;
 
 public class Largonji
 {
     /**
      *  This class will handle the coding/decoding of the algorithm
-     *  A single object should be initialised once at start of the app and be destroyed at app close
+     *  Class is to be used by its static members
      */
+
+
     //TODO algorithmToNormal()
-    //TODO Tie the Largonji class to the DB
+    // TODO *J'en* parle
+    private static final String vowelsCase = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
+    private static final String possibleException = "'-";
+    private static final String[] ignoreList =
+            new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
+            "ils", "elles", "me", "te", "se", "en", "lui", "y",
+            "nous", "vous", "leur", "moi", "toi", "lui", "elle", "soi", "eux",
+            "elles", "de", "du", "des", "j"};
+
+    /*
+        I'll leave these here in case we need them
+        "-le", "-la", "-les", "-lui", "-leur", "-moi", "-toi",
+            "-nous", "-vous", "-y", "-z-y", "-z-en", "-m", "-m'", "-t'",
+            "-m'en", "-moi-z-en", "-en-moi", "m'en", "-en-toi", "-en-nous", "-en-vous",
+            "-en-lui", "-en-leur", "-en-la", "-en-le", "-en-les",
+     */
 
     static private boolean isVowel(char x){
-        final String vowelsCase = "aeioulAEIOUL";
         return vowelsCase.indexOf(x) != -1;
+    }
+
+    private static boolean inputStartsWithL(String input) {
+        return java.lang.Character.toLowerCase(input.charAt(0))=='l';
+    }
+
+    private static boolean inputHasOnlyVowels(String input) {
+        for(char x:input.toCharArray()) if (!isVowel(x)) return false;
+
+        return true;
     }
 
     private static char addLEncode(char x){
@@ -22,25 +50,45 @@ public class Largonji
         return 'l';
     }
 
-    public static String algorithmToLargonji(String input){
-        String encodedText = input;
-        if( isVowel(input.charAt(0) ) ){
-            int startOfSequenceToBeAdded=0;
-            int endOfTheSequenceToBeAdded;
+    //TODO black -> llackbi
+    static String algorithmToLargonji(String input){
+        String encodedText;
 
-            //Select a whole consonant cluster
-            while( isVowel(input.charAt( ++startOfSequenceToBeAdded ) ) );
-            endOfTheSequenceToBeAdded=startOfSequenceToBeAdded;
-            while( isVowel( input.charAt( ++endOfTheSequenceToBeAdded ) ) );
+        if( inputHasOnlyVowels(input) ) {
+            encodedText = addLEncode( input.charAt(0) ) + input;
+            return encodedText;
+        }
 
-            encodedText = input.substring(0,startOfSequenceToBeAdded-1) + addLEncode(input.charAt(startOfSequenceToBeAdded)) +
-                    input.substring(endOfTheSequenceToBeAdded+1,input.length()-1) +
-                    input.substring(startOfSequenceToBeAdded, endOfTheSequenceToBeAdded) + 'i';
+        for(String x:ignoreList) {
+            if(input.toLowerCase()==x) return input;
+        }
 
+        for(Character x:possibleException.toCharArray() ) {
+            if( input.indexOf(x) != -1 )
+                if( !inputStartsWithL(input) ) return input.substring( 0,input.indexOf(x) )+
+                        algorithmToLargonji( input.substring(input.indexOf(x)+1,input.length() ) );
+                else {
+                    String aux =
+                            algorithmToLargonji( input.substring(input.indexOf(x)+1,input.length()));
+                    return input.substring( 0,input.indexOf(x) ) + aux.substring(1,aux.length());
+                }
+        }
+
+        if( isVowel(input.charAt(0) ) || inputStartsWithL(input) ){
+           int charToReplaceIndex;
+
+            for(charToReplaceIndex=0;
+                charToReplaceIndex < input.length() &&
+                        isVowel(input.charAt(charToReplaceIndex) ) ; charToReplaceIndex++ );
+
+            encodedText = addLEncode(input.charAt(0)) + input.substring(0,charToReplaceIndex) +
+                    addLEncode(input.charAt(charToReplaceIndex)) +
+                    input.substring(charToReplaceIndex+1,input.length() ) +
+                    input.charAt( charToReplaceIndex ) + 'i';
         }
         else{
             char auxChar = input.charAt(0);
-            encodedText = addLEncode(auxChar) + input.substring(0,input.length()-1) + auxChar + 'i';
+            encodedText = addLEncode(auxChar) + input.substring(1,input.length()) + auxChar + 'i';
         }
         Phrase.updateDatabase(input, encodedText);
         return encodedText;

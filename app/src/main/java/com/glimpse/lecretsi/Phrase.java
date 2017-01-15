@@ -7,22 +7,32 @@ public class Phrase extends SugarRecord {
      *  We will use SugarORM for DB http://satyan.github.io/sugar/getting-started.html
      *  This class should be initialised once at the start of the app
      */
-    //TODO Read documentation for Sugar
+    ///@ADI IMPORTANT : INSTANT RUN *MIGHT* BREAK THIS CLASS further testing needed
+
     private String phrase;
     private String largonjiPhrase;
-    private long priorityKey;
+    private double priorityKey;
     private int howManyTimesUsed;
     private Date lastTimeUsed;
     private int length;
 
-    public static void updateDatabase(String phrase, String phraseLargonji) {
-        List<Phrase> recordExistsCheck = Phrase.find(Phrase.class, "phrase = ?", phrase);
-        if(recordExistsCheck.size()!=0) {
-            updatePhrase(recordExistsCheck.get(0));
-        }
-        else {
+    //TODO predefined phrases initialised in def constr ?
+    public Phrase() {}  ///Every table needs a default constructor
+
+    static void updateDatabase(String phrase, String phraseLargonji) {
+        List<Phrase> recordExistsCheck = Phrase.find(Phrase.class, "phrase=?", phrase);
+
+        if(recordExistsCheck.size()==0) {
             Phrase newRecord = new Phrase(phrase, phraseLargonji);
             newRecord.save();
+        }
+        else {
+            Phrase updatePhrase = recordExistsCheck.get(0);
+            updatePhrase.calculateKey();
+            updatePhrase.lastTimeUsed = new Date();
+            updatePhrase.howManyTimesUsed += 1;
+
+            updatePhrase.save();
         }
     }
 
@@ -33,19 +43,12 @@ public class Phrase extends SugarRecord {
         );
     }
 
-    private static void updatePhrase(Phrase e) {
-        e.lastTimeUsed = new Date();
-        e.howManyTimesUsed += 1;
-        e.calculateKey();
-        e.save();
-    }
-
     private void calculateKey() {
         Date timeNow = new Date();
-        long lastUsedIndex = 1 / (timeNow.getTime() - lastTimeUsed.getTime());
-        long howOftenUsed = this.howManyTimesUsed * this.length; // Longer more often used words have priority
+        double lastUsedIndex = 1 / (double) (timeNow.getTime() - this.lastTimeUsed.getTime());
+        double howOftenUsed = this.howManyTimesUsed * this.length; // Longer more often used words have priority
 
-        int MAGIC_TOUCH = 42;
+        double MAGIC_TOUCH = 42;
         this.priorityKey = lastUsedIndex * howOftenUsed / MAGIC_TOUCH;
     }
 
@@ -55,8 +58,6 @@ public class Phrase extends SugarRecord {
         this.howManyTimesUsed = 1;
         this.lastTimeUsed = new Date();
         this.length = phrase.length();
-
-        this.save();
     }
 
     /*
