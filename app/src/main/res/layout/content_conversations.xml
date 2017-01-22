@@ -13,4 +13,5 @@
     tools:context="com.glimpse.lecretsi.ConversationsActivity"
     tools:showIn="@layout/app_bar_conversations">
 
+
 </RelativeLayout>
