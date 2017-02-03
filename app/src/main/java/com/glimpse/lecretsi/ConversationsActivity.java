@@ -12,9 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 public class ConversationsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ListView mainList;
+    private static final String TAG_NICKNAME = "nickname";
+    private static final String TAG_LAST_MESSAGE = "lastMessage";
+    private static final String TAG_DATE = "date";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +39,7 @@ public class ConversationsActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onCreateNewMessage();
             }
         });
 
@@ -40,6 +51,34 @@ public class ConversationsActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mainList = (ListView)findViewById(R.id.conversationsList);
+
+        ArrayList<HashMap<String, String>> conversationsList = new ArrayList<>();
+
+        String nickname = "Largonji Assistant";
+        String last_message = "Hi User! I'm your Largonji Assistant";
+        String date = "Feb 3";
+
+        HashMap<String, String> conversation = new HashMap<>();
+
+        conversation.put(TAG_NICKNAME, nickname);
+        conversation.put(TAG_LAST_MESSAGE, last_message);
+        conversation.put(TAG_DATE, date);
+
+        conversationsList.add(conversation);
+
+        ListAdapter adapter = new SimpleAdapter(
+                ConversationsActivity.this, conversationsList,
+                R.layout.conversations_list, new String[]{TAG_NICKNAME, TAG_LAST_MESSAGE, TAG_DATE},
+                new int[]{R.id.nicknameText, R.id.lastMessage, R.id.dateText}
+        );
+        mainList.setAdapter(adapter);
+
+    }
+
+    public void onCreateNewMessage(){
+
     }
 
     @Override

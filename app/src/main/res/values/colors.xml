@@ -10,4 +10,6 @@
     <color name="colorUserMessageBorder">#16a0b5</color>
     <color name="colorAssistantMessageBorder">#457dd9</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorGrey">#646464</color>
+    <color name="colorDarkGrey">#454545</color>
 </resources>
