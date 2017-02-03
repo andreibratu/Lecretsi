@@ -48,32 +48,25 @@ public class MainActivity extends AppCompatActivity {
         userText.setTypeface(custom_font);
         assistantText.setTypeface(custom_font);
 
-        /*
-        messageText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    messageText.setHint("");
-                }
-            }
-        });*/
+
 
     }
 
     public void onSend(View view){
-        scrollView.requestFocus();
-        userText.setText(messageText.getText().toString());
-        userText.setVisibility(View.VISIBLE);
-        final String text = Largonji.algorithmToLargonji(messageText.getText().toString());
-        messageText.setText("");
-        new Handler().postDelayed(new Runnable() {
+        if(!messageText.getText().toString().isEmpty()) {
+            userText.setText(messageText.getText().toString());
+            userText.setVisibility(View.VISIBLE);
+            final String text = Largonji.algorithmToLargonji(messageText.getText().toString());
+            messageText.setText("");
+            new Handler().postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                assistantText.setText(text);
-                assistantText.setVisibility(View.VISIBLE);
-            }
-        }, 500);
+                @Override
+                public void run() {
+                    assistantText.setText(text);
+                    assistantText.setVisibility(View.VISIBLE);
+                }
+            }, 500);
+        }
     }
 
 }

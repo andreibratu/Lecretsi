@@ -20,7 +20,7 @@ public class Phrase extends SugarRecord {
     public Phrase() {}  ///Every table needs a default constructor
 
     static void updateDatabase(String phrase, String phraseLargonji) {
-        List<Phrase> recordExistsCheck = Phrase.find(Phrase.class, "phrase=?", phrase);
+        List<Phrase> recordExistsCheck = Phrase.find(Phrase.class, "PHRASE=?", phrase);
 
         if(recordExistsCheck.size()==0) {
             Phrase newRecord = new Phrase(phrase, phraseLargonji);
