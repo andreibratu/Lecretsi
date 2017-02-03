@@ -62,7 +62,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:background="@drawable/ic_message_send"
-        android:onClick="onSend" />
+        android:onClick="onSend"
+        android:layout_below="@+id/scrollView" />
 
     <ScrollView
         android:layout_width="match_parent"
