@@ -50,8 +50,7 @@ public class Largonji
         return 'l';
     }
 
-    //TODO black -> llackbi
-    static String algorithmToLargonji(String input){
+    private static  String algorithmToLargonji(String input){
         String encodedText;
 
         if( inputHasOnlyVowels(input) ) {
@@ -75,7 +74,7 @@ public class Largonji
         }
 
         if( isVowel(input.charAt(0) ) || charIsL(input.charAt(0)) ){
-           int charToReplaceIndex;
+            int charToReplaceIndex;
 
             for(charToReplaceIndex=0;
                 charToReplaceIndex < input.length() &&
@@ -94,5 +93,20 @@ public class Largonji
             encodedText = encodedText.charAt(0)+encodedText.substring(2,encodedText.length());
         Phrase.updateDatabase(input, encodedText);
         return encodedText;
+    }
+
+    public static String algorithmWrapper(String input) {
+        String answer = "";
+        int whereIsWhiteSpace = input.indexOf(' ');
+        while(whereIsWhiteSpace!=-1 && input.length()>0) {
+            String aux = input.substring(0,whereIsWhiteSpace);
+            answer += algorithmToLargonji(aux) + ' ';
+            input = input.substring(whereIsWhiteSpace + 1, input.length());
+            whereIsWhiteSpace = input.indexOf(' ');
+        }
+
+        answer += algorithmToLargonji(input);
+
+        return answer;
     }
 }

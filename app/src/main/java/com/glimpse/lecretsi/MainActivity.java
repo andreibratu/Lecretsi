@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         if(!messageText.getText().toString().isEmpty()) {
             userText.setText(messageText.getText().toString());
             userText.setVisibility(View.VISIBLE);
-            final String text = Largonji.algorithmToLargonji(messageText.getText().toString());
+            final String text = Largonji.algorithmWrapper(messageText.getText().toString());
             messageText.setText("");
             new Handler().postDelayed(new Runnable() {
 
