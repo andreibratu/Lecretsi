@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:padding="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +13,7 @@
         android:textSize="18sp"
         android:id="@+id/nicknameText"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="65dp"
+        android:layout_marginStart="60dp"
         android:layout_marginTop="3dp"/>
 
     <TextView
@@ -21,11 +22,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorGrey"
         android:text="lastMessage"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:id="@+id/lastMessage"
         android:layout_below="@+id/nicknameText"
         android:layout_alignStart="@+id/nicknameText"
-        android:layout_marginTop="-5dp" />
+        android:layout_marginTop="-2dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -41,7 +42,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="date"
         android:textColor="@color/colorGrey"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:id="@+id/dateText"
         android:layout_alignBottom="@id/nicknameText"
         android:layout_alignParentEnd="true"

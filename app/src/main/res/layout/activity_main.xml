@@ -46,26 +46,20 @@
         android:inputType="textPersonName"
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="0dp"
         android:hint="Type a message..."
         android:ems="10"
         android:layout_alignParentBottom="true"
         android:id="@+id/messageText"
         android:background="@drawable/messagebox"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="onTyping"
-        android:layout_alignTop="@+id/sendButton" />
+        android:onClick="onTyping" />
 
     <Button
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:id="@+id/sendButton"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="@drawable/ic_message_send"
         android:onClick="onSend" />
@@ -74,7 +68,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/messageText"
         android:id="@+id/scrollView"
