@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView userText, assistantText;
     EditText messageText;
-    Button sendButton;
+    ImageButton sendButton;
     LinearLayout convLayout;
     RelativeLayout mainLayout;
     ScrollView scrollView;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         userText = (TextView)findViewById(R.id.userText);
         assistantText = (TextView)findViewById(R.id.assistantText);
         messageText = (EditText)findViewById(R.id.messageText);
-        sendButton = (Button)findViewById(R.id.sendButton);
+        sendButton = (ImageButton)findViewById(R.id.sendButton);
 
         userText.setVisibility(View.INVISIBLE);
         assistantText.setVisibility(View.INVISIBLE);
@@ -73,12 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 assistantText.setVisibility(View.VISIBLE);
             }
         }, 500);
-    }
-
-    public void onReleaseFocus(View view){
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        (findViewById(R.id.dummy_id)).requestFocus();
     }
 
 }
