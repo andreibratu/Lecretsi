@@ -34,8 +34,8 @@ public class Largonji
         return vowelsCase.indexOf(x) != -1;
     }
 
-    private static boolean inputStartsWithL(String input) {
-        return java.lang.Character.toLowerCase(input.charAt(0))=='l';
+    private static boolean charIsL(Character x) {
+        return java.lang.Character.toLowerCase(x)=='l';
     }
 
     private static boolean inputHasOnlyVowels(String input) {
@@ -50,8 +50,7 @@ public class Largonji
         return 'l';
     }
 
-    //TODO black -> llackbi
-    static String algorithmToLargonji(String input){
+    private static  String algorithmToLargonji(String input){
         String encodedText;
 
         if( inputHasOnlyVowels(input) ) {
@@ -65,7 +64,7 @@ public class Largonji
 
         for(Character x:possibleException.toCharArray() ) {
             if( input.indexOf(x) != -1 )
-                if( !inputStartsWithL(input) ) return input.substring( 0,input.indexOf(x) )+
+                if( !charIsL(input.charAt(0)) ) return input.substring( 0,input.indexOf(x) )+
                         algorithmToLargonji( input.substring(input.indexOf(x)+1,input.length() ) );
                 else {
                     String aux =
@@ -74,8 +73,8 @@ public class Largonji
                 }
         }
 
-        if( isVowel(input.charAt(0) ) || inputStartsWithL(input) ){
-           int charToReplaceIndex;
+        if( isVowel(input.charAt(0) ) || charIsL(input.charAt(0)) ){
+            int charToReplaceIndex;
 
             for(charToReplaceIndex=0;
                 charToReplaceIndex < input.length() &&
@@ -90,7 +89,24 @@ public class Largonji
             char auxChar = input.charAt(0);
             encodedText = addLEncode(auxChar) + input.substring(1,input.length()) + auxChar + 'i';
         }
+        if( charIsL( encodedText.charAt(0) ) && charIsL(encodedText.charAt(1) ) )
+            encodedText = encodedText.charAt(0)+encodedText.substring(2,encodedText.length());
         Phrase.updateDatabase(input, encodedText);
         return encodedText;
+    }
+
+    public static String algorithmWrapper(String input) {
+        String answer = "";
+        int whereIsWhiteSpace = input.indexOf(' ');
+        while(whereIsWhiteSpace!=-1 && input.length()>0) {
+            String aux = input.substring(0,whereIsWhiteSpace);
+            answer += algorithmToLargonji(aux) + ' ';
+            input = input.substring(whereIsWhiteSpace + 1, input.length());
+            whereIsWhiteSpace = input.indexOf(' ');
+        }
+
+        answer += algorithmToLargonji(input);
+
+        return answer;
     }
 }
