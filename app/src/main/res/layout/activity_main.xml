@@ -11,48 +11,19 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.glimpse.lecretsi.MainActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/scrollView"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:onClick="onReleaseFocus"
-        android:layout_above="@+id/messageBox">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_above="@+id/messageBox"
+        android:id="@+id/messagesLayout">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/convLayout">
+        <ListView
+            android:id="@+id/messagesList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:text="This is a user message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/userText"
-                android:textSize="16sp"
-                android:background="@drawable/usertextbox"
-                android:layout_gravity="end"
-                android:textColor="@color/colorWhite"
-                android:layout_marginBottom="12dp"/>
-
-            <TextView
-                android:text="This is the assistant's reply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/assistantText"
-                android:textSize="16sp"
-                android:background="@drawable/assistanttextbox"
-                android:layout_gravity="start"
-                android:textColor="@color/colorWhite"
-                android:layout_marginBottom="12dp"/>
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

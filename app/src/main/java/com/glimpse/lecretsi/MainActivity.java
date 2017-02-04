@@ -1,13 +1,10 @@
 package com.glimpse.lecretsi;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -29,19 +26,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
         convLayout = (LinearLayout)findViewById(R.id.convLayout);
-        scrollView = (ScrollView)findViewById(R.id.scrollView);
-        scrollView.requestFocus();
 
-        userText = (TextView)findViewById(R.id.userText);
-        assistantText = (TextView)findViewById(R.id.assistantText);
         messageText = (EditText)findViewById(R.id.messageText);
         sendButton = (ImageButton)findViewById(R.id.sendButton);
 
-        userText.setVisibility(View.INVISIBLE);
-        assistantText.setVisibility(View.INVISIBLE);
+
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
@@ -54,19 +45,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSend(View view){
         if(!messageText.getText().toString().isEmpty()) {
-            userText.setText(messageText.getText().toString());
-            userText.setVisibility(View.VISIBLE);
+            onUserMessage();
             final String text = Largonji.algorithmToLargonji(messageText.getText().toString());
             messageText.setText("");
             new Handler().postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
-                    assistantText.setText(text);
-                    assistantText.setVisibility(View.VISIBLE);
+                    onAssistantMessage(text);
                 }
             }, 500);
         }
+    }
+
+    public void onUserMessage(){
+
+    }
+
+    public void onAssistantMessage(String message){
+
     }
 
 }
