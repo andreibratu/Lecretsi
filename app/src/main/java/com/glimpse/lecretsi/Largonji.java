@@ -50,7 +50,7 @@ public class Largonji
         return 'l';
     }
 
-    private static  String algorithmToLargonji(String input){
+    static  String algorithmToLargonji(String input){
         String encodedText;
 
         if( inputHasOnlyVowels(input) ) {
