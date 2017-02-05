@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "658445662003",
+    "firebase_url": "https://lecretsi.firebaseio.com",
+    "project_id": "lecretsi",
+    "storage_bucket": "lecretsi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658445662003:android:4039bf639031c276",
+        "android_client_info": {
+          "package_name": "com.glimpse.lerobedi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658445662003-vj5t8u34k68jsid641kom5dv479illvd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyVS8S6d4EvMNbRd9eeerO9qVSWghCauY"
+        },
+        {
+          "current_key": "AIzaSyDTz3ePYRftITMPWkFfifoPRDeCjUWo9cU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658445662003-vj5t8u34k68jsid641kom5dv479illvd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

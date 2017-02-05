@@ -20,10 +20,12 @@
         android:src="@mipmap/ic_launcher" />
 
     <TextView
+        android:id="@+id/usernameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Premiile CFA"
+        android:text="username"
+        android:textSize="18sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView

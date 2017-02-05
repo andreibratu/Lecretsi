@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +53,11 @@ public class ConversationsActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        TextView usernameText = (TextView) findViewById(R.id.usernameText);
+
+        LoginActivity loginActivity = new LoginActivity();
+        usernameText.setText(loginActivity.user.getDisplayName());
 
         mainList = (ListView)findViewById(R.id.conversationsList);
 
