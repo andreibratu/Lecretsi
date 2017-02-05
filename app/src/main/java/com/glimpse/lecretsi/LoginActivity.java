@@ -42,8 +42,9 @@ public class LoginActivity extends AppCompatActivity implements
     /**
      * Firebase objects needed to register the user in the app's Firebase db
      */
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+        private FirebaseAuth mAuth;
+        private FirebaseAuth.AuthStateListener mAuthListener;
+        public FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +79,12 @@ public class LoginActivity extends AppCompatActivity implements
 
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    user = firebaseAuth.getCurrentUser();
                     if (user != null) {
                         // User is signed in
                         //TODO Send the user to mainActivity
                         //TODO Read the docs about checking if user is already logged on
+                        //TODO *HERE*
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     } else {
                         // User is signed out
@@ -94,6 +96,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         /** Sign In Button [START] */
             //TODO Write XML file for Google sign in
+            //TODO Should we move this to *HERE* ?
             SignInButton googleSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
             googleSignInButton.setSize(SignInButton.SIZE_STANDARD);
 
