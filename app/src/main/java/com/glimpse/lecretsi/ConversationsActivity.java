@@ -22,6 +22,8 @@ import java.util.HashMap;
 public class ConversationsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // This is the activity that's gonna contain all the conversations
+
     ListView mainList;
     private static final String TAG_NICKNAME = "nickname";
     private static final String TAG_LAST_MESSAGE = "lastMessage";
@@ -57,7 +59,7 @@ public class ConversationsActivity extends AppCompatActivity
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent intent = new Intent(ConversationsActivity.this, MainActivity.class);
+                        Intent intent = new Intent(ConversationsActivity.this, ChatActivity.class);
                         /* String conversationID = conversationIDText.getText().toString();
                         intent.putExtra("conversationID", conversationID); */
                         startActivity(intent);

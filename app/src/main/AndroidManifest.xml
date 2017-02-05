@@ -9,11 +9,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="DATABASE" android:value="lecretsi.db" />
-        <meta-data android:name="VERSION" android:value="2" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.glimpse.lecretsi" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="lecretsi.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="2" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.glimpse.lecretsi" />
 
         <activity
             android:name=".ConversationsActivity"
@@ -25,15 +32,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".MainActivity"
-            android:parentActivityName=".ConversationsActivity" >
+            android:name=".ChatActivity"
+            android:parentActivityName=".ConversationsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ConversationsActivity" />
         </activity>
-
+        <activity android:name=".LoginActivity"></activity>
     </application>
 
 </manifest>
