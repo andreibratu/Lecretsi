@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity implements
 
         /** Firebase [START] */
 
-        FirebaseApp.initializeApp(LoginActivity.this);
         //Shared instance of the FirebaseAuth object
         mAuth = FirebaseAuth.getInstance();
 
