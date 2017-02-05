@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:658445662003:android:4039bf639031c276",
+        "mobilesdk_app_id": "1:658445662003:android:b8455965fadff016",
         "android_client_info": {
-          "package_name": "com.glimpse.lerobedi"
+          "package_name": "com.glimpse.lecretsi"
         }
       },
       "oauth_client": [
@@ -32,13 +32,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "658445662003-vj5t8u34k68jsid641kom5dv479illvd.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

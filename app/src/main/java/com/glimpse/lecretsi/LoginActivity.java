@@ -85,9 +85,9 @@ public class LoginActivity extends AppCompatActivity implements
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Intent intent = new Intent(LoginActivity.this, ConversationsActivity.class);
-                    startActivity(intent);
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    ///Intent intent = new Intent(LoginActivity.this, ConversationsActivity.class);
+                    ///startActivity(intent);
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
                 } else {
                     // User is signed out
 
