@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ChatActivity extends AppCompatActivity {
 
     // This is the activity that's gonna enlist all the different conversations

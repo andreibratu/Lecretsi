@@ -2,6 +2,7 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -16,12 +17,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,6 +34,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
@@ -44,6 +50,7 @@ public class ConversationsActivity extends AppCompatActivity
     public static final String ANONYMOUS = "anonymous";
 
     private String mUsername;
+    private String mEmail;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
     private GoogleApiClient mGoogleApiClient;
@@ -51,6 +58,9 @@ public class ConversationsActivity extends AppCompatActivity
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+
+    public TextView usernameText, emailText;
+    public CircleImageView userImage;
 
 
     @Override
@@ -72,6 +82,7 @@ public class ConversationsActivity extends AppCompatActivity
             return;
         } else {
             mUsername = mFirebaseUser.getDisplayName();
+            mEmail = mFirebaseUser.getEmail();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
@@ -102,9 +113,20 @@ public class ConversationsActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TextView usernameText = (TextView) findViewById(R.id.usernameText);
+        View header = navigationView.getHeaderView(0);
 
-        mainList = (ListView)findViewById(R.id.conversationsList);
+        usernameText = (TextView) header.findViewById(R.id.usernameText);
+        usernameText.setText(mUsername);
+
+        emailText = (TextView) header.findViewById(R.id.emailText);
+        emailText.setText(mEmail);
+
+        userImage = (CircleImageView) header.findViewById(R.id.userImage);
+        Glide.with(ConversationsActivity.this)
+                .load(mPhotoUrl)
+                .into(userImage);
+
+        mainList = (ListView) findViewById(R.id.conversationsList);
 
         mainList.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
@@ -139,11 +161,16 @@ public class ConversationsActivity extends AppCompatActivity
         );
         mainList.setAdapter(adapter);
 
+
+
     }
 
     public void onCreateNewMessage(){
 
     }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -188,8 +215,6 @@ public class ConversationsActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in.
-        // TODO: Add code to check if user is signed in.
     }
 
     @Override
