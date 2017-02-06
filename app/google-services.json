@@ -1,30 +1,27 @@
 {
   "project_info": {
-    "project_number": "658445662003",
-    "firebase_url": "https://lecretsi.firebaseio.com",
-    "project_id": "lecretsi",
-    "storage_bucket": "lecretsi.appspot.com"
+    "project_number": "374943686191",
+    "firebase_url": "https://lecretsi-57d62.firebaseio.com",
+    "project_id": "lecretsi-57d62",
+    "storage_bucket": "lecretsi-57d62.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:658445662003:android:b8455965fadff016",
+        "mobilesdk_app_id": "1:374943686191:android:b8455965fadff016",
         "android_client_info": {
           "package_name": "com.glimpse.lecretsi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "658445662003-vj5t8u34k68jsid641kom5dv479illvd.apps.googleusercontent.com",
+          "client_id": "374943686191-u8v087p30kevgj0ep1q297brhao2vmgt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDyVS8S6d4EvMNbRd9eeerO9qVSWghCauY"
-        },
-        {
-          "current_key": "AIzaSyDTz3ePYRftITMPWkFfifoPRDeCjUWo9cU"
+          "current_key": "AIzaSyAQ0JyncvjyzX9GvDQkL_eK9qYS0ehdZeE"
         }
       ],
       "services": {
@@ -32,8 +29,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "374943686191-u8v087p30kevgj0ep1q297brhao2vmgt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
