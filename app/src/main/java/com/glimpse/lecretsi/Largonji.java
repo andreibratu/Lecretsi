@@ -50,7 +50,7 @@ public class Largonji
         return 'l';
     }
 
-    static  String algorithmToLargonji(String input){
+    static String algorithmToLargonji(String input){
         String encodedText;
 
         if( inputHasOnlyVowels(input) ) {
@@ -91,7 +91,6 @@ public class Largonji
         }
         if( charIsL( encodedText.charAt(0) ) && charIsL(encodedText.charAt(1) ) )
             encodedText = encodedText.charAt(0)+encodedText.substring(2,encodedText.length());
-        Phrase.updateDatabase(input, encodedText);
         return encodedText;
     }
 
