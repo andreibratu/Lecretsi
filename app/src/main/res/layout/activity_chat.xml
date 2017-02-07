@@ -13,36 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/messagesLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/messageBox"
-            android:orientation="vertical">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messageRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:layout_marginBottom="15dp"
+            android:layout_above="@+id/messageBox"/>
 
-            <ListView
-                android:id="@+id/messagesList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             android:id="@+id/messageBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
 
             <EditText
                 android:id="@+id/messageText"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@drawable/messagebox"
+                android:background="@drawable/message_box"
                 android:hint="Type a message..."
                 android:inputType="textMultiLine"
                 android:padding="7dp"
                 android:paddingEnd="25dp"
-                android:paddingStart="7dp" />
+                android:paddingStart="7dp"
+                android:layout_alignParentStart="true" />
 
             <ImageButton
                 android:id="@+id/expandButton"
@@ -53,6 +51,7 @@
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/ic_sheet_expand"
                 android:onClick="onExpand"
+                android:visibility="visible"
                 android:padding="15dp" />
 
             <ImageButton
@@ -75,7 +74,7 @@
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="450dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:clipToPadding="true"
         android:background="@color/colorWhite"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">

@@ -67,8 +67,8 @@ public class ConversationsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversations);
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
 
