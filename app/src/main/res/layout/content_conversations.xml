@@ -12,13 +12,81 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
 
         <ListView
             android:id="@+id/conversationsList"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="310dp" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/friendBox"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_gravity="top|start"
+            android:text="Friends"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:id = "@+id/friends"
+            android:visibility="visible"
+            android:layout_alignParentStart="true" />
+
+        <HorizontalScrollView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:id="@+id/friendGallery"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true">
+        </HorizontalScrollView>
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/ic_add_circle_black_24dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/friendRequests"
+        android:layout_below="@+id/friendBox"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:id="@+id/requests"
+            android:text="Requests"
+            android:textStyle="bold"
+            android:textSize="12"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listFriendRequests">
+        </ListView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30"
+        android:layout_below="@+id/friendRequests"
+        android:layout_alignParentStart="true"
+        android:id="@+id/assistantLayout"
+        android:layout_alignParentBottom="true">
+
+    </RelativeLayout>
 
 </RelativeLayout>
