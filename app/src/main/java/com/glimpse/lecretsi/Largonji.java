@@ -1,7 +1,6 @@
 package com.glimpse.lecretsi;
 import java.lang.String;
 import java.lang.reflect.Array;
-
 import com.glimpse.lecretsi.Phrase;
 
 public class Largonji
