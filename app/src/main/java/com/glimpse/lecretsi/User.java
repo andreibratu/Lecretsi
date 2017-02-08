@@ -20,7 +20,7 @@ public class User {
     public static int userCount = 0;
     private static Map<String,Integer> usersDictionary ;
 
-    private int userID;
+    private String userID;
     private String firstName;
     private String lastName;
     private String email;
@@ -39,64 +39,15 @@ public class User {
         this.email = acct.getEmail();
         this.firstName = acct.getFamilyName();
         this.lastName = acct.getGivenName();
-        this.userID = User.userCount;
+        this.userID = Integer.toString(User.userCount);
         this.photoURL = (!Objects.equals(acct.getPhotoUrl().toString(), ""))
                 ? acct.getPhotoUrl().toString():null;
-
-        usersDictionary.put(this.email,this.userID);
     }
 
-    public int getUserID() {return this.userID;}
+    public String getUserID() {return this.userID;}
     public String getEmail() {return this.email;}
     public String getName() {return this.firstName+" "+this.lastName;}
     public String getPhotoURL() {return this.photoURL;}
-
-    public void addFriend(int indexFriend) {
-        assert this.friendRequests.indexOf(indexFriend)!=-1;
-
-        this.friends.add(indexFriend);
-        this.friendRequests.remove(this.friendRequests.indexOf(indexFriend));
-    }
-
-    public void sendFriendRequest(String email) {
-        final DatabaseReference queriedUser = FirebaseDatabase.getInstance()
-                .getReference("users/"+Integer.toString(usersDictionary.get(email)));
-
-        queriedUser.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User mUser = dataSnapshot.getValue(User.class);
-                mUser.friendRequests.add(User.this.userID);
-                queriedUser.setValue(mUser);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("User.sendRequest error", String.valueOf(databaseError.toException()));
-            }
-        });
-    }
-
-    public ArrayList<User> getFriends() {
-        final ArrayList<User> aux = new ArrayList<>();
-
-        DatabaseReference userFriends = FirebaseDatabase.getInstance().getReference();
-        for(int x:friends) {
-            userFriends = userFriends.child(Integer.toString(x));
-            userFriends.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    aux.add(dataSnapshot.getValue(User.class));
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("User.getFriends error", String.valueOf(databaseError.toException()));
-                }
-            });
-        }
-        return aux;
-    }
 
     public Phrase[] getRelevantPhrases() {
         Collections.sort(usedPhrases);
