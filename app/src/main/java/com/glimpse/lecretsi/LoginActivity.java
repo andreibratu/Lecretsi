@@ -22,14 +22,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity  extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+
+    public static User loggedInUser = null;
 
     private SignInButton mSignInButton;
 
@@ -68,7 +72,7 @@ public class LoginActivity  extends AppCompatActivity implements
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
@@ -86,7 +90,14 @@ public class LoginActivity  extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             DatabaseReference mDatabase;
-                            mDatabase = FirebaseDatabase.getInstance().getReference("users");
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
+
+                            ++User.userCount;
+                            loggedInUser = new User(acct);
+
+                            mDatabase.child("users").child(Integer.toString(++User.userCount))
+                                    .setValue(loggedInUser);
+
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
                             finish();
                         }

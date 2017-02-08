@@ -3,7 +3,6 @@ package com.glimpse.lecretsi;
 import java.util.*;
 
 public class Phrase implements Comparable<Phrase>{
-    ///@ADI IMPORTANT : INSTANT RUN *MIGHT* BREAK THIS CLASS further testing needed
 
     private String phrase;
     private String largonjiPhrase;
