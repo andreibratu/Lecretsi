@@ -92,10 +92,9 @@ public class LoginActivity  extends AppCompatActivity implements
                             DatabaseReference mDatabase;
                             mDatabase = FirebaseDatabase.getInstance().getReference();
 
-                            ++User.userCount;
                             loggedInUser = new User(acct);
 
-                            mDatabase.child("users").child(Integer.toString(++User.userCount))
+                            mDatabase.child("users").child(loggedInUser.getUserID())
                                     .setValue(loggedInUser);
 
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
