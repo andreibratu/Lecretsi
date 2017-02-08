@@ -3,85 +3,77 @@ package com.glimpse.lecretsi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListAdapter;
 
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.api.client.util.Data;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-
 public class ContactsActivity extends AppCompatActivity {
 
-    ArrayList<User> contactsToDisplay;
-    ArrayList<User> friendRequestToDisplay;
+    final String LOGGED_USER_ID = LoginActivity.loggedInUser.getUserID();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
-        DatabaseReference friendListener = FirebaseDatabase.getInstance().getReference()
+        DatabaseReference newFriendListener = FirebaseDatabase.getInstance().getReference()
                 .child("friendships")
-                .child(LoginActivity.loggedInUser.getUserID());
+                .child(LOGGED_USER_ID);
 
-        final DatabaseReference friendRequestListener = FirebaseDatabase.getInstance().getReference()
-                .child("friend_requests")
-                .child(LoginActivity.loggedInUser.getUserID());
-
-        friendListener.addValueEventListener(new ValueEventListener() {
+        newFriendListener.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // added friend as a pair {userID-true}
 
-                DatabaseReference newFriend = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(dataSnapshot.getKey());
-
-                newFriend.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        contactsToDisplay.add(dataSnapshot.getValue(User.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d("ContactsActivity", "Error reading friend profile");
-                    }
-                });
+                FirebaseDatabase.getInstance().getReference().child("users")
+                        .child(LOGGED_USER_ID).child("friends")
+                        .child(dataSnapshot.getValue(User.class).getUserID())
+                        .setValue(dataSnapshot.getValue(User.class));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("ContactsActivity", "Error reading friendships");
+                Log.d("ContactsActivity", "Error adding friendships: "+ databaseError.getMessage());
             }
         });
 
+        
+        DatabaseReference newFriendRequestListener = FirebaseDatabase.getInstance().getReference()
+                .child("friend_requests").child(LOGGED_USER_ID);
 
-        friendRequestListener.addValueEventListener(new ValueEventListener() {
+        newFriendRequestListener.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                DatabaseReference findFriend = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(dataSnapshot.getKey());
-
-                findFriend.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        friendRequestToDisplay.add(dataSnapshot.getValue(User.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                //added friend request as userID-true
+                FirebaseDatabase.getInstance().getReference().child("users")
+                        .child(LOGGED_USER_ID).child("friend_requests")
+                        .child(dataSnapshot.getValue(User.class).getUserID())
+                        .setValue(dataSnapshot.getValue(User.class));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d("ContactsActivity", "Error adding friend request: "+databaseError.getMessage());
             }
         });
+
+        //TODO @ADI https://firebaseui.com/docs/android/com/firebase/ui/FirebaseListAdapter.html
+        //TODO List adapters for firebase
+        DatabaseReference mUserFriends = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(LOGGED_USER_ID).child("friends");
+        DatabaseReference mUserFriendRequests = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(LOGGED_USER_ID).child("friend_requests");
+    }
+
+    void acceptFriendRequest(String whoseFriendReqID, String receiverFriendReqID) {
+
     }
 }
