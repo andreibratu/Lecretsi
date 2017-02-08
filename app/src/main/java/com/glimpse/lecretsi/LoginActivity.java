@@ -94,7 +94,7 @@ public class LoginActivity  extends AppCompatActivity implements
 
                             loggedInUser = new User(acct);
 
-                            mDatabase.child("users").child(loggedInUser.getUserID())
+                            mDatabase.child("users").child(loggedInUser.getId())
                                     .setValue(loggedInUser);
 
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));

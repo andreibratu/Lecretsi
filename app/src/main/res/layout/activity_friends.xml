@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_contacts"
-    tools:context="com.glimpse.lecretsi.ContactsActivity">
+    tools:context="com.glimpse.lecretsi.FriendsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
 
         <include
             android:id="@+id/assistantContact"
-            layout="@layout/contacts_item">
+            layout="@layout/friends_item">
 
         </include>
 
@@ -37,7 +37,7 @@
             android:textColor="@color/colorGrey"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/contactsView"
+            android:id="@+id/friendsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/addFriends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

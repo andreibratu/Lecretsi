@@ -97,7 +97,7 @@ public class ConversationsActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ConversationsActivity.this, ContactsActivity.class);
+                Intent intent = new Intent(ConversationsActivity.this, FriendsActivity.class);
                 startActivity(intent);
             }
         });

@@ -37,7 +37,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".ContactsActivity"
+            android:name=".FriendsActivity"
             android:parentActivityName=".ConversationsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

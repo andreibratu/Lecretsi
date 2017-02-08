@@ -7,11 +7,12 @@ import java.util.Objects;
 
 public class User {
 
-    private String userID;
+    private String id;
+    private String email;
     private String firstName;
     private String lastName;
     private String photoURL;
-    private ArrayList<Phrase> usedPhrases;
+    // private ArrayList<Phrase> usedPhrases;
 
     //TODO link user to db
     //TODO add getter for friends and conversations
@@ -19,17 +20,22 @@ public class User {
     User(){}
 
     User(GoogleSignInAccount acct) {
+        this.id = acct.getId();
         this.firstName = acct.getFamilyName();
         this.lastName = acct.getGivenName();
-        this.userID = acct.getEmail();
+        this.email = acct.getEmail();
         this.photoURL = (!Objects.equals(acct.getPhotoUrl().toString(), ""))
                 ? acct.getPhotoUrl().toString():null;
     }
 
-    public String getUserID() {return this.userID;}
-    public String getName() {return this.firstName+" "+this.lastName;}
-    public String getPhotoURL() {return this.photoURL;}
+    // TODO: Save all the info in a SavedSharedPreference
 
+    public String getId() {return id;}
+    public String getEmail() {return email;}
+    public String getName() {return firstName+" "+lastName;}
+    public String getPhotoURL() {return photoURL;}
+
+    /*
     public Phrase[] getRelevantPhrases() {
         Collections.sort(usedPhrases);
 
@@ -47,9 +53,10 @@ public class User {
         else
             this.usedPhrases.add(phrase);
 
-        /*
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users")
                 .child(Integer.toString(this.userID)).child("usedPhrases").setValue(this.usedPhrases);
-                */
+
     }
+    */
 }
