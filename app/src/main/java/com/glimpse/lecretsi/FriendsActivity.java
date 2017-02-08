@@ -89,8 +89,6 @@ public class FriendsActivity extends AppCompatActivity {
             }
         });
 
-        //TODO @ADI https://firebaseui.com/docs/android/com/firebase/ui/FirebaseListAdapter.html
-        //TODO List adapters for firebase
         DatabaseReference mUserFriends = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(LOGGED_USER_ID).child("friends");
         DatabaseReference mUserFriendRequests = FirebaseDatabase.getInstance().getReference()
