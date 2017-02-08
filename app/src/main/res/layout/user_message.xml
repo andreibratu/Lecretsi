@@ -9,7 +9,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true"
-    android:gravity="right"
+    android:gravity="end"
     android:paddingTop="3dp"
     android:paddingStart="10dp"
     android:paddingEnd="10dp">
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/messagePosition"
         android:orientation="horizontal"
-        android:gravity="right"
+        android:gravity="end"
         android:weightSum="1">
 
         <TextView

@@ -38,6 +38,7 @@ import java.util.Calendar;
 
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    public static String lastMessage = "";
     static TextView lastMessageSelected = null;
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder{
@@ -67,6 +68,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     lastMessageSelected = messageDateTime;
                 }
             });
+
+            lastMessage = messageTextView.getText().toString();
         }
     }
 
@@ -143,29 +146,18 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             protected void populateViewHolder(MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
                 if(chatMessage.getEmail().equals(mEmail)) {
-                    viewHolder.messageLayout.setGravity(Gravity.RIGHT);
-                    viewHolder.messagePosition.setGravity(Gravity.RIGHT);
+                    viewHolder.messageLayout.setGravity(Gravity.END);
+                    viewHolder.messagePosition.setGravity(Gravity.END);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
                     viewHolder.messageTextView.setText(chatMessage.getText());
                     viewHolder.messageDateTime.setText(chatMessage.getDateTime());
                 } else {
-                    viewHolder.messageLayout.setGravity(Gravity.LEFT);
-                    viewHolder.messagePosition.setGravity(Gravity.LEFT);
+                    viewHolder.messageLayout.setGravity(Gravity.START);
+                    viewHolder.messagePosition.setGravity(Gravity.START);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                     viewHolder.messageTextView.setText(chatMessage.getText());
                     viewHolder.messageDateTime.setText(chatMessage.getDateTime());
                 }
-                /*
-                if (chatMessage.getPhotoUrl() == null) {
-                    viewHolder.messengerImageView
-                            .setImageDrawable(ContextCompat
-                                    .getDrawable(MainActivity.this,
-                                            R.drawable.ic_account_circle_black_36dp));
-                } else {
-                    Glide.with(MainActivity.this)
-                            .load(friendlyMessage.getPhotoUrl())
-                            .into(viewHolder.messengerImageView);
-                }*/
             }
         };
 
@@ -262,22 +254,23 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                onAssistantMessage("Hello, " + mUsername);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onAssistantMessage("I am your personal Largonji Assistant");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                onAssistantMessage("What would you want me to translate?");
-                            }
-                        }, 1000);
-                    }
-                }, 1000);
+                if (lastMessage.isEmpty()) {
+                    onAssistantMessage("Hello, " + mUsername);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAssistantMessage("I am your personal Largonji Assistant");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onAssistantMessage("What would you want me to translate?");
+                                }
+                            }, 1000);
+                        }
+                    }, 1000);
+                }
             }
-        }, 1000);
-
+        }, 5000);
     }
 
     public void onSend(View view){

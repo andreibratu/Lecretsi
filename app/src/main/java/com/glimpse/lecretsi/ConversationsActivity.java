@@ -2,7 +2,6 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -17,8 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -100,7 +97,8 @@ public class ConversationsActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onCreateNewMessage();
+                Intent intent = new Intent(ConversationsActivity.this, ContactsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -156,7 +154,7 @@ public class ConversationsActivity extends AppCompatActivity
 
         ListAdapter adapter = new SimpleAdapter(
                 ConversationsActivity.this, conversationsList,
-                R.layout.conversations_list, new String[]{TAG_NICKNAME, TAG_LAST_MESSAGE, TAG_DATE},
+                R.layout.conversations_item, new String[]{TAG_NICKNAME, TAG_LAST_MESSAGE, TAG_DATE},
                 new int[]{R.id.nicknameText, R.id.lastMessage, R.id.dateText}
         );
         mainList.setAdapter(adapter);
@@ -164,12 +162,6 @@ public class ConversationsActivity extends AppCompatActivity
 
 
     }
-
-    public void onCreateNewMessage(){
-
-    }
-
-
 
 
     @Override
