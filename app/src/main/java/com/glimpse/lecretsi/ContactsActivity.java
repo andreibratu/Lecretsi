@@ -2,9 +2,14 @@ package com.glimpse.lecretsi;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.TextView;
+
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,6 +20,17 @@ import com.google.firebase.database.ValueEventListener;
 public class ContactsActivity extends AppCompatActivity {
 
     final String LOGGED_USER_ID = LoginActivity.loggedInUser.getUserID();
+
+    public static class MessageViewHolder extends RecyclerView.ViewHolder{
+        TextView messageTextView;
+        TextView messageDateTime;
+
+        public MessageViewHolder(View v) {
+            super(v);
+            messageTextView = (TextView) itemView.findViewById(R.id.userMessage);
+            messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
