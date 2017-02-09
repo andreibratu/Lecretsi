@@ -1,8 +1,10 @@
 package com.glimpse.lecretsi;
 
-import android.util.Log;
-
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.*;
 
@@ -18,29 +20,16 @@ public class Phrase {
 
     Phrase() {}
 
-    //TODO Update db
     Phrase(String phrase) {
-
-        if( FirebaseDatabase.getInstance().getReference().child("priority_phrase")
-                .child(LOGGED_IN_USER).child(this.phrase) ==null ) {
-            this.phrase = phrase;
-            this.largonjiPhrase = Largonji.algorithmWrapper(phrase);
-            this.howManyTimesUsed = 1;
-            this.lastTimeUsed = new Date();
-            this.length = phrase.length();
-            this.calculateKey();
-
-            FirebaseDatabase.getInstance().getReference().child("priority_phrase")
-                    .child(LOGGED_IN_USER).child(this.phrase).setValue(this);
-
-        } else {
-            this.updatePhrase();
-        }
+        phrase = phrase;
+        largonjiPhrase = Largonji.algorithmWrapper(phrase);
+        howManyTimesUsed = 1;
+        lastTimeUsed = new Date();
+        length = phrase.length();
+        calculateKey();
     }
 
-    double getPriorityKey() {return this.priorityKey;}
-
-    private void calculateKey() {
+    public double calculateKey() {
         Date timeNow = new Date();
         double lastUsedIndex = 1 / (double) (timeNow.getTime() - this.lastTimeUsed.getTime());
         double howOftenUsed = this.howManyTimesUsed * this.length;
@@ -50,10 +39,32 @@ public class Phrase {
         this.priorityKey = lastUsedIndex * howOftenUsed / MAGIC_TOUCH;
     }
 
-    public void updatePhrase() {
-        this.howManyTimesUsed += 1;
-        this.calculateKey();
-        this.lastTimeUsed = new Date();
-    }
+    public static void updatePhrase(final String phrase) {
 
+        DatabaseReference pathPhrase = FirebaseDatabase.getInstance().getReference().
+                child("priority_phrases").child(LOGGED_IN_USER).child(phrase);
+
+        if( pathPhrase == null ) {
+            pathPhrase.setValue(User(phrase));
+        }
+        else
+        {
+            pathPhrase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                //TODO Tommorow
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot x:dataSnapshot) {
+                        Phrase phraseToUpdate = x.getValue(Phrase.class);
+                        phraseToUpdate.howManyTimesUsed++;
+                        phraseToUpdate.calculateKey();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
 }
