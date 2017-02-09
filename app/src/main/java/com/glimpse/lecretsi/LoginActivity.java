@@ -33,8 +33,6 @@ public class LoginActivity  extends AppCompatActivity implements
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    public static User loggedInUser = null;
-
     private SignInButton mSignInButton;
 
     private GoogleApiClient mGoogleApiClient;
@@ -89,14 +87,6 @@ public class LoginActivity  extends AppCompatActivity implements
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            DatabaseReference mDatabase;
-                            mDatabase = FirebaseDatabase.getInstance().getReference();
-
-                            loggedInUser = new User(acct);
-
-                            mDatabase.child("users").child(loggedInUser.getId())
-                                    .setValue(loggedInUser);
-
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
                             finish();
                         }

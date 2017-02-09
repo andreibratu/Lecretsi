@@ -109,8 +109,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mUsername = ANONYMOUS;
 
         //TODO Get from shared prefs
-        mUsername=LoginActivity.loggedInUser.getName();
-        mEmail=LoginActivity.loggedInUser.getEmail();
+        mUsername = ConversationsActivity.loggedInUser.getName();
+        mEmail = ConversationsActivity.loggedInUser.getEmail();
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);

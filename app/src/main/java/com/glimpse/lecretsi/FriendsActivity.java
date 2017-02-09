@@ -21,7 +21,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsActivity extends AppCompatActivity {
 
-    final String LOGGED_USER_ID = LoginActivity.loggedInUser.getId();
+    final String LOGGED_USER_ID = ConversationsActivity.loggedInUser.getId();
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView friendUsername;
@@ -56,11 +56,12 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // added friend as a pair {userID-true}
-
-                FirebaseDatabase.getInstance().getReference().child("users")
-                        .child(LOGGED_USER_ID).child("friends")
-                        .child(dataSnapshot.getValue(User.class).getId())
-                        .setValue(dataSnapshot.getValue(User.class));
+                if(dataSnapshot.getValue(User.class) != null) {
+                    FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(LOGGED_USER_ID).child("friends")
+                            .child(dataSnapshot.getValue(User.class).getId())
+                            .setValue(dataSnapshot.getValue(User.class));
+                }
             }
 
             @Override
@@ -77,10 +78,12 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //added friend request as userID-true
-                FirebaseDatabase.getInstance().getReference().child("users")
-                        .child(LOGGED_USER_ID).child("friend_requests")
-                        .child(dataSnapshot.getValue(User.class).getId())
-                        .setValue(dataSnapshot.getValue(User.class));
+                if(dataSnapshot.getValue(User.class) != null) {
+                    FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(LOGGED_USER_ID).child("friend_requests")
+                            .child(dataSnapshot.getValue(User.class).getId())
+                            .setValue(dataSnapshot.getValue(User.class));
+                }
             }
 
             @Override

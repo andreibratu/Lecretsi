@@ -28,6 +28,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ public class ConversationsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     // This is the activity that's gonna contain all the conversations
+
+    public static User loggedInUser;
 
     ListView mainList;
     private static final String TAG = "ConversationsActivity";
@@ -54,7 +58,7 @@ public class ConversationsActivity extends AppCompatActivity
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+    public static FirebaseUser mFirebaseUser;
 
     public TextView usernameText, emailText;
     public CircleImageView userImage;
@@ -72,6 +76,7 @@ public class ConversationsActivity extends AppCompatActivity
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, LoginActivity.class));
@@ -83,6 +88,14 @@ public class ConversationsActivity extends AppCompatActivity
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
+
+            DatabaseReference mDatabase;
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+
+            loggedInUser = new User(mFirebaseUser);
+
+            mDatabase.child("users").child(loggedInUser.getId())
+                    .setValue(loggedInUser);
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
