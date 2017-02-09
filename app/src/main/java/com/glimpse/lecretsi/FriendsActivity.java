@@ -56,13 +56,30 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // added friend as a pair {userID-true}
-                if(dataSnapshot.getValue(User.class) != null) {
-                    FirebaseDatabase.getInstance().getReference().child("users")
-                            .child(LOGGED_USER_ID).child("friends")
-                            .child(dataSnapshot.getValue(User.class).getId())
-                            .setValue(dataSnapshot.getValue(User.class));
+
+                DatabaseReference getFriendObject = FirebaseDatabase.getInstance().getReference()
+                        .child("users")
+                        .child(dataSnapshot.getKey())
+                        .child(dataSnapshot.getKey());
+
+                getFriendObject.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        FirebaseDatabase.getInstance().getReference().child("users")
+                                .child(LOGGED_USER_ID).child("friends")
+                                .child(dataSnapshot.getValue(User.class).getId())
+                                .setValue(dataSnapshot.getValue(User.class));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d("FriendsActivity", "Error binding friend with user"
+                                + databaseError.getMessage());
+                    }
+                });
+
                 }
-            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -78,12 +95,26 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //added friend request as userID-true
-                if(dataSnapshot.getValue(User.class) != null) {
-                    FirebaseDatabase.getInstance().getReference().child("users")
-                            .child(LOGGED_USER_ID).child("friend_requests")
-                            .child(dataSnapshot.getValue(User.class).getId())
-                            .setValue(dataSnapshot.getValue(User.class));
-                }
+
+                DatabaseReference getFriendReqObject = FirebaseDatabase.getInstance().getReference()
+                        .child("users").child(dataSnapshot.getKey()).child(dataSnapshot.getKey());
+
+                getFriendReqObject.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        FirebaseDatabase.getInstance().getReference().child("users")
+                                .child(LOGGED_USER_ID).child("friend_requests")
+                                .child(dataSnapshot.getValue(User.class).getId())
+                                .setValue(dataSnapshot.getValue(User.class));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d("FriendsActivity", "Error bind friendReq user: "
+                                + databaseError.getMessage());
+                    }
+                });
             }
 
             @Override
