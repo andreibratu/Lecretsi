@@ -1,34 +1,41 @@
 package com.glimpse.lecretsi;
 
+import android.util.Log;
+
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.*;
 
-public class Phrase implements Comparable<Phrase>{
+public class Phrase {
 
+    private final static String LOGGED_IN_USER = ConversationsActivity.loggedInUser.getId();
     private String phrase;
     private String largonjiPhrase;
     public double priorityKey;
     private int howManyTimesUsed;
-
-    @Override
-    public int compareTo(Phrase comparePhrase) {
-        //ascending
-        //return java.lang.Double.compare(this.priorityKey,comparePhrase.priorityKey);
-        //descending
-        return java.lang.Double.compare(comparePhrase.priorityKey,this.priorityKey);
-    }
-
     private Date lastTimeUsed;
     private int length;
 
-    Phrase() {}  ///Every table needs a default constructor
+    Phrase() {}
 
+    //TODO Update db
     Phrase(String phrase) {
-        this.phrase = phrase;
-        this.largonjiPhrase = Largonji.algorithmToLargonji(phrase);
-        this.howManyTimesUsed = 1;
-        this.lastTimeUsed = new Date();
-        this.length = phrase.length();
-        this.calculateKey();
+
+        if( FirebaseDatabase.getInstance().getReference().child("priority_phrase")
+                .child(LOGGED_IN_USER).child(this.phrase) ==null ) {
+            this.phrase = phrase;
+            this.largonjiPhrase = Largonji.algorithmWrapper(phrase);
+            this.howManyTimesUsed = 1;
+            this.lastTimeUsed = new Date();
+            this.length = phrase.length();
+            this.calculateKey();
+
+            FirebaseDatabase.getInstance().getReference().child("priority_phrase")
+                    .child(LOGGED_IN_USER).child(this.phrase).setValue(this);
+
+        } else {
+            this.updatePhrase();
+        }
     }
 
     double getPriorityKey() {return this.priorityKey;}
@@ -36,7 +43,8 @@ public class Phrase implements Comparable<Phrase>{
     private void calculateKey() {
         Date timeNow = new Date();
         double lastUsedIndex = 1 / (double) (timeNow.getTime() - this.lastTimeUsed.getTime());
-        double howOftenUsed = this.howManyTimesUsed * this.length; // Longer more often used words have priority
+        double howOftenUsed = this.howManyTimesUsed * this.length;
+        // Longer more often used words have priority
 
         double MAGIC_TOUCH = 42;
         this.priorityKey = lastUsedIndex * howOftenUsed / MAGIC_TOUCH;

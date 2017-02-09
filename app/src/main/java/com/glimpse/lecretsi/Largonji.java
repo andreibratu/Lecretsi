@@ -1,24 +1,21 @@
 package com.glimpse.lecretsi;
 import java.lang.String;
-import java.lang.reflect.Array;
-import com.glimpse.lecretsi.Phrase;
+import java.util.ArrayList;
+import java.util.Objects;
 
-public class Largonji
+class Largonji
 {
     /**
-     *  This class will handle the coding/decoding of the algorithm
-     *  Class is to be used by its static members
-     */
-
+     *  This class handles the coding/decoding of the algorithm
+    **/
 
     //TODO algorithmToNormal()
-    // TODO *J'en* parle
     private static final String vowelsCase = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
     private static final String possibleException = "'-";
     private static final String[] ignoreList =
             new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
             "ils", "elles", "me", "te", "se", "en", "lui", "y",
-            "nous", "vous", "leur", "moi", "toi", "lui", "elle", "soi", "eux",
+            "nous", "vous", "leur", "moi", "toi", "elle", "soi", "eux", "l",
             "elles", "de", "du", "des", "j"};
 
     /*
@@ -49,34 +46,48 @@ public class Largonji
         return 'l';
     }
 
-    static String algorithmToLargonji(String input){
+
+    private static String algorithmToLargonji(String input){
         String encodedText;
+
+        for(String x:ignoreList) {
+            if(Objects.equals(input.toLowerCase(), x))
+                return input;
+        }
+
+        for(Character x:possibleException.toCharArray() ) {
+            Integer countExceptions = 0;
+            String aux = input;
+
+            while (aux.indexOf(x) != -1) {
+                Integer pos = aux.indexOf(x);
+                countExceptions++;
+                aux = aux.substring(pos+1,aux.length());
+            }
+
+            if(countExceptions>=2) {
+
+                Integer posException = input.indexOf(x);
+                return (algorithmToLargonji(input.substring(0,posException))+x)+
+                        input.substring(posException+1,input.length());
+
+            } else if(countExceptions==1) {
+
+                Integer posException = input.indexOf(x);
+                return (algorithmToLargonji(input.substring(0, posException)) + x) +
+                        algorithmToLargonji(input.substring(posException + 1, input.length()));
+            }
+        }
 
         if( inputHasOnlyVowels(input) ) {
             encodedText = addLEncode( input.charAt(0) ) + input;
             return encodedText;
         }
 
-        for(String x:ignoreList) {
-            if(input.toLowerCase()==x) return input;
-        }
-
-        for(Character x:possibleException.toCharArray() ) {
-            if( input.indexOf(x) != -1 )
-                if( !charIsL(input.charAt(0)) ) return input.substring( 0,input.indexOf(x) )+
-                        algorithmToLargonji( input.substring(input.indexOf(x)+1,input.length() ) );
-                else {
-                    String aux =
-                            algorithmToLargonji( input.substring(input.indexOf(x)+1,input.length()));
-                    return input.substring( 0,input.indexOf(x) ) + aux.substring(1,aux.length());
-                }
-        }
-
         if( isVowel(input.charAt(0) ) || charIsL(input.charAt(0)) ){
             int charToReplaceIndex;
 
-            for(charToReplaceIndex=0;
-                charToReplaceIndex < input.length() &&
+            for(charToReplaceIndex=0; charToReplaceIndex < input.length() &&
                         isVowel(input.charAt(charToReplaceIndex) ) ; charToReplaceIndex++ );
 
             encodedText = addLEncode(input.charAt(0)) + input.substring(0,charToReplaceIndex) +
@@ -84,16 +95,19 @@ public class Largonji
                     input.substring(charToReplaceIndex+1,input.length() ) +
                     input.charAt( charToReplaceIndex ) + 'i';
         }
+
         else{
             char auxChar = input.charAt(0);
-            encodedText = addLEncode(auxChar) + input.substring(1,input.length()) + auxChar + 'i';
+            encodedText = addLEncode(auxChar) + input.substring(1,input.length()) +
+                    Character.toLowerCase(auxChar) + 'i';
         }
+
         if( charIsL( encodedText.charAt(0) ) && charIsL(encodedText.charAt(1) ) )
             encodedText = encodedText.charAt(0)+encodedText.substring(2,encodedText.length());
         return encodedText;
     }
 
-    public static String algorithmWrapper(String input) {
+    static String algorithmWrapper(String input) {
         String answer = "";
         int whereIsWhiteSpace = input.indexOf(' ');
         while(whereIsWhiteSpace!=-1 && input.length()>0) {

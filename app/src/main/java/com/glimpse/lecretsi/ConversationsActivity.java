@@ -1,9 +1,7 @@
 package com.glimpse.lecretsi;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -53,7 +51,6 @@ public class ConversationsActivity extends AppCompatActivity
     private String mUsername;
     private String mEmail;
     private String mPhotoUrl;
-    private SharedPreferences mSharedPreferences;
     private GoogleApiClient mGoogleApiClient;
 
     // Firebase instance variables
@@ -68,7 +65,6 @@ public class ConversationsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversations);
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
@@ -100,8 +96,8 @@ public class ConversationsActivity extends AppCompatActivity
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .build();
+                .addApi(Auth.GOOGLE_SIGN_IN_API).build();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

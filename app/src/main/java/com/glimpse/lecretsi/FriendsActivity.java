@@ -49,7 +49,7 @@ public class FriendsActivity extends AppCompatActivity {
     private FirebaseRecyclerAdapter<User, FriendsViewHolder> mFriendsAdapter;
 
     AlertDialog alertDialog;
-    private DatabaseReference newFriendListener, newFriendRequestListener;
+    private DatabaseReference newFriendRequestListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +175,7 @@ public class FriendsActivity extends AppCompatActivity {
 
     }
 
+    //TODO acceptFriendRequest
     void acceptFriendRequest(User whoseFriendRequest, User receiverFriendRequest) {
 
     }
