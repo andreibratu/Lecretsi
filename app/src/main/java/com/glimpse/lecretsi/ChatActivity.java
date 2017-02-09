@@ -122,7 +122,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             protected void populateViewHolder(MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
-                /*if(chatMessage.getEmail().equals(mEmail)) {
+                if(chatMessage.getEmail().equals(mEmail)) {
                     viewHolder.messageLayout.setGravity(Gravity.END);
                     viewHolder.messagePosition.setGravity(Gravity.END);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
@@ -134,7 +134,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                     viewHolder.messageTextView.setText(chatMessage.getText());
                     viewHolder.messageDateTime.setText(chatMessage.getDateTime());
-                }*/
+                }
             }
         };
 
@@ -229,7 +229,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     }, 1000);
                 }
             }
-        }, 5000);
+        }, 1000);
     }
 
     public void onSend(View view){
@@ -267,7 +267,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void onUserMessage(){
         ChatMessage chatMessage = new
-                ChatMessage(mMessageEditText.getText().toString(), date);
+                ChatMessage(mEmail, mMessageEditText.getText().toString(), date);
         mFirebaseDatabaseReference.child("conversations/" + MESSAGES_CHILD)
                 .push().setValue(chatMessage);
     }
@@ -275,7 +275,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onAssistantMessage(String message){
         if(message != null) {
             ChatMessage chatMessage = new
-                    ChatMessage(message, date);
+                    ChatMessage("assistant@gmail.com", message, date);
             mFirebaseDatabaseReference.child("conversations/" + MESSAGES_CHILD)
                     .push().setValue(chatMessage);
         }
