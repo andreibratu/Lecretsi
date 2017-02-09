@@ -8,42 +8,13 @@
     android:id="@+id/activity_contacts"
     tools:context="com.glimpse.lecretsi.FriendsActivity">
 
-    <LinearLayout
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/friendsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/assistantContact"
-            layout="@layout/friends_item">
-
-        </include>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/friendRequestsView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.v7.widget.RecyclerView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Largonji contacts"
-            android:textSize="14sp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/colorGrey"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/friendsView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </android.support.v7.widget.RecyclerView>
-
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addFriends"

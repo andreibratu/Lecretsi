@@ -1,13 +1,20 @@
 package com.glimpse.lecretsi;
 
+import android.content.DialogInterface;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -23,12 +30,12 @@ public class FriendsActivity extends AppCompatActivity {
 
     final String LOGGED_USER_ID = ConversationsActivity.loggedInUser.getId();
 
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class FriendsViewHolder extends RecyclerView.ViewHolder {
         TextView friendUsername;
         TextView friendEmail;
         CircleImageView friendPicture;
 
-        public MessageViewHolder(View v) {
+        public FriendsViewHolder(View v) {
             super(v);
             friendUsername = (TextView) itemView.findViewById(R.id.friendUsername);
             friendEmail = (TextView) itemView.findViewById(R.id.friendEmail);
@@ -36,92 +43,18 @@ public class FriendsActivity extends AppCompatActivity {
         }
     }
 
-    private RecyclerView friendsView, friendRequestsView;
-    private LinearLayoutManager mFriendsManager, mFriendRequestsManager;
+    private RecyclerView friendsView;
+    private LinearLayoutManager mFriendsManager;
 
+    private FirebaseRecyclerAdapter<User, FriendsViewHolder> mFriendsAdapter;
+
+    AlertDialog alertDialog;
     private DatabaseReference newFriendListener, newFriendRequestListener;
-    private FirebaseRecyclerAdapter<User, MessageViewHolder>
-            mFriendsAdapter, mFriendRequestAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-
-        newFriendListener = FirebaseDatabase.getInstance().getReference()
-                .child("friendships")
-                .child(LOGGED_USER_ID);
-
-        newFriendListener.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // added friend as a pair {userID-true}
-
-                DatabaseReference getFriendObject = FirebaseDatabase.getInstance().getReference()
-                        .child("users")
-                        .child(dataSnapshot.getKey())
-                        .child(dataSnapshot.getKey());
-
-                getFriendObject.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        FirebaseDatabase.getInstance().getReference().child("users")
-                                .child(LOGGED_USER_ID).child("friends")
-                                .child(dataSnapshot.getValue(User.class).getId())
-                                .setValue(dataSnapshot.getValue(User.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d("FriendsActivity", "Error binding friend with user"
-                                + databaseError.getMessage());
-                    }
-                });
-
-                }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FriendsActivity", "Error adding friendships: " + databaseError.getMessage());
-            }
-        });
-
-
-        newFriendRequestListener = FirebaseDatabase.getInstance().getReference()
-                .child("friend_requests").child(LOGGED_USER_ID);
-
-        newFriendRequestListener.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //added friend request as userID-true
-
-                DatabaseReference getFriendReqObject = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(dataSnapshot.getKey()).child(dataSnapshot.getKey());
-
-                getFriendReqObject.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        FirebaseDatabase.getInstance().getReference().child("users")
-                                .child(LOGGED_USER_ID).child("friend_requests")
-                                .child(dataSnapshot.getValue(User.class).getId())
-                                .setValue(dataSnapshot.getValue(User.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d("FriendsActivity", "Error bind friendReq user: "
-                                + databaseError.getMessage());
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FriendsActivity", "Error adding friend request: " + databaseError.getMessage());
-            }
-        });
 
         DatabaseReference mUserFriends = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(LOGGED_USER_ID).child("friends");
@@ -131,20 +64,21 @@ public class FriendsActivity extends AppCompatActivity {
         // This is the adapter for listing user's friends
 
         friendsView = (RecyclerView) findViewById(R.id.friendsView);
+        friendsView.setHasFixedSize(true);
         mFriendsManager = new LinearLayoutManager(this);
         mFriendsManager.setStackFromEnd(true);
         friendsView.setLayoutManager(mFriendsManager);
 
-        mFriendsAdapter = new FirebaseRecyclerAdapter<User, MessageViewHolder>(
+        mFriendsAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(
                 User.class,
                 R.layout.friends_item,
-                MessageViewHolder.class,
+                FriendsViewHolder.class,
                 mUserFriends) {
 
             @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, User user, int position) {
+            protected void populateViewHolder(FriendsViewHolder viewHolder, User user, int position) {
                 viewHolder.friendUsername.setText(user.getName());
-                viewHolder.friendEmail.setText(user.getId());
+                viewHolder.friendEmail.setText(user.getEmail());
                 Glide.with(FriendsActivity.this)
                         .load(user.getPhotoURL())
                         .into(viewHolder.friendPicture);
@@ -169,60 +103,79 @@ public class FriendsActivity extends AppCompatActivity {
             }
         });
 
-        // This is the adapter for listing user's friend requests
+        friendsView.setLayoutManager(mFriendsManager);
+        friendsView.setAdapter(mFriendsAdapter);
 
-        friendRequestsView = (RecyclerView) findViewById(R.id.friendRequestsView);
-        mFriendRequestsManager = new LinearLayoutManager(this);
-        mFriendRequestsManager.setStackFromEnd(true);
-        friendRequestsView.setLayoutManager(mFriendRequestsManager);
-
-        mFriendRequestAdapter = new FirebaseRecyclerAdapter<User, MessageViewHolder>(
-                User.class,
-                R.layout.friends_item,
-                MessageViewHolder.class,
-                mUserFriendRequests) {
-
+        FloatingActionButton addFriends = (FloatingActionButton) findViewById(R.id.addFriends);
+        addFriends.setOnClickListener(new View.OnClickListener() {
             @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, User user, int position) {
-                viewHolder.friendUsername.setText(user.getName());
-                viewHolder.friendEmail.setText(user.getId());
-                Glide.with(FriendsActivity.this)
-                        .load(user.getPhotoURL())
-                        .into(viewHolder.friendPicture);
-            }
-        };
+            public void onClick(View view) {
 
-        mFriendRequestAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = mFriendRequestAdapter.getItemCount();
-                int lastVisiblePosition =
-                        mFriendRequestsManager.findLastCompletelyVisibleItemPosition();
-                // If the recycler view is initially being loaded or the
-                // user is at the bottom of the list, scroll to the bottom
-                // of the list to show the newly added message.
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    friendRequestsView.scrollToPosition(positionStart);
-                }
+                final ViewGroup nullParent = null;
+                LayoutInflater li = LayoutInflater.from(FriendsActivity.this);
+                View dialogView = li.inflate(R.layout.friend_request_dialog, nullParent);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FriendsActivity.this, R.style.alertDialog);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(dialogView);
+
+                final EditText friendEmail = (EditText) dialogView.findViewById(R.id.friendRequestEmail);
+
+                // set dialog message
+                alertDialogBuilder.setPositiveButton("Add friend", null);
+
+                // create alert dialog
+                alertDialog = alertDialogBuilder.create();
+
+                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final String friendEmailText = friendEmail.getText().toString();
+                                if(!friendEmailText.isEmpty()) {
+                                    // Send a friend request to the specified user
+                                    final User user = new User(ConversationsActivity.mFirebaseUser);
+                                    newFriendRequestListener = FirebaseDatabase.getInstance().getReference();
+                                    newFriendRequestListener.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                User details = postSnapshot.getValue(User.class);
+                                                if(details.getEmail().equals(friendEmailText)) {
+                                                    FirebaseDatabase.getInstance().getReference().child("users")
+                                                            .child(details.getId()).child("friend_requests").push().setValue(user);
+                                                }
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                    alertDialog.dismiss();
+                                } else {
+                                    Toast.makeText(FriendsActivity.this, "Please insert an email address", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // show it
+                alertDialog.show();
             }
         });
 
     }
 
     void acceptFriendRequest(User whoseFriendRequest, User receiverFriendRequest) {
-        FirebaseDatabase.getInstance().getReference().child("users")
-                .child(whoseFriendRequest.getId()).child("friends")
-                .child(receiverFriendRequest.getId()).setValue(receiverFriendRequest);
 
-        FirebaseDatabase.getInstance().getReference().child("users")
-                .child(receiverFriendRequest.getId()).child("friends")
-                .child(whoseFriendRequest.getId()).setValue(whoseFriendRequest);
-
-        FirebaseDatabase.getInstance().getReference().child("users")
-                .child(receiverFriendRequest.getId()).child("friend_requests")
-                .child(whoseFriendRequest.getId()).removeValue();
     }
 }

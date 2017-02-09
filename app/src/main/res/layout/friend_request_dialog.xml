@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:text="Send a friend request"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/dividerLine"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginBottom="25dp"
+        android:src="@color/colorAccent" />
+
+    <EditText
+        android:id="@+id/friendRequestEmail"
+        android:layout_width="265dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/text_box"
+        android:hint="Your friend's email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textColor="#000000" />
+
+
+
+</LinearLayout>
