@@ -7,7 +7,7 @@
 
     <string name="action_settings">Préférences</string>
 
-    <string name="user_not_found">Nous n'avons pas trouvé votre ami</string>
+    <string name="user_not_found">Nous n\'avons pas trouvé votre ami</string>
     <string name="no_email_inserted">Veuillez insérer une adresse de e-mail</string>
     <string name="add_friend">Ajouter un ami</string>
     <string name="login_connection_failed"> La connexion a échoué</string>
