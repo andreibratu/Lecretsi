@@ -13,98 +13,75 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class FriendsActivity extends AppCompatActivity {
 
     final String LOGGED_USER_ID = ConversationsActivity.loggedInUser.getId();
 
-    public static class FriendsViewHolder extends RecyclerView.ViewHolder {
-        TextView friendUsername;
-        TextView friendEmail;
-        CircleImageView friendPicture;
-
-        public FriendsViewHolder(View v) {
-            super(v);
-            friendUsername = (TextView) itemView.findViewById(R.id.friendUsername);
-            friendEmail = (TextView) itemView.findViewById(R.id.friendEmail);
-            friendPicture = (CircleImageView) itemView.findViewById(R.id.friendPicture);
-        }
-    }
-
     private RecyclerView friendsView;
     private LinearLayoutManager mFriendsManager;
 
-    private FirebaseRecyclerAdapter<User, FriendsViewHolder> mFriendsAdapter;
-
     AlertDialog alertDialog;
     private DatabaseReference newFriendListener, newFriendRequestListener;
+
+    public static class FriendsViewHolder extends RecyclerView.ViewHolder{
+        RecyclerView friendRequestsView, friendsView;
+        TextView friendRequestsText, friendsText;
+
+        public FriendsViewHolder (View v) {
+            super(v);
+            friendRequestsView = (RecyclerView) itemView.findViewById(R.id.friendRequestsView);
+            friendsView = (RecyclerView) itemView.findViewById(R.id.friendsView);
+            friendRequestsText = (TextView) itemView.findViewById(R.id.friendRequestsText);
+            friendsText = (TextView) itemView.findViewById(R.id.friendsText);
+        }
+    }
+
+    RecyclerView.Adapter<FriendsViewHolder> friendsViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
-        DatabaseReference mUserFriends = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(LOGGED_USER_ID).child("friends");
-        DatabaseReference mUserFriendRequests = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(LOGGED_USER_ID).child("friend_requests");
-
         // This is the adapter for listing user's friends
 
         friendsView = (RecyclerView) findViewById(R.id.friendsView);
-        friendsView.setHasFixedSize(true);
         mFriendsManager = new LinearLayoutManager(this);
         mFriendsManager.setStackFromEnd(true);
-        friendsView.setLayoutManager(mFriendsManager);
 
-        mFriendsAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(
-                User.class,
-                R.layout.friends_item,
-                FriendsViewHolder.class,
-                mUserFriends) {
+        friendsViewAdapter = new RecyclerView.Adapter<FriendsViewHolder>() {
+            @Override
+            public FriendsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                FriendsViewHolder viewHolder;
+                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+                View view = inflater.inflate(R.layout.friends_view, parent, false);
+                viewHolder = new FriendsViewHolder(view);
+                return viewHolder;
+            }
 
             @Override
-            protected void populateViewHolder(FriendsViewHolder viewHolder, User user, int position) {
-                viewHolder.friendUsername.setText(user.getName());
-                viewHolder.friendEmail.setText(user.getEmail());
-                Glide.with(FriendsActivity.this)
-                        .load(user.getPhotoURL())
-                        .into(viewHolder.friendPicture);
+            public void onBindViewHolder(FriendsViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return 1;
             }
         };
 
-        mFriendsAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = mFriendsAdapter.getItemCount();
-                int lastVisiblePosition =
-                        mFriendsManager.findLastCompletelyVisibleItemPosition();
-                // If the recycler view is initially being loaded or the
-                // user is at the bottom of the list, scroll to the bottom
-                // of the list to show the newly added message.
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    friendsView.scrollToPosition(positionStart);
-                }
-            }
-        });
-
         friendsView.setLayoutManager(mFriendsManager);
-        friendsView.setAdapter(mFriendsAdapter);
+        friendsView.setAdapter(friendsViewAdapter);
 
         FloatingActionButton addFriends = (FloatingActionButton) findViewById(R.id.addFriends);
         addFriends.setOnClickListener(new View.OnClickListener() {
