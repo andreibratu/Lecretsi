@@ -2,6 +2,9 @@
     <string name="app_name" >Lecretsi</string>
     <string name="title_activity_conversations" >Lecretsi</string>
 
+    <String name="login_lecretsi_greeting">Bienvenue à Lecretsi</String>
+    <String name="login_lecretsi_subtitle">La mode génial d'envoyer des messages secrets</String>
+
     <string name="navigation_drawer_open">Ouvrir le menu latéral</string>
     <string name="navigation_drawer_close" >Fermez le menu latéral</string>
 
