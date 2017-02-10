@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/messagePosition"
         android:orientation="horizontal"
+        android:background="?android:selectableItemBackground"
         android:gravity="end"
         android:weightSum="1">
 

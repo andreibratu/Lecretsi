@@ -17,9 +17,18 @@ public class User {
     //TODO link user to db
     //TODO add getter for friends and conversations
 
-    User(){}
+    public User() {
 
-    User(FirebaseUser acct) {
+    }
+
+    public User(String id, String name, String email, String photoURL){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.photoURL = photoURL;
+    }
+
+    public User(FirebaseUser acct) {
         this.id = acct.getUid();
         this.name = acct.getDisplayName();
         this.email = acct.getEmail();

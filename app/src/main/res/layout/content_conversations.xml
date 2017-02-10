@@ -9,33 +9,12 @@
     tools:context="com.glimpse.lecretsi.ConversationsActivity"
     tools:showIn="@layout/app_bar_conversations">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linearLayout">
-
-        <ListView
-            android:id="@+id/conversationsList"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/conversationsView"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:id="@+id/friendBox"
-        android:orientation="horizontal"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/friendGallery">
-        </HorizontalScrollView>
-
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

@@ -1,51 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="nickname"
-        android:textColor="@color/colorDarkGrey"
-        android:textSize="18sp"
-        android:id="@+id/nicknameText"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="3dp"/>
+        android:orientation="horizontal"
+        android:background="?android:selectableItemBackground"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:weightSum="1">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorGrey"
-        android:text="lastMessage"
-        android:textSize="13sp"
-        android:id="@+id/lastMessage"
-        android:layout_below="@+id/nicknameText"
-        android:layout_alignStart="@+id/nicknameText"
-        android:layout_marginTop="-2dp" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/conversationPicture"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:src="@drawable/ic_account_circle_black_36dp"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lockIcon"
-        android:src="@mipmap/lecretsi_list_icon"
         android:layout_marginStart="5dp"
-        android:layout_alignParentStart="true" />
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="date"
-        android:textColor="@color/colorGrey"
-        android:textSize="13sp"
-        android:id="@+id/dateText"
-        android:layout_alignBottom="@id/nicknameText"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="nickname"
+                android:paddingStart="7dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/colorDarkGrey"
+                android:textSize="18sp"
+                android:id="@+id/conversationUsername"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="date"
+                android:gravity="end"
+                android:textColor="@color/colorGrey"
+                android:textSize="13sp"
+                android:paddingStart="0dp"
+                android:paddingEnd="7dp"
+                android:id="@+id/lastMessageDate"
+                android:layout_marginEnd="5dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorGrey"
+            android:text="lastMessage"
+            android:paddingStart="7dp"
+            android:paddingEnd="4dp"
+            android:textSize="13sp"
+            android:id="@+id/lastMessage"
+            android:layout_marginTop="-2dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

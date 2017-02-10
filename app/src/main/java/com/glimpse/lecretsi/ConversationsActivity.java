@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -13,24 +15,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,16 +40,6 @@ public class ConversationsActivity extends AppCompatActivity
 
     public static User loggedInUser;
 
-    ListView mainList;
-    private static final String TAG = "ConversationsActivity";
-    private static final String TAG_NICKNAME = "nickname";
-    private static final String TAG_LAST_MESSAGE = "lastMessage";
-    private static final String TAG_DATE = "date";
-    public static final String ANONYMOUS = "anonymous";
-
-    private String mUsername;
-    private String mEmail;
-    private String mPhotoUrl;
     private GoogleApiClient mGoogleApiClient;
 
     // Firebase instance variables
@@ -60,16 +49,27 @@ public class ConversationsActivity extends AppCompatActivity
     public TextView usernameText, emailText;
     public CircleImageView userImage;
 
+    public static class ConversationsHolder extends RecyclerView.ViewHolder {
+
+        TextView conversationUsername;
+        TextView lastMessage;
+        TextView lastMessageDate;
+        CircleImageView conversationPicture;
+
+        public ConversationsHolder(View itemView) {
+            super(itemView);
+            conversationUsername = (TextView) itemView.findViewById(R.id.conversationUsername);
+            lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
+            lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
+            conversationPicture = (CircleImageView) itemView.findViewById(R.id.conversationPicture);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversations);
 
-        // Set default username is anonymous.
-        mUsername = ANONYMOUS;
-
-        // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
@@ -77,27 +77,39 @@ public class ConversationsActivity extends AppCompatActivity
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
-            return;
         } else {
-            mUsername = mFirebaseUser.getDisplayName();
-            mEmail = mFirebaseUser.getEmail();
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-            }
 
-            DatabaseReference mDatabase;
-                mDatabase = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
             loggedInUser = new User(mFirebaseUser);
 
-            mDatabase.child("users").child(loggedInUser.getId())
-                    .setValue(loggedInUser);
+            DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference();
+            newUserListener.child("users")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            boolean userFound = false;
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if(postSnapshot.getKey().equals(loggedInUser.getId())){
+                                    userFound = true;
+                                }
+                            }
+                            if (!userFound) {
+                                mDatabase.child("users").child(loggedInUser.getId()).setValue(loggedInUser);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,7 +126,7 @@ public class ConversationsActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -123,52 +135,66 @@ public class ConversationsActivity extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
 
         usernameText = (TextView) header.findViewById(R.id.usernameText);
-        usernameText.setText(mUsername);
+        usernameText.setText(mFirebaseUser.getDisplayName());
 
         emailText = (TextView) header.findViewById(R.id.emailText);
-        emailText.setText(mEmail);
+        emailText.setText(mFirebaseUser.getEmail());
 
         userImage = (CircleImageView) header.findViewById(R.id.userImage);
         Glide.with(ConversationsActivity.this)
-                .load(mPhotoUrl)
+                .load(mFirebaseUser.getPhotoUrl())
                 .into(userImage);
 
-        mainList = (ListView) findViewById(R.id.conversationsList);
+        final RecyclerView conversationsView = (RecyclerView) findViewById(R.id.conversationsView);
+        LinearLayoutManager mFConversationsManager = new LinearLayoutManager(this);
+        mFConversationsManager.setStackFromEnd(true);
 
-        mainList.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent intent = new Intent(ConversationsActivity.this, ChatActivity.class);
-                        /* String conversationID = conversationIDText.getText().toString();
-                        intent.putExtra("conversationID", conversationID); */
-                        startActivity(intent);
-                    }
+        DatabaseReference mConversations = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(loggedInUser.getId()).child("conversations");
+
+        // This is the adapter for displaying user's friend requests
+
+        final LinearLayoutManager mConversationsManager = new LinearLayoutManager(getApplicationContext());
+        mConversationsManager.setStackFromEnd(false);
+
+        final FirebaseRecyclerAdapter<Conversation, ConversationsHolder> mConversationsAdapter;
+
+        mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
+                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
+
+            @Override
+            protected void populateViewHolder(ConversationsHolder viewHolder, Conversation conversation, int position) {
+                viewHolder.conversationUsername.setText(conversation.getUser().getName());
+                if(conversation.getLastMessage() == null) {
+                    viewHolder.lastMessage.setVisibility(View.GONE);
+                } else {
+                    viewHolder.lastMessage.setVisibility(View.VISIBLE);
+                    viewHolder.lastMessage.setText(conversation.getLastMessage());
                 }
-        );
+                viewHolder.lastMessageDate.setText(conversation.getLastMessageDate());
+                Glide.with(ConversationsActivity.this)
+                        .load(conversation.getUser().getPhotoURL())
+                        .into(viewHolder.conversationPicture);
+            }
+        };
 
-        ArrayList<HashMap<String, String>> conversationsList = new ArrayList<>();
+        mConversationsAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = mConversationsAdapter.getItemCount();
+                int lastVisiblePosition =
+                        mConversationsManager.findLastCompletelyVisibleItemPosition();
+                if (lastVisiblePosition == -1 ||
+                        (positionStart >= (friendlyMessageCount - 1) &&
+                                lastVisiblePosition == (positionStart - 1))) {
+                    conversationsView.scrollToPosition(positionStart);
+                }
+            }
+        });
 
-        String nickname = "Largonji Assistant";
-        String last_message = "Hi User! I'm your Largonji Assistant";
-        String date = "Feb 3";
-
-        HashMap<String, String> conversation = new HashMap<>();
-
-        conversation.put(TAG_NICKNAME, nickname);
-        conversation.put(TAG_LAST_MESSAGE, last_message);
-        conversation.put(TAG_DATE, date);
-
-        conversationsList.add(conversation);
-
-        ListAdapter adapter = new SimpleAdapter(
-                ConversationsActivity.this, conversationsList,
-                R.layout.conversations_item, new String[]{TAG_NICKNAME, TAG_LAST_MESSAGE, TAG_DATE},
-                new int[]{R.id.nicknameText, R.id.lastMessage, R.id.dateText}
-        );
-        mainList.setAdapter(adapter);
-
-
+        conversationsView.setLayoutManager(mConversationsManager);
+        conversationsView.setAdapter(mConversationsAdapter);
 
     }
 
@@ -185,7 +211,7 @@ public class ConversationsActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -200,7 +226,6 @@ public class ConversationsActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             mFirebaseAuth.signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-            mUsername = ANONYMOUS;
             startActivity(new Intent(this, LoginActivity.class));
         } else if (id == R.id.nav_settings) {
 
@@ -237,7 +262,7 @@ public class ConversationsActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Log.d("ConversationsActivity", "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }
