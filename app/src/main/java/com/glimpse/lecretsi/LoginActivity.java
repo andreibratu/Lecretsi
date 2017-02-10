@@ -1,12 +1,17 @@
 package com.glimpse.lecretsi;
 
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.icu.text.DisplayContext;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -57,6 +62,44 @@ public class LoginActivity extends AppCompatActivity implements
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        final Animation fadeTextIn = new AlphaAnimation(0.0f,1.0f);
+        final Animation fadeTextInSubtitle = new AlphaAnimation(0.0f,1.0f);
+        fadeTextIn.setDuration(2000);
+        fadeTextInSubtitle.setDuration(2000);
+        final Typeface mFont = Typeface.createFromAsset(getAssets(), "fonts/intrique.ttf");
+
+        TextView title = (TextView)findViewById(R.id.login_greater);
+        title.setText(R.string.login_lecretsi_greeting);
+        title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        title.setTextColor(getResources().getColor(R.color.colorWhite));
+        title.setTypeface(mFont, Typeface.BOLD);
+        title.setTextSize(80);
+        title.setAnimation(fadeTextIn);
+
+        fadeTextIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                TextView subTitle = (TextView)findViewById(R.id.login_subtitle);
+                subTitle.setText(R.string.login_lecretsi_subtitle);
+                subTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                subTitle.setTextColor(getResources().getColor(R.color.colorWhite));
+                subTitle.setTextSize(50);
+                subTitle.setTypeface(mFont, Typeface.BOLD);
+                subTitle.setAnimation(fadeTextInSubtitle);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
     }
 
     private void signIn() {
