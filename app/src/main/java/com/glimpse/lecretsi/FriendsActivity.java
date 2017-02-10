@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,13 +130,13 @@ public class FriendsActivity extends AppCompatActivity {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
                         super.onItemRangeRemoved(positionStart, itemCount);
-                        if(mFriendRequestsAdapter.getItemCount() == 0) {
+                        if (mFriendRequestsAdapter.getItemCount() == 0) {
                             holder.friendRequestsText.setVisibility(View.GONE);
                         }
                     }
                 });
 
-                if(mFriendRequestsAdapter.getItemCount() == 0) {
+                if (mFriendRequestsAdapter.getItemCount() == 0) {
                     holder.friendRequestsText.setVisibility(View.GONE);
                 } else {
                     holder.friendRequestsText.setVisibility(View.VISIBLE);
@@ -180,13 +181,13 @@ public class FriendsActivity extends AppCompatActivity {
                     @Override
                     public void onItemRangeRemoved(int positionStart, int itemCount) {
                         super.onItemRangeRemoved(positionStart, itemCount);
-                        if(mFriendsAdapter.getItemCount() == 0) {
+                        if (mFriendsAdapter.getItemCount() == 0) {
                             holder.friendsText.setVisibility(View.GONE);
                         }
                     }
                 });
 
-                if(mFriendRequestsAdapter.getItemCount() == 0) {
+                if (mFriendRequestsAdapter.getItemCount() == 0) {
                     holder.friendsText.setVisibility(View.GONE);
                 } else {
                     holder.friendsText.setVisibility(View.VISIBLE);
@@ -231,97 +232,78 @@ public class FriendsActivity extends AppCompatActivity {
                     public void onShow(DialogInterface dialog) {
                         Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                         b.setOnClickListener(new View.OnClickListener() {
-
                             @Override
                             public void onClick(View view) {
                                 final String friendEmailText = friendEmail.getText().toString();
 
-                                if(!friendEmailText.isEmpty()) {
-                                    // Send a friend request to the specified user
-                                    final User user = new User(ConversationsActivity.mFirebaseUser);
-                                    newFriendRequestListener =
-                                            FirebaseDatabase.getInstance().getReference();
+                                if (friendEmailText.isEmpty()) {
+                                    Toast.makeText(FriendsActivity.this, R.string.no_email_inserted, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                if (friendEmailText.equals(LOGGED_USER.getEmail())) {
+                                    Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                DatabaseReference checkAlreadyAddedFriend = FirebaseDatabase.getInstance()
+                                        .getReference().child("users").child(LOGGED_USER.getId()).child("friends");
+                                checkAlreadyAddedFriend.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot friend : dataSnapshot.getChildren()) {
+                                            User friendObj = friend.getValue(User.class);
+                                            if (friendObj.getEmail().equals(friendEmailText)) {
+                                                Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
+                                    }
+                                });
+                                // Send a friend request to the specified user
+                                newFriendRequestListener = FirebaseDatabase.getInstance().getReference();
 
-                                    newFriendRequestListener.child("users").
-                                            addListenerForSingleValueEvent(new ValueEventListener() {
+                                newFriendRequestListener.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        User userFound = null;
+
+                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                            User details = postSnapshot.getValue(User.class);
+                                            if (details.getEmail().equals(friendEmailText)) {
+                                                userFound = details;
+                                            }
+                                        }
+
+                                        if (userFound == null) {
+                                            Toast.makeText(getApplicationContext(), R.string.user_not_found, Toast.LENGTH_LONG).show();
+                                        } else {
+                                            DatabaseReference checkAlreadySentFriendRequest = FirebaseDatabase.getInstance().getReference()
+                                                    .child("users").child(userFound.getId()).child("friend_requests");
+
+                                            final User finalUserFound = userFound;
+                                            checkAlreadySentFriendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    boolean userFound = false;
-
-                                                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                        User details = postSnapshot.getValue(User.class);
-                                                        if(details.getEmail().equals(friendEmailText)) {
-                                                            userFound = true;
-
-
-                                                            DatabaseReference checkAlreadyAddedFriend = FirebaseDatabase.getInstance()
-                                                                    .getReference().child("users").child(LOGGED_USER.getId()).child("friends");
-                                                            checkAlreadyAddedFriend.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                    for(DataSnapshot friend:dataSnapshot.getChildren()) {
-                                                                        User friendObj = friend.getValue(User.class);
-                                                                        if(Objects.equals(friendObj.getEmail(), friendEmailText)) {
-                                                                            Toast.makeText(
-                                                                                    getApplicationContext(),
-                                                                                    R.string.friend_already_added,
-                                                                                    Toast.LENGTH_LONG).show();
-                                                                            return;
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                                }
-                                                            });
-
-
-                                                            DatabaseReference checkAlreadySentFriendRequest = FirebaseDatabase.getInstance().getReference()
-                                                                    .child("users").child(details.getId()).child("friend_request");
-
-                                                            checkAlreadySentFriendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                    for(DataSnapshot friend:dataSnapshot.getChildren()) {
-                                                                        User friendObject = friend.getValue(User.class);
-
-                                                                        if(Objects.equals(friendObject.getId(), user.getId())) {
-                                                                            Toast.makeText(
-                                                                                    getApplicationContext(),
-                                                                                    R.string.friend_req_already_sent,
-                                                                                    Toast.LENGTH_LONG).show();
-                                                                            return;
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                                }
-                                                            });
-
-
-                                                            FirebaseDatabase.getInstance().getReference()
-                                                                    .child("users")
-                                                                    .child(details.getId())
-                                                                    .child("friend_requests")
-                                                                    .push().setValue(user);
+                                                    boolean friendRequestAlreadySent = false;
+                                                    for (DataSnapshot friend : dataSnapshot.getChildren()) {
+                                                        User friendObj = friend.getValue(User.class);
+                                                        if (friendObj.getId().equals(LOGGED_USER.getId())) {
+                                                            friendRequestAlreadySent = true;
                                                         }
                                                     }
-
-                                                    if(!userFound) {
-                                                        Toast.makeText(getApplicationContext(),
-                                                                R.string.user_not_found,
-                                                                Toast.LENGTH_LONG).show();
-                                                    }
-                                                    else {
-                                                        Toast.makeText(getApplicationContext(),
-                                                                R.string.friend_request_sent,
-                                                                Toast.LENGTH_LONG).show();
+                                                    if (!friendRequestAlreadySent) {
+                                                        FirebaseDatabase.getInstance().getReference()
+                                                                .child("users")
+                                                                .child(finalUserFound.getId())
+                                                                .child("friend_requests")
+                                                                .push().setValue(LOGGED_USER);
+                                                        Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
+                                                        alertDialog.dismiss();
+                                                    } else {
+                                                        Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
                                                     }
                                                 }
 
@@ -330,18 +312,17 @@ public class FriendsActivity extends AppCompatActivity {
 
                                                 }
                                             });
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                    alertDialog.dismiss();
-                                } else {
-                                    Toast.makeText(FriendsActivity.this, R.string.no_email_inserted
-                                            , Toast.LENGTH_SHORT).show();
-                                }
+                                    }
+                                });
                             }
                         });
                     }
                 });
-
-                // show it
                 alertDialog.show();
             }
         });
