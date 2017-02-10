@@ -77,6 +77,7 @@ public class ConversationsActivity extends AppCompatActivity
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+            return;
         } else {
 
             final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();

@@ -27,7 +27,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ConversationsActivity" />
         </activity>
-        <activity android:name=".LoginActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name=".LoginActivity"/>
 
         <activity
             android:name=".FriendsActivity"
