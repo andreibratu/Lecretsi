@@ -213,15 +213,15 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void run() {
                 if (lastMessage.isEmpty()) {
-                    onAssistantMessage("Hello, " + mUsername);
+                    onAssistantMessage(getString(R.string.assistant_greeting) +" "+ mUsername);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            onAssistantMessage("I am your personal Largonji Assistant");
+                            onAssistantMessage(getString(R.string.assistant_presentation));
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    onAssistantMessage("What would you want me to translate?");
+                                    onAssistantMessage(getString(R.string.assistant_expect_response));
                                 }
                             }, 1000);
                         }

@@ -117,7 +117,7 @@ public class FriendsActivity extends AppCompatActivity {
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FriendsActivity.this, R.style.alertDialog);
 
-                // set prompts.xml to alertdialog builder
+                // set prompts.xml to alert dialog builder
                 alertDialogBuilder.setView(dialogView);
 
                 final EditText friendEmail = (EditText) dialogView.findViewById(R.id.friendRequestEmail);
@@ -161,7 +161,8 @@ public class FriendsActivity extends AppCompatActivity {
 
                                     alertDialog.dismiss();
                                 } else {
-                                    Toast.makeText(FriendsActivity.this, "Please insert an email address", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(FriendsActivity.this, R.string.no_email_inserted
+                                            , Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

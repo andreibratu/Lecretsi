@@ -2,13 +2,18 @@
     <string name="app_name">Lecretsi</string>
     <string name="title_activity_conversations">Lecretsi</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Ouvrir le menu latéral</string>
+    <string name="navigation_drawer_close">Fermez le menu latéral</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Préférences</string>
 
-    <string name="user_not_found">We could not find that special someone</string>
-    <string name="no_email_inserted">Please insert an email address</string>
-    <string name="add_friend">Add friend</string>
-    <string name="login_connection_failed"> Connection failed </string>
+    <string name="user_not_found">Nous n'avons pas trouvé votre ami</string>
+    <string name="no_email_inserted">Veuillez insérer une adresse de e-mail</string>
+    <string name="add_friend">Ajouter un ami</string>
+    <string name="login_connection_failed"> La connexion a échoué</string>
+    <string name="play_services_connection_error">Impossible de se connecter au service du Google."</string>
+
+    <string name="assistant_greeting">Bonjour </string>
+    <string name="assistant_presentation">Je suis votre assistant personnel de Largonji</string>
+    <string name="assistant_expect_response">Que voulez-vous que je traduise?</string>
 </resources>
