@@ -29,10 +29,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     public static String lastMessage = "";
+    //TODO This warning sounds kinda bad
     static TextView lastMessageSelected = null;
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder{
@@ -193,17 +195,18 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
-            public void onStateChanged(View bottomSheet, int newState) {
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     mBottomSheetBehavior.setPeekHeight(0);
                 }
             }
 
             @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
         });
 
+        //TODO @Adi how ab this ?
         Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
         new Handler().postDelayed(new Runnable() {
@@ -258,7 +261,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
-    DateFormat df = new SimpleDateFormat("d EEE • HH:mm");
+    //Locale.getDefault for local time
+    DateFormat df = new SimpleDateFormat("d EEE • HH:mm", Locale.getDefault());
     String date = df.format(Calendar.getInstance().getTime());
 
     public void onUserMessage(){

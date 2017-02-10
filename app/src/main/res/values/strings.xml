@@ -6,4 +6,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="user_not_found">We could not find that special someone</string>
+    <string name="no_email_inserted">Please insert an email address</string>
+    <string name="add_friend">Add friend</string>
+    <string name="login_connection_failed"> Connection failed </string>
 </resources>
