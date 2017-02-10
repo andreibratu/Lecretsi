@@ -31,7 +31,7 @@ public class FriendsActivity extends AppCompatActivity {
     private LinearLayoutManager mFriendsManager;
 
     AlertDialog alertDialog;
-    private DatabaseReference newFriendListener, newFriendRequestListener;
+    private DatabaseReference newFriendRequestListener;
 
     public static class FriendsViewHolder extends RecyclerView.ViewHolder{
         RecyclerView friendRequestsView, friendsView;
@@ -152,6 +152,7 @@ public class FriendsActivity extends AppCompatActivity {
 
     }
 
+    //TODO acceptFriendRequest
     void acceptFriendRequest(User whoseFriendRequest, User receiverFriendRequest) {
 
     }

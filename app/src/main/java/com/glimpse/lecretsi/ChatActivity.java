@@ -1,6 +1,5 @@
 package com.glimpse.lecretsi;
 
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,9 +72,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     ImageButton mSendButton, expandButton;
     RelativeLayout chatLayout;
     private BottomSheetBehavior mBottomSheetBehavior;
-
-    private SharedPreferences mSharedPreferences;
-    private GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "ChatActivity";
     private static final String TAG_NICKNAME = "nickname";
@@ -235,7 +231,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
             onUserMessage();
-            final String text = Largonji.algorithmToLargonji(mMessageEditText.getText().toString());
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
             mMessageEditText.setText("");
             new Handler().postDelayed(new Runnable() {
                 @Override
