@@ -108,7 +108,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
-        mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         // New child entries
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();

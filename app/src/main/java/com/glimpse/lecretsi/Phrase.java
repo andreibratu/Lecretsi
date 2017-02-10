@@ -26,9 +26,9 @@ public class Phrase {
         howManyTimesUsed = 1;
         lastTimeUsed = new Date();
         length = phrase.length();
-        calculateKey();
+        //calculateKey();
     }
-
+/*
     public double calculateKey() {
         Date timeNow = new Date();
         double lastUsedIndex = 1 / (double) (timeNow.getTime() - this.lastTimeUsed.getTime());
@@ -66,5 +66,5 @@ public class Phrase {
                 }
             });
         }
-    }
+    }*/
 }
