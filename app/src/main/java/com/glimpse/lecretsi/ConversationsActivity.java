@@ -228,6 +228,7 @@ public class ConversationsActivity extends AppCompatActivity
             mFirebaseAuth.signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
             startActivity(new Intent(this, LoginActivity.class));
+            finish();
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_help){
