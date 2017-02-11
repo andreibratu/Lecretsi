@@ -36,6 +36,7 @@ android {
         compile 'com.google.firebase:firebase-auth:10.0.1'
         compile 'com.google.android.gms:play-services-auth:10.0.1'
         compile 'com.android.support:design:25.1.1'
+        compile 'com.android.support:recyclerview-v7:25.1.1'
         compile 'com.github.d-max:spots-dialog:0.4@aar'
         compile 'com.android.support:support-v4:25.1.1'
         compile 'com.android.support:recyclerview-v7:25.1.1'
@@ -43,12 +44,6 @@ android {
 
         testCompile 'junit:junit:4.12'
     }
-
-    apply plugin: 'com.google.gms.google-services'
-
-    return void
-
 }
-dependencies {
-    compile 'com.android.support:recyclerview-v7:25.1.1'
-}
+
+apply plugin: 'com.google.gms.google-services'

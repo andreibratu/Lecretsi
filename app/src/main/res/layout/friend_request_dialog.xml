@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:paddingTop="30dp"
+    android:paddingBottom="50dp"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="144dp"
+        android:layout_height="144dp">
+
+        <ImageView
+            android:id="@+id/friendRequestPicture"
+            android:layout_width="144dp"
+            android:layout_height="144dp"
+            android:src="@drawable/tumblr" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/image_border" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/friendRequestNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Firstname Lastname"
+        android:textSize="21sp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorDarkGrey"/>
+
+    <TextView
+        android:id="@+id/friendRequestEmailText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="email@gmail.com"
+        android:textSize="14sp"
+        android:layout_marginTop="0dp"
+        android:textColor="@color/colorGrey"/>
+
+</LinearLayout>

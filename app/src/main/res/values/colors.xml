@@ -10,8 +10,9 @@
     <color name="colorUserMessageSelected">#f59404</color>
     <color name="colorUserMessageBorder">#fd9802</color>
 
-    <color name="colorAssistantMessage">#0091ea</color>
-    <color name="colorAssistantMessageBorder">#0095f1</color>
+    <color name="colorFriendMessage">#0091ea</color>
+    <color name="colorFriendMessageSelected">#007cc9</color>
+    <color name="colorFriendMessageBorder">#0095f1</color>
 
     <color name="colorWhite">#ffffff</color>
     <color name="colorGrey">#646464</color>

@@ -10,7 +10,8 @@ public class ChatMessage {
     public ChatMessage() {
     }
 
-    public ChatMessage(String text, String date_time) {
+    public ChatMessage(String id, String text, String date_time) {
+        this.id = id;
         this.text = text;
         this.date_time = date_time;
     }

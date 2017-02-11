@@ -32,8 +32,9 @@ public class User {
         this.id = acct.getUid();
         this.name = acct.getDisplayName();
         this.email = acct.getEmail();
-        this.photoURL = (!Objects.equals(acct.getPhotoUrl().toString(), ""))
-                ? acct.getPhotoUrl().toString():null;
+        if(acct.getPhotoUrl() != null) {
+            this.photoURL = acct.getPhotoUrl().toString().replace("/s96-c/","/s256-c/");
+        }
     }
 
     // TODO: Save all the info in a SavedSharedPreference

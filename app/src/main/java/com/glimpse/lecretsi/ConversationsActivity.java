@@ -80,11 +80,9 @@ public class ConversationsActivity extends AppCompatActivity
             return;
         } else {
 
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
             loggedInUser = new User(mFirebaseUser);
 
-            DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference();
             newUserListener.child("users")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -97,7 +95,7 @@ public class ConversationsActivity extends AppCompatActivity
                                 }
                             }
                             if (!userFound) {
-                                mDatabase.child("users").child(loggedInUser.getId()).setValue(loggedInUser);
+                                newUserListener.child(loggedInUser.getId()).setValue(loggedInUser);
                             }
                         }
 

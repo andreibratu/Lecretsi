@@ -2,6 +2,9 @@ package com.glimpse.lecretsi;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +30,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsActivity extends AppCompatActivity {
@@ -33,7 +41,6 @@ public class FriendsActivity extends AppCompatActivity {
     static final User LOGGED_USER = ConversationsActivity.loggedInUser;
 
     AlertDialog alertDialog;
-    private DatabaseReference newFriendRequestListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,8 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onBindViewHolder(final FriendsViewHolder holder, int position) {
 
+                // Create conversation with the assistant
+
                 holder.assistantItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -67,8 +76,8 @@ public class FriendsActivity extends AppCompatActivity {
                             public void run() {
                                 User assistant = new User("largonjiAssistant", "Largonji Assistant", "largonji@assistant.com", "http://i.imgur.com/NglEj0p.png");
                                 Conversation largonjiConversation = new Conversation(assistant, null, null);
-                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(LOGGED_USER.getId()).child("conversations").child(largonjiConversation.getUser().getId()).setValue(largonjiConversation);
+                                DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference();
+                                conversationReference.child("users").child(LOGGED_USER.getId()).child("conversations").child(largonjiConversation.getUser().getId()).setValue(largonjiConversation);
                                 startActivity(new Intent(FriendsActivity.this, ChatActivity.class).
                                         putExtra("userId", largonjiConversation.getUser().getId()));
                                 finish();
@@ -95,17 +104,83 @@ public class FriendsActivity extends AppCompatActivity {
                         User.class, R.layout.friends_item, FriendsListHolder.class, mUserFriendRequests) {
 
                     @Override
-                    protected void populateViewHolder(final FriendsListHolder viewHolder, User user, int position) {
+                    protected void populateViewHolder(final FriendsListHolder viewHolder, final User user, int position) {
                         viewHolder.friendUsername.setText(user.getName());
                         viewHolder.friendEmail.setText(user.getEmail());
                         Glide.with(getApplicationContext())
                                 .load(user.getPhotoURL())
                                 .into(viewHolder.friendPicture);
+
+                        // Build a dialog for accepting or denying a friend request
+
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Toast.makeText(FriendsActivity.this, "I clicked " + viewHolder.itemView, Toast.LENGTH_SHORT).show();
 
+                                final ViewGroup nullParent = null;
+                                LayoutInflater li = LayoutInflater.from(FriendsActivity.this);
+                                final View dialogView = li.inflate(R.layout.friend_request_dialog, nullParent);
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FriendsActivity.this, R.style.alertDialog);
+
+                                alertDialogBuilder.setView(dialogView);
+
+                                final TextView friendRequestNameText = (TextView) dialogView.findViewById(R.id.friendRequestNameText);
+                                final TextView friendRequestEmailText = (TextView) dialogView.findViewById(R.id.friendRequestEmailText);
+                                final ImageView friendRequestPicture = (ImageView) dialogView.findViewById(R.id.friendRequestPicture);
+
+                                alertDialogBuilder.setPositiveButton("Accept", null);
+                                alertDialogBuilder.setNegativeButton("Deny", null);
+
+                                alertDialog = alertDialogBuilder.create();
+
+
+                                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                    @Override
+                                    public void onShow(DialogInterface dialog) {
+                                        friendRequestNameText.setText(user.getName());
+                                        friendRequestEmailText.setText(user.getEmail());
+                                        Glide.with(getApplicationContext())
+                                                .load(user.getPhotoURL())
+                                                .asBitmap()
+                                                .into(friendRequestPicture);
+
+                                        Button accept = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                        Button deny = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                                        final DatabaseReference friendRequest = FirebaseDatabase.getInstance().getReference().child("users");
+
+                                        // TODO: Andrei, pune-ti toasturile :P
+
+                                        accept.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                friendRequest.child(LOGGED_USER.getId()).child("friends").child(user.getId()).setValue(user);
+                                                friendRequest.child(user.getId()).child("friends").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
+                                                friendRequest.child(LOGGED_USER.getId()).child("friend_requests").child(LOGGED_USER.getId()).removeValue();
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+
+                                        deny.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                friendRequest.child(LOGGED_USER.getId()).child("friend_requests").child(LOGGED_USER.getId()).removeValue();
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                });
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        alertDialog.show();
+                                        if(alertDialog.getWindow() != null){
+                                            alertDialog.getWindow().setLayout(850, 975);
+                                        }
+                                    }
+                                }, 500);
                             }
                         });
                     }
@@ -158,12 +233,51 @@ public class FriendsActivity extends AppCompatActivity {
                         User.class, R.layout.friends_item, FriendsListHolder.class, mUserFriends) {
 
                     @Override
-                    protected void populateViewHolder(FriendsListHolder viewHolder, User user, int position) {
+                    protected void populateViewHolder(FriendsListHolder viewHolder, final User user, int position) {
                         viewHolder.friendUsername.setText(user.getName());
                         viewHolder.friendEmail.setText(user.getEmail());
                         Glide.with(getApplicationContext())
                                 .load(user.getPhotoURL())
                                 .into(viewHolder.friendPicture);
+
+                        // Start a conversation when the user clicks a friend
+
+                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Conversation conversation = new Conversation(user, null, null);
+                                        final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
+                                                .child("users").child(LOGGED_USER.getId()).child("conversations");
+                                        conversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                boolean userFound = false;
+                                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                    if(postSnapshot.getKey().equals(user.getId())){
+                                                        userFound = true;
+                                                    }
+                                                }
+                                                if (!userFound) {
+                                                    conversationReference.child(user.getId()).setValue(conversation);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        startActivity(new Intent(FriendsActivity.this, ChatActivity.class).
+                                                putExtra("userId", user.getId()));
+                                        finish();
+                                    }
+                                }, 500);
+                            }
+                        });
                     }
                 };
 
@@ -244,10 +358,12 @@ public class FriendsActivity extends AppCompatActivity {
                                     Toast.makeText(FriendsActivity.this, R.string.no_email_inserted, Toast.LENGTH_LONG).show();
                                     return;
                                 }
+                                /* Disabled for debug
+                                    TODO: Enable this exception
                                 if (friendEmailText.equals(LOGGED_USER.getEmail())) {
                                     Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
                                     return;
-                                }
+                                }*/
                                 DatabaseReference checkAlreadyAddedFriend = FirebaseDatabase.getInstance()
                                         .getReference().child("users").child(LOGGED_USER.getId()).child("friends");
                                 checkAlreadyAddedFriend.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -267,7 +383,7 @@ public class FriendsActivity extends AppCompatActivity {
                                     }
                                 });
                                 // Send a friend request to the specified user
-                                newFriendRequestListener = FirebaseDatabase.getInstance().getReference();
+                                DatabaseReference newFriendRequestListener = FirebaseDatabase.getInstance().getReference();
 
                                 newFriendRequestListener.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -300,10 +416,7 @@ public class FriendsActivity extends AppCompatActivity {
                                                     }
                                                     if (!friendRequestAlreadySent) {
                                                         FirebaseDatabase.getInstance().getReference()
-                                                                .child("users")
-                                                                .child(finalUserFound.getId())
-                                                                .child("friend_requests")
-                                                                .push().setValue(LOGGED_USER);
+                                                                .child("users").child(finalUserFound.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
                                                         Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
                                                         alertDialog.dismiss();
                                                     } else {
