@@ -29,4 +29,5 @@
     <string name="your_friend_s_email">L\'email de votre ami</string>
     <string name="friend_already_added">Vous êtes déjà amis</string>
     <string name="friend_req_already_sent">Demande d\'amitié déjà envoyée</string>
+    <string name="login_to_continue">Connectez-vous pour continuer s\'il vous plaît</string>
 </resources>

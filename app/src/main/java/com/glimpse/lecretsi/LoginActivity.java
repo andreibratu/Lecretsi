@@ -35,8 +35,6 @@ public class LoginActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
-
-    // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
 
     @Override
@@ -44,11 +42,14 @@ public class LoginActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Assign fields
-        SignInButton mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        // Hide the status bar.
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
-        // Set click listeners
+        final SignInButton mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(this);
+        mSignInButton.setVisibility(View.INVISIBLE);
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -63,19 +64,34 @@ public class LoginActivity extends AppCompatActivity implements
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        final Animation fadeTextIn = new AlphaAnimation(0.0f,1.0f);
         final Animation fadeTextInSubtitle = new AlphaAnimation(0.0f,1.0f);
-        fadeTextIn.setDuration(2000);
-        fadeTextInSubtitle.setDuration(2000);
-        final Typeface mFont = Typeface.createFromAsset(getAssets(), "fonts/intrique.ttf");
+        final TextView pleaseProceed = (TextView)findViewById(R.id.please_proceed);
+        final Animation fadeTextIn = new AlphaAnimation(0.0f,1.0f);
+        final Typeface mFont = Typeface.createFromAsset(getAssets(), "fonts/french.otf");
+        fadeTextIn.setDuration(2500);
 
         TextView title = (TextView)findViewById(R.id.login_greater);
         title.setText(R.string.login_lecretsi_greeting);
         title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         title.setTextColor(getResources().getColor(R.color.colorWhite));
-        title.setTypeface(mFont, Typeface.BOLD);
-        title.setTextSize(80);
+        title.setTypeface(mFont);
+        title.setTextSize(50);
         title.setAnimation(fadeTextIn);
+
+        final TextView subTitle = (TextView)findViewById(R.id.login_subtitle);
+        subTitle.setText(R.string.login_lecretsi_subtitle);
+        subTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        subTitle.setTextColor(getResources().getColor(R.color.colorWhite));
+        subTitle.setTextSize(25);
+        subTitle.setTypeface(mFont);
+        subTitle.setVisibility(View.INVISIBLE);
+
+        pleaseProceed.setText(R.string.login_to_continue);
+        pleaseProceed.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        pleaseProceed.setTextColor(getResources().getColor(R.color.colorWhite));
+        pleaseProceed.setTextSize(14);
+        pleaseProceed.setTypeface(mFont);
+        pleaseProceed.setVisibility(View.INVISIBLE);
 
         fadeTextIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -85,13 +101,28 @@ public class LoginActivity extends AppCompatActivity implements
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                TextView subTitle = (TextView)findViewById(R.id.login_subtitle);
-                subTitle.setText(R.string.login_lecretsi_subtitle);
-                subTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                subTitle.setTextColor(getResources().getColor(R.color.colorWhite));
-                subTitle.setTextSize(50);
-                subTitle.setTypeface(mFont, Typeface.BOLD);
+                fadeTextInSubtitle.setDuration(2000);
+
                 subTitle.setAnimation(fadeTextInSubtitle);
+
+                fadeTextInSubtitle.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        subTitle.setVisibility(View.VISIBLE);
+                        mSignInButton.setVisibility(View.VISIBLE);
+                        pleaseProceed.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             }
 
             @Override
