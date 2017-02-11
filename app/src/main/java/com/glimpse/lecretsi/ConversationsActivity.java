@@ -217,9 +217,9 @@ public class ConversationsActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_flashcards) {
 
-        } else if (id == R.id.nav_archives) {
+        }
 
-        } else if (id == R.id.nav_about) {
+        else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_logout) {
             mFirebaseAuth.signOut();
@@ -227,8 +227,6 @@ public class ConversationsActivity extends AppCompatActivity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_settings) {
-
-        } else if (id == R.id.nav_help){
 
         }
 

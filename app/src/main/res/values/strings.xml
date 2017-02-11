@@ -2,32 +2,48 @@
     <string name="app_name" >Lecretsi</string>
     <string name="title_activity_conversations" >Lecretsi</string>
 
+
     <string name="login_lecretsi_greeting">Bienvenue à Lecretsi</string>
-    <string name="login_lecretsi_subtitle">La mode génial d\'envoyer des messages secrets</string>
+    <string name="login_lecretsi_subtitle">Le mode génial d\'envoyer des messages secrets</string>
+
 
     <string name="navigation_drawer_open">Ouvrir le menu latéral</string>
     <string name="navigation_drawer_close" >Fermez le menu latéral</string>
 
+
     <string name="action_settings" >Préférences</string>
+
 
     <string name="user_not_found" >Nous n\'avons pas trouvé votre ami</string>
     <string name="no_email_inserted" >Veuillez insérer une adresse de e-mail</string>
-    <string name="add_friend" >Ajouter un ami</string>
+    <string name="add_friend" >Ajouter ami</string>
+    <string name="friend_request_sent">La sollicitation d\'amitié a été envoyée</string>
+    <string name="send_a_friend_request">Envoyer demande d\'amitié</string>
+    <string name="your_friend_s_email">L\'email de votre ami</string>
+    <string name="friend_already_added">Vous êtes déjà amis</string>
+    <string name="friend_req_already_sent">Demande d\'amitié déjà envoyée</string>
+
 
     <string name="login_connection_failed" > La connexion a échoué</string>
     <string name="play_services_connection_error" >
         Impossible de se connecter au service du Google."</string>
+    <string name="login_to_continue">Connectez-vous pour continuer s\'il vous plaît</string>
+
 
     <string name="assistant_greeting" >Bonjour </string>
     <string name="assistant_presentation" >
         Je suis votre assistant personnel de Largonji</string>
     <string name="assistant_expect_response" >Que voulez-vous que je traduise?</string>
-    <string name="friend_request_sent">La sollicitation d\'amitié a été envoyée</string>
 
 
-    <string name="send_a_friend_request">Envoyer demande d\'amitié</string>
-    <string name="your_friend_s_email">L\'email de votre ami</string>
-    <string name="friend_already_added">Vous êtes déjà amis</string>
-    <string name="friend_req_already_sent">Demande d\'amitié déjà envoyée</string>
-    <string name="login_to_continue">Connectez-vous pour continuer s\'il vous plaît</string>
+    <string name="this_is_not_a_friend">Ce n\'est pas un ami</string>
+    <string name="this_is_not_a_friend_add_one_from_button">
+        Utiliser le bouton pour ajouter un ami</string>
+
+    <string name="activity_conversation">Conversations</string>
+    <string name="activity_friends">Copains</string>
+    <string name="activity_about_us">Les auteurs</string>
+    <string name="learn_activity">Practise</string>
+    <string name="activity_log_out">Sortir</string>
+    <string name="activity_settings">Préférences</string>
 </resources>
