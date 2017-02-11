@@ -353,7 +353,6 @@ public class FriendsActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 final String friendEmailText = friendEmail.getText().toString();
-                                final boolean[] canSendRequest = {true};
 
                                 if (friendEmailText.isEmpty()) {
                                     Toast.makeText(FriendsActivity.this, R.string.no_email_inserted, Toast.LENGTH_LONG).show();
@@ -365,71 +364,51 @@ public class FriendsActivity extends AppCompatActivity {
                                     Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
                                     return;
                                 }*/
-                                DatabaseReference checkAlreadyAddedFriend = FirebaseDatabase.getInstance()
-                                        .getReference().child("users").child(LOGGED_USER.getId()).child("friends");
-                                checkAlreadyAddedFriend.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                final DatabaseReference friendRequest = FirebaseDatabase.getInstance().getReference().child("users");
+                                friendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot friend : dataSnapshot.getChildren()) {
-                                            User friendObj = friend.getValue(User.class);
-                                            if (friendObj.getEmail().equals(friendEmailText)) {
-                                                Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
-                                                canSendRequest[0] = false;
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                                // Send a friend request to the specified user
-                                DatabaseReference newFriendRequestListener = FirebaseDatabase.getInstance().getReference();
-
-                                newFriendRequestListener.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        User userFound = null;
-
-                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                            User details = postSnapshot.getValue(User.class);
-                                            if (details.getEmail().equals(friendEmailText)) {
-                                                userFound = details;
-                                            }
-                                        }
-
-                                        if (userFound == null) {
-                                            Toast.makeText(getApplicationContext(), R.string.user_not_found, Toast.LENGTH_LONG).show();
-                                        } else {
-                                            DatabaseReference checkAlreadySentFriendRequest = FirebaseDatabase.getInstance().getReference()
-                                                    .child("users").child(userFound.getId()).child("friend_requests");
-
-                                            final User finalUserFound = userFound;
-                                            checkAlreadySentFriendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    boolean friendRequestAlreadySent = false;
-                                                    for (DataSnapshot friend : dataSnapshot.getChildren()) {
-                                                        User friendObj = friend.getValue(User.class);
-                                                        if (friendObj.getId().equals(LOGGED_USER.getId())) {
-                                                            friendRequestAlreadySent = true;
+                                        boolean userFound = false;
+                                        for(DataSnapshot postSnapshot:dataSnapshot.getChildren()){
+                                            final User user = postSnapshot.getValue(User.class);
+                                            if(user.getEmail().equals(friendEmailText)){
+                                                userFound = true;
+                                                DatabaseReference requestNotSent = FirebaseDatabase.getInstance().getReference()
+                                                        .child("users").child(user.getId()).child("friend_requests").child(LOGGED_USER.getId());
+                                                requestNotSent.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot snapshot) {
+                                                        if (snapshot.getValue() == null) {
+                                                            DatabaseReference friendNotAdded = FirebaseDatabase.getInstance().getReference()
+                                                                    .child("users").child(LOGGED_USER.getId()).child("friends").child(user.getId());
+                                                            friendNotAdded.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(DataSnapshot snapshot) {
+                                                                    if (snapshot.getValue() == null) {
+                                                                        friendRequest.child(user.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
+                                                                        Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
+                                                                        alertDialog.dismiss();
+                                                                    } else {
+                                                                        Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                }
+                                                                @Override
+                                                                public void onCancelled(DatabaseError databaseError) {
+                                                                }
+                                                            });
+                                                        } else {
+                                                            Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
                                                         }
                                                     }
-                                                    if (!friendRequestAlreadySent && canSendRequest[0]) {
-                                                        FirebaseDatabase.getInstance().getReference()
-                                                                .child("users").child(finalUserFound.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
-                                                        Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
-                                                        alertDialog.dismiss();
-                                                    } else {
-                                                        Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
                                                     }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                }
-                                            });
+                                                });
+                                            }
+                                        }
+                                        if(!userFound){
+                                            Toast.makeText(getApplicationContext(), R.string.user_not_found, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                     @Override
