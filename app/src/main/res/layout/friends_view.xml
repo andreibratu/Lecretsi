@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="7dp"
                     android:paddingEnd="7dp"
-                    android:text="Email • assistant@gmail.com"
+                    android:text="Email • assistant@lecretsi.com"
                     android:textColor="@color/colorGrey"
                     android:textSize="14sp"/>
 

@@ -291,6 +291,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                     FirebaseDatabase.getInstance().getReference().child("users")
                             .child(userId).child("conversations").child(LOGGED_USER.getId()).child("chatMessages").push().setValue(chatMessage);
+
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
