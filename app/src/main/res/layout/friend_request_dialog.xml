@@ -16,7 +16,7 @@
             android:id="@+id/friendRequestPicture"
             android:layout_width="144dp"
             android:layout_height="144dp"
-            android:src="@drawable/tumblr" />
+            android:src="@drawable/ic_account_circle_black_36dp" />
 
         <View
             android:layout_width="fill_parent"

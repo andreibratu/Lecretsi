@@ -158,7 +158,7 @@ public class FriendsActivity extends AppCompatActivity {
                                             public void onClick(View v) {
                                                 friendRequest.child(LOGGED_USER.getId()).child("friends").child(user.getId()).setValue(user);
                                                 friendRequest.child(user.getId()).child("friends").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
-                                                friendRequest.child(LOGGED_USER.getId()).child("friend_requests").child(LOGGED_USER.getId()).removeValue();
+                                                friendRequest.child(LOGGED_USER.getId()).child("friend_requests").child(user.getId()).removeValue();
                                                 alertDialog.dismiss();
                                             }
                                         });
@@ -353,6 +353,7 @@ public class FriendsActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 final String friendEmailText = friendEmail.getText().toString();
+                                final boolean[] canSendRequest = {true};
 
                                 if (friendEmailText.isEmpty()) {
                                     Toast.makeText(FriendsActivity.this, R.string.no_email_inserted, Toast.LENGTH_LONG).show();
@@ -373,7 +374,7 @@ public class FriendsActivity extends AppCompatActivity {
                                             User friendObj = friend.getValue(User.class);
                                             if (friendObj.getEmail().equals(friendEmailText)) {
                                                 Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
-                                                return;
+                                                canSendRequest[0] = false;
                                             }
                                         }
                                     }
@@ -414,7 +415,7 @@ public class FriendsActivity extends AppCompatActivity {
                                                             friendRequestAlreadySent = true;
                                                         }
                                                     }
-                                                    if (!friendRequestAlreadySent) {
+                                                    if (!friendRequestAlreadySent && canSendRequest[0]) {
                                                         FirebaseDatabase.getInstance().getReference()
                                                                 .child("users").child(finalUserFound.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
                                                         Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();

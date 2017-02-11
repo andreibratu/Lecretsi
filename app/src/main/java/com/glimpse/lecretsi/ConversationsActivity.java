@@ -82,9 +82,8 @@ public class ConversationsActivity extends AppCompatActivity
 
             loggedInUser = new User(mFirebaseUser);
 
-            final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference();
-            newUserListener.child("users")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
+            final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference().child("users");
+            newUserListener.addListenerForSingleValueEvent(new ValueEventListener() {
 
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
