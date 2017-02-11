@@ -2,13 +2,11 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.icu.text.DisplayContext;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
@@ -150,6 +148,8 @@ public class LoginActivity extends AppCompatActivity implements
                                     getString(R.string.login_connection_failed),
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            GetUserToken updateToken = new GetUserToken();
+                            updateToken.onTokenRefresh();
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
                             finish();
                         }
