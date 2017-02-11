@@ -12,9 +12,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -116,10 +118,10 @@ public class FriendsActivity extends AppCompatActivity {
                         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Toast.makeText(FriendsActivity.this, "I clicked " + viewHolder.itemView, Toast.LENGTH_SHORT).show();
 
                                 final ViewGroup nullParent = null;
-                                LayoutInflater li = LayoutInflater.from(FriendsActivity.this);
+                                final LayoutInflater li = LayoutInflater.from(FriendsActivity.this);
+
                                 final View dialogView = li.inflate(R.layout.friend_request_dialog, nullParent);
 
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FriendsActivity.this, R.style.alertDialog);
@@ -143,7 +145,6 @@ public class FriendsActivity extends AppCompatActivity {
                                         friendRequestEmailText.setText(user.getEmail());
                                         Glide.with(getApplicationContext())
                                                 .load(user.getPhotoURL())
-                                                .asBitmap()
                                                 .into(friendRequestPicture);
 
                                         Button accept = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -176,8 +177,8 @@ public class FriendsActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         alertDialog.show();
-                                        if(alertDialog.getWindow() != null){
-                                            alertDialog.getWindow().setLayout(850, 975);
+                                        if(alertDialog.getWindow() != null) {
+                                            alertDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         }
                                     }
                                 }, 500);
@@ -255,9 +256,9 @@ public class FriendsActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    if(dataSnapshot.getValue() == null){
-                                                        conversationReference.setValue(conversation);
-                                                    }
+                                                if (dataSnapshot.getValue() == null) {
+                                                    conversationReference.setValue(conversation);
+                                                }
                                             }
 
                                             @Override
@@ -353,20 +354,20 @@ public class FriendsActivity extends AppCompatActivity {
                                     return;
                                 }
 
-                                if (friendEmailText.equals(LOGGED_USER.getEmail())) {
+                                /*if (friendEmailText.equals(LOGGED_USER.getEmail())) {
                                     // TODO: Andrei, schimba string-ul :P
                                     Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
                                     return;
-                                }
+                                }*/
 
                                 final DatabaseReference friendRequest = FirebaseDatabase.getInstance().getReference().child("users");
                                 friendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         boolean userFound = false;
-                                        for(DataSnapshot postSnapshot:dataSnapshot.getChildren()){
+                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                             final User user = postSnapshot.getValue(User.class);
-                                            if(user.getEmail().equals(friendEmailText)){
+                                            if (user.getEmail().equals(friendEmailText)) {
                                                 userFound = true;
                                                 DatabaseReference requestNotSent = FirebaseDatabase.getInstance().getReference()
                                                         .child("users").child(user.getId()).child("friend_requests").child(LOGGED_USER.getId());
@@ -387,6 +388,7 @@ public class FriendsActivity extends AppCompatActivity {
                                                                         Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
                                                                     }
                                                                 }
+
                                                                 @Override
                                                                 public void onCancelled(DatabaseError databaseError) {
                                                                 }
@@ -395,16 +397,18 @@ public class FriendsActivity extends AppCompatActivity {
                                                             Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
                                                         }
                                                     }
+
                                                     @Override
                                                     public void onCancelled(DatabaseError databaseError) {
                                                     }
                                                 });
                                             }
                                         }
-                                        if(!userFound){
+                                        if (!userFound) {
                                             Toast.makeText(getApplicationContext(), R.string.user_not_found, Toast.LENGTH_LONG).show();
                                         }
                                     }
+
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
 
