@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -68,7 +65,7 @@ public class FriendsActivity extends AppCompatActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                User assistant = new User("largonjiAssistant", "Largonji Assistant", "largonji@assistant.com", "http://i.imgur.com/unL01px.png");
+                                User assistant = new User("largonjiAssistant", "Largonji Assistant", "largonji@assistant.com", "http://i.imgur.com/NglEj0p.png");
                                 Conversation largonjiConversation = new Conversation(assistant, null, null);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("users").child(LOGGED_USER.getId()).child("conversations").child(largonjiConversation.getUser().getId()).setValue(largonjiConversation);
@@ -98,12 +95,19 @@ public class FriendsActivity extends AppCompatActivity {
                         User.class, R.layout.friends_item, FriendsListHolder.class, mUserFriendRequests) {
 
                     @Override
-                    protected void populateViewHolder(FriendsListHolder viewHolder, User user, int position) {
+                    protected void populateViewHolder(final FriendsListHolder viewHolder, User user, int position) {
                         viewHolder.friendUsername.setText(user.getName());
                         viewHolder.friendEmail.setText(user.getEmail());
                         Glide.with(getApplicationContext())
                                 .load(user.getPhotoURL())
                                 .into(viewHolder.friendPicture);
+                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(FriendsActivity.this, "I clicked " + viewHolder.itemView, Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
                     }
 
                     @Override
@@ -213,7 +217,7 @@ public class FriendsActivity extends AppCompatActivity {
 
                 final ViewGroup nullParent = null;
                 LayoutInflater li = LayoutInflater.from(FriendsActivity.this);
-                View dialogView = li.inflate(R.layout.friend_request_dialog, nullParent);
+                View dialogView = li.inflate(R.layout.friend_add_dialog, nullParent);
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder
                         (FriendsActivity.this, R.style.alertDialog);

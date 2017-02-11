@@ -9,7 +9,6 @@
 
     <RelativeLayout
         android:id="@+id/chatLayout"
-        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -19,14 +18,13 @@
             android:layout_height="match_parent"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:clickable="true"
-            android:layout_marginBottom="15dp"
-            android:layout_above="@+id/messageBox"/>
+            android:clickable="true"/>
 
         <RelativeLayout
             android:id="@+id/messageBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true">
 
