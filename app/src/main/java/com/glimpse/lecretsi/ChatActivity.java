@@ -26,8 +26,11 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -108,18 +111,15 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mConversationReference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(LOGGED_USER.getId()).child("conversations").child(userId);
 
-
-
         mFirebaseAdapter = new FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder>(
                 ChatMessage.class,
                 R.layout.user_message,
                 MessageViewHolder.class,
                 mConversationReference.child("chatMessages")) {
 
-            boolean firstMessage = true;
-
             @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {/*
+            protected void populateViewHolder(MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
+                /*
                 if(firstMessage){
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -277,9 +277,28 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     String date = df.format(Calendar.getInstance().getTime());
 
     public void onUserMessage(String message){
-        ChatMessage chatMessage = new
-                ChatMessage(LOGGED_USER.getId(), message, date);
+        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
+        if(!userId.equals("largonjiAssistant")) {
+            final Conversation conversation = new Conversation(LOGGED_USER, null, null);
+            final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users").child(userId).child("conversations").child(LOGGED_USER.getId());
+            conversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue() == null) {
+                        conversationReference.setValue(conversation);
+                    }
+                    FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(userId).child("conversations").child(LOGGED_USER.getId()).child("chatMessages").push().setValue(chatMessage);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 
     public void onAssistantMessage(String message){

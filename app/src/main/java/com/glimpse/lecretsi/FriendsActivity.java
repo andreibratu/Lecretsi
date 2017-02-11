@@ -250,20 +250,14 @@ public class FriendsActivity extends AppCompatActivity {
                                     public void run() {
                                         final Conversation conversation = new Conversation(user, null, null);
                                         final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
-                                                .child("users").child(LOGGED_USER.getId()).child("conversations");
+                                                .child("users").child(LOGGED_USER.getId()).child("conversations").child(user.getId());
                                         conversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                boolean userFound = false;
-                                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                    if(postSnapshot.getKey().equals(user.getId())){
-                                                        userFound = true;
+                                                    if(dataSnapshot.getValue() == null){
+                                                        conversationReference.setValue(conversation);
                                                     }
-                                                }
-                                                if (!userFound) {
-                                                    conversationReference.child(user.getId()).setValue(conversation);
-                                                }
                                             }
 
                                             @Override
@@ -358,12 +352,12 @@ public class FriendsActivity extends AppCompatActivity {
                                     Toast.makeText(FriendsActivity.this, R.string.no_email_inserted, Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                /* Disabled for debug
-                                    TODO: Enable this exception
+
                                 if (friendEmailText.equals(LOGGED_USER.getEmail())) {
+                                    // TODO: Andrei, schimba string-ul :P
                                     Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
                                     return;
-                                }*/
+                                }
 
                                 final DatabaseReference friendRequest = FirebaseDatabase.getInstance().getReference().child("users");
                                 friendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
