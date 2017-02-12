@@ -77,9 +77,23 @@ public class FriendsActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 User assistant = new User("largonjiAssistant", "Largonji Assistant", "largonji@assistant.com", "http://i.imgur.com/NglEj0p.png");
-                                Conversation largonjiConversation = new Conversation(assistant, null, null);
-                                DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference();
-                                conversationReference.child("users").child(LOGGED_USER.getId()).child("conversations").child(largonjiConversation.getUser().getId()).setValue(largonjiConversation);
+                                final Conversation largonjiConversation = new Conversation(assistant, null, null);
+                                final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
+                                        .child("users").child(LOGGED_USER.getId()).child("conversations").child(assistant.getId());
+                                conversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getValue() == null) {
+                                            conversationReference.setValue(largonjiConversation);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
                                 startActivity(new Intent(FriendsActivity.this, ChatActivity.class).
                                         putExtra("userId", largonjiConversation.getUser().getId()));
                                 finish();
