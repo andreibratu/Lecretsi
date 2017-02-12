@@ -1,13 +1,17 @@
 package com.glimpse.lecretsi;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,7 +89,6 @@ public class ConversationsActivity extends AppCompatActivity
         } else {
 
             loggedInUser = new User(mFirebaseUser);
-            // startService(new Intent(this, NewMessageService.class));
 
             final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference().child("users");
             newUserListener.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,6 +117,8 @@ public class ConversationsActivity extends AppCompatActivity
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
+
+        // TODO: startService(new Intent(this, NewMessageService.class));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -175,7 +181,7 @@ public class ConversationsActivity extends AppCompatActivity
         emptyConversationsBackground.setVisibility(View.GONE);
 
         mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
-                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
+                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations.orderByPriority()) {
 
             @Override
             protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
@@ -225,6 +231,67 @@ public class ConversationsActivity extends AppCompatActivity
                                 startActivity(intent);
                             }
                         }, 500);
+                    }
+                });
+                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        final ViewGroup nullParent = null;
+                        final LayoutInflater li = LayoutInflater.from(ConversationsActivity.this);
+                        View dialogView = li.inflate(R.layout.long_click_dialog, nullParent);
+
+                        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(ConversationsActivity.this, R.style.alertDialog);
+
+                        alertDialogBuilder.setView(dialogView);
+
+                        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        final LinearLayout archive = (LinearLayout) dialogView.findViewById(R.id.archive);
+                        final LinearLayout delete = (LinearLayout) dialogView.findViewById(R.id.delete);
+                        final LinearLayout block = (LinearLayout) dialogView.findViewById(R.id.block);
+
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                archive.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                });
+                                delete.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(ConversationsActivity.this);
+                                        deleteDialogBuilder.setTitle(R.string.dialog_delete_title).setMessage(R.string.dialog_delete_message)
+                                                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        mConversations.child(conversation.getUser().getId()).removeValue();
+                                                        dialog.dismiss();
+                                                    }
+                                                })
+                                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                        deleteDialogBuilder.show();
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                                block.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                });
+                            }
+
+                        });
+                        alertDialog.show();
+                        return false;
                     }
                 });
             }

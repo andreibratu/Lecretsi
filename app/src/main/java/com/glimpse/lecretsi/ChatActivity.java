@@ -74,8 +74,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private String userId;
 
-    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.getDefault());
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
 
     String date, time;
 
@@ -102,7 +102,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 MessageViewHolder.class,
                 mConversationReference.child("chatMessages")) {
 
-            TextView lastMessageSelected = null;
+            MessageViewHolder lastMessageSelected = null;
 
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
@@ -110,14 +110,17 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(lastMessageSelected != null)
-                            lastMessageSelected.setVisibility(View.GONE);
+
                         if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
                             viewHolder.messageDateTime.setVisibility(View.VISIBLE);
                         } else {
                             viewHolder.messageDateTime.setVisibility(View.GONE);
+
                         }
-                        lastMessageSelected = viewHolder.messageDateTime;
+                        if(lastMessageSelected != null && lastMessageSelected != viewHolder)
+                            lastMessageSelected.messageDateTime.setVisibility(View.GONE);
+
+                        lastMessageSelected = viewHolder;
                     }
                 });
 
@@ -218,7 +221,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         //TODO @Adi how ab this ?
         Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(LOGGED_USER.getId());
         databaseReference.child("serverTimestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {

@@ -42,8 +42,6 @@ public class FriendsActivity extends AppCompatActivity {
 
     static final User LOGGED_USER = ConversationsActivity.loggedInUser;
 
-    AlertDialog alertDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,8 +147,7 @@ public class FriendsActivity extends AppCompatActivity {
                                 alertDialogBuilder.setPositiveButton("Accept", null);
                                 alertDialogBuilder.setNegativeButton("Deny", null);
 
-                                alertDialog = alertDialogBuilder.create();
-
+                                final AlertDialog alertDialog = alertDialogBuilder.create();
 
                                 alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                     @Override
@@ -347,12 +344,11 @@ public class FriendsActivity extends AppCompatActivity {
 
                 alertDialogBuilder.setView(dialogView);
 
-                final EditText friendEmail = (EditText)
-                        dialogView.findViewById(R.id.friendRequestEmail);
+                final EditText friendEmail = (EditText) dialogView.findViewById(R.id.friendRequestEmail);
 
                 alertDialogBuilder.setPositiveButton(R.string.add_friend, null);
 
-                alertDialog = alertDialogBuilder.create();
+                final AlertDialog alertDialog = alertDialogBuilder.create();
 
                 alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override

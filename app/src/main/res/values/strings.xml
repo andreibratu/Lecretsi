@@ -53,4 +53,12 @@
     <string name="no_conversations_yet">Aucune conversation encore</string>
     <string name="friend_request_pending">Vous avez une demande d\'amitié en attente de cet utilisateur</string>
     <string name="double_press_close">Press the back button again to close the app</string>
+    <string name="menu_conversation">Conversation</string>
+    <string name="conversation_menu">Conversation</string>
+    <string name="archive">Archive</string>
+    <string name="delete">Delete</string>
+    <string name="block">Block</string>
+    <string name="dialog_delete_message">Once you delete your copy of the conversation, it cannot be undone</string>
+    <string name="dialog_delete_title">Delete this conversation?</string>
+    <string name="cancel">cancel</string>
 </resources>
