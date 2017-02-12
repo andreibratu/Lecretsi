@@ -2,12 +2,10 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +14,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -34,14 +31,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -74,7 +67,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     private LinearLayoutManager mLinearLayoutManager;
     private EditText mMessageEditText;
 
-    private DatabaseReference mConversationReference;
+    private DatabaseReference mConversationReference, databaseReference;
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder>
             mFirebaseAdapter;
@@ -84,7 +77,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.getDefault());
     DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-    String date, time, dateTime;
+    String date, time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +218,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         //TODO @Adi how ab this ?
         Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
-        mConversationReference.child("lastMessageDate").addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("serverTimestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Long timestamp = Long.parseLong(snapshot.getValue().toString());
@@ -239,8 +233,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
-
-        mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
 
         if(userId.equals("largonjiAssistant")) {
             mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -312,21 +304,23 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void onUserMessage(final String message){
+        databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
 
         if(!userId.equals("largonjiAssistant")) {
-            final Conversation conversation = new Conversation(LOGGED_USER, null, null);
             final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
                     .child("users").child(userId).child("conversations").child(LOGGED_USER.getId());
             conversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getValue() == null) {
+                        Conversation conversation = new Conversation(LOGGED_USER, null, null);
                         conversationReference.setValue(conversation);
                     }
                     conversationReference.child("chatMessages").push().setValue(chatMessage);
                     conversationReference.child("lastMessage").setValue(message);
+                    mConversationReference.child("lastMessageDate").setValue(date);
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -336,15 +330,16 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         mConversationReference.child("lastMessage").setValue(message);
-        mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
+        mConversationReference.child("lastMessageDate").setValue(date);
     }
 
     public void onAssistantMessage(String message){
         if(message != null) {
+            databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
-            mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
+            mConversationReference.child("lastMessageDate").setValue(date);
         }
     }
 
@@ -376,6 +371,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onResume() {
         super.onResume();
+        databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+
     }
 
     @Override

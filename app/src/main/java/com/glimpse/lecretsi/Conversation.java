@@ -6,20 +6,16 @@ public class Conversation {
 
     private User user;
     private String lastMessage;
-    private Long lastMessageDate;
+    private String lastMessageDate;
 
     public Conversation() {
 
     }
 
-    public Conversation(User user, String lastMessage, Long lastMessageDate) {
+    public Conversation(User user, String lastMessage, String lastMessageDate) {
         this.user = user;
         this.lastMessage = lastMessage;
-        if(lastMessage != null) {
-            this.lastMessageDate = lastMessageDate;
-        } else {
-            this.lastMessageDate = 0L;
-        }
+        this.lastMessageDate = lastMessageDate;
     }
 
     public void setUser(User user){
@@ -38,11 +34,11 @@ public class Conversation {
         return lastMessage;
     }
 
-    public void setLastMessageDate(Long lastMessageDate){
+    public void setLastMessageDate(String lastMessageDate){
         this.lastMessageDate = lastMessageDate;
     }
 
-    public Long getLastMessageDate(){
+    public String getLastMessageDate(){
         return lastMessageDate;
     }
 }

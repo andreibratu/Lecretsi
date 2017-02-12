@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -184,19 +185,29 @@ public class ConversationsActivity extends AppCompatActivity
             protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
                 // TODO: Test if last message is responsive, when someone else sends one
                 viewHolder.conversationUsername.setText(conversation.getUser().getName());
-                if(conversation.getLastMessage() == null) {
-                    viewHolder.lastMessage.setVisibility(View.GONE);
-                } else {
-                    viewHolder.lastMessage.setVisibility(View.VISIBLE);
-                    viewHolder.lastMessage.setText(conversation.getLastMessage());
-                }
+
+                mConversations.child(conversation.getUser().getId()).child("lastMessage")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue() == null) {
+                                    viewHolder.lastMessage.setVisibility(View.GONE);
+                                } else {
+                                    viewHolder.lastMessage.setVisibility(View.VISIBLE);
+                                    viewHolder.lastMessage.setText(dataSnapshot.getValue().toString());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                 mConversations.child(conversation.getUser().getId()).child("lastMessageDate")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Long timestamp = Long.parseLong(dataSnapshot.getValue().toString());
-                                DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.getDefault());
-                                viewHolder.lastMessageDate.setText(dateFormat.format(new Date(timestamp)));
+                                viewHolder.lastMessageDate.setText(dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -255,7 +266,6 @@ public class ConversationsActivity extends AppCompatActivity
 
         conversationsView.setLayoutManager(mConversationsManager);
         conversationsView.setAdapter(mConversationsAdapter);
-
     }
 
 
