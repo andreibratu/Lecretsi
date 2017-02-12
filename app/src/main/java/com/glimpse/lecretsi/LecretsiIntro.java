@@ -26,14 +26,8 @@ public class LecretsiIntro extends AppIntro {
         addSlide(AppIntroFragment.newInstance(
                 "Comment?",
                 "Si le mot commence par une consonne, vous la" +
-                        " remplacez par L, ajoutez-la à la fin et ajoutez I",
-                R.drawable.light_bulb,
-                getResources().getColor(R.color.green)
-        ));
-
-        addSlide(AppIntroFragment.newInstance(
-            "Comment?",
-                "Si le mot commence par une voyelle ou la lettre L, vous " +
+                        " remplacez par L, ajoutez-la à la fin et ajoutez I\n"
+                        + "Si le mot commence par une voyelle ou la lettre L, vous " +
                         "ajoutez L au début, placez la première consonne à la fin et ajoutez I",
                 R.drawable.light_bulb,
                 getResources().getColor(R.color.green)
@@ -56,6 +50,12 @@ public class LecretsiIntro extends AppIntro {
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
+        startActivity(new Intent(this,ConversationsActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onSkipPressed(Fragment currentFragment) {
         startActivity(new Intent(this,ConversationsActivity.class));
         finish();
     }
