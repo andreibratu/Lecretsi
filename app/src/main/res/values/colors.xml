@@ -14,10 +14,10 @@
     <color name="colorFriendMessageSelected">#007cc9</color>
     <color name="colorFriendMessageBorder">#0095f1</color>
 
-    <color name="lightBlue">#2196f3</color>
-    <color name="green">#4caf50</color>
+    <color name="lightBlue">#009688</color>
+    <color name="green">#ffd600</color>
     <color name="gentleman_blue">#29b6f6</color>
-    <color name="yellow_book">#ffd740</color>
+    <color name="yellow_book">#651fff</color>
 
     <color name="colorWhite">#ffffff</color>
     <color name="colorGrey">#646464</color>

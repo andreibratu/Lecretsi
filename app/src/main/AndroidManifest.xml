@@ -14,7 +14,7 @@
 
         <service android:name=".NewMessageService"/>
 
-        <activity android:name=".LecretsiIntro" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".LecretsiIntro"/>
 
         <activity
             android:name=".ConversationsActivity"

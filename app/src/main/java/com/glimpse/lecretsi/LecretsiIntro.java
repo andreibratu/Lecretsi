@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.WindowManager;
+
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 
@@ -11,11 +13,12 @@ public class LecretsiIntro extends AppIntro {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
 
         addSlide(AppIntroFragment.newInstance(
                 "Largonji?",
-                "Vos messages sont chiffrés à l\'aide du chiffre Largonji",
+                "Vos messages sont chiffrés à l\'aide du Largonji",
                 R.drawable.question_mark,
                 getResources().getColor(R.color.lightBlue)
         ));
