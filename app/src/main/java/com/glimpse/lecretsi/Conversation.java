@@ -1,7 +1,5 @@
 package com.glimpse.lecretsi;
 
-
-
 public class Conversation {
 
     private User user;
