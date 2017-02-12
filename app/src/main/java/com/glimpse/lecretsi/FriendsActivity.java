@@ -380,6 +380,7 @@ public class FriendsActivity extends AppCompatActivity {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         boolean userFound = false;
                                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                            // TODO: check if the other user didnt send a request first
                                             final User user = postSnapshot.getValue(User.class);
                                             if (user.getEmail().equals(friendEmailText)) {
                                                 userFound = true;
