@@ -120,6 +120,8 @@ public class ConversationsActivity extends AppCompatActivity
 
         // TODO: startService(new Intent(this, NewMessageService.class));
 
+        // TODO: Set version and make the user update
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

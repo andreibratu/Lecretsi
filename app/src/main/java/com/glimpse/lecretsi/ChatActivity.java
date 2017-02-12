@@ -103,6 +103,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 mConversationReference.child("chatMessages")) {
 
             MessageViewHolder lastMessageSelected = null;
+            ChatMessage lastMessage = null;
 
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
@@ -124,27 +125,35 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 });
 
+                viewHolder.messageTextView.setText(chatMessage.getText());
+                viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
 
-                /*
-                if(firstMessage){
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(0, 0, 0, 250);
-                    viewHolder.messageLayout.setLayoutParams(layoutParams);
-                    firstMessage = false;
-                }*/
                 if (chatMessage.getId().equals(LOGGED_USER.getId())) {
                     viewHolder.messageLayout.setGravity(Gravity.END);
                     viewHolder.messagePosition.setGravity(Gravity.END);
+                    viewHolder.messagePosition.setPadding(100, 0, 0, 0);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
+                    /* TODO: margins between different groups of messages
+                    if(lastMessage != null){
+                        if(!lastMessage.getId().equals(chatMessage.getId())){
+                            viewHolder.messagePosition.setPadding(100, 75, 0, 0);
+                        }
+                    }*/
                 } else {
                     viewHolder.messageLayout.setGravity(Gravity.START);
                     viewHolder.messagePosition.setGravity(Gravity.START);
+                    viewHolder.messagePosition.setPadding(0, 0, 100, 0);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
+                    /*
+                    if(lastMessage != null){
+                        if(!lastMessage.getId().equals(chatMessage.getId())){
+                            viewHolder.messagePosition.setPadding(0, 75, 100, 0);
+                        }
+                    }*/
                 }
 
-                viewHolder.messageTextView.setText(chatMessage.getText());
-                viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
+                lastMessage = chatMessage;
+
             }
         };
 
