@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity implements
                                     getString(R.string.login_connection_failed),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            GetUserToken updateToken = new GetUserToken();
+                            UserGetToken updateToken = new UserGetToken();
                             updateToken.onTokenRefresh();
                             startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
                             finish();
