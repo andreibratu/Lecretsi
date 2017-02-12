@@ -87,7 +87,7 @@ public class ConversationsActivity extends AppCompatActivity
         } else {
 
             loggedInUser = new User(mFirebaseUser);
-            startService(new Intent(this, NewMessageService.class));
+            ///startService(new Intent(this, NewMessageService.class));
 
             final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference().child("users");
             newUserListener.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -1,6 +1,4 @@
 package com.glimpse.lecretsi;
-import java.lang.String;
-import java.util.ArrayList;
 import java.util.Objects;
 
 class Largonji
@@ -10,13 +8,14 @@ class Largonji
     **/
 
     //TODO algorithmToNormal()
-    private static final String vowelsCase = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
-    private static final String possibleException = "'-";
+    private final static String VOWEL_CASE = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
+    private final static String POSSIBLE_EXCEPTION = "'-";
+    private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_";
     private static final String[] ignoreList =
             new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
             "ils", "elles", "me", "te", "se", "en", "lui", "y",
             "nous", "vous", "leur", "moi", "toi", "elle", "soi", "eux", "l",
-            "elles", "de", "du", "des", "j"};
+            "elles", "de", "du", "des", "j", "m", "t"};
 
     /*
         I'll leave these here in case we need them
@@ -27,7 +26,7 @@ class Largonji
      */
 
     static private boolean isVowel(char x){
-        return vowelsCase.indexOf(x) != -1;
+        return VOWEL_CASE.indexOf(x) != -1;
     }
 
     private static boolean charIsL(Character x) {
@@ -55,7 +54,7 @@ class Largonji
                 return input;
         }
 
-        for(Character x:possibleException.toCharArray() ) {
+        for(Character x: POSSIBLE_EXCEPTION.toCharArray() ) {
             Integer countExceptions = 0;
             String aux = input;
 
@@ -108,6 +107,22 @@ class Largonji
     }
 
     static String algorithmWrapper(String input) {
+        ///Input sanitisation
+        input=input.trim();
+        input=input.replaceAll("(?m)^\\s+$", "");
+
+        for(Character x:PUNCTUATION.toCharArray())
+            if (input.indexOf(x) != -1) {
+                if (input.indexOf(x) == input.length() - 1)
+                    return algorithmWrapper(input.substring(0, input.indexOf(x))) + x;
+                if (input.indexOf(x) == 0)
+                    return x + algorithmWrapper(input.substring(1, input.indexOf(x)));
+
+
+                return algorithmWrapper(input.substring(0, input.indexOf(x))) + x +
+                        algorithmWrapper(input.substring(input.indexOf(x) + 1, input.length()));
+            }
+
         String answer = "";
         int whereIsWhiteSpace = input.indexOf(' ');
         while(whereIsWhiteSpace!=-1 && input.length()>0) {
