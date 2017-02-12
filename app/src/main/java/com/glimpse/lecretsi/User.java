@@ -1,10 +1,5 @@
 package com.glimpse.lecretsi;
-
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
 
 public class User {
 
@@ -12,10 +7,6 @@ public class User {
     private String email;
     private String name;
     private String photoURL;
-    // private ArrayList<Phrase> usedPhrases;
-
-    //TODO link user to db
-    //TODO add getter for friends and conversations
 
     public User() {
 

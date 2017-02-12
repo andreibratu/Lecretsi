@@ -30,7 +30,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -88,6 +87,7 @@ public class ConversationsActivity extends AppCompatActivity
         } else {
 
             loggedInUser = new User(mFirebaseUser);
+            startService(new Intent(this, NewMessageService.class));
 
             final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference().child("users");
             newUserListener.addListenerForSingleValueEvent(new ValueEventListener() {
