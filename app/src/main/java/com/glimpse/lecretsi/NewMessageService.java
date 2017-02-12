@@ -41,9 +41,7 @@ public class NewMessageService extends Service {
 
                     Conversation mConversation = newMessage.getValue(Conversation.class);
                     String text = mConversation.getLastMessage();
-                    User sender = mConversation.getUser(
-
-                    );
+                    User sender = mConversation.getUser();
                     Bitmap bitmap = null;
 
                     try {
