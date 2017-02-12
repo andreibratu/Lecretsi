@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,7 +88,7 @@ public class ConversationsActivity extends AppCompatActivity
         } else {
 
             loggedInUser = new User(mFirebaseUser);
-            startService(new Intent(this, NewMessageService.class));
+            // startService(new Intent(this, NewMessageService.class));
 
             final DatabaseReference newUserListener = FirebaseDatabase.getInstance().getReference().child("users");
             newUserListener.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,7 +120,16 @@ public class ConversationsActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.hide();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fab.show();
+            }
+        }, 1000);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,6 +173,9 @@ public class ConversationsActivity extends AppCompatActivity
         mConversationsManager.setStackFromEnd(false);
 
         final FirebaseRecyclerAdapter<Conversation, ConversationsHolder> mConversationsAdapter;
+
+        final LinearLayout emptyConversationsBackground = (LinearLayout) findViewById(R.id.emptyConversationsBackground);
+        emptyConversationsBackground.setVisibility(View.GONE);
 
         mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
                 Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
@@ -222,8 +235,23 @@ public class ConversationsActivity extends AppCompatActivity
                                 lastVisiblePosition == (positionStart - 1))) {
                     conversationsView.scrollToPosition(positionStart);
                 }
+                emptyConversationsBackground.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                if (mConversationsAdapter.getItemCount() == 0) {
+                    emptyConversationsBackground.setVisibility(View.VISIBLE);
+                }
             }
         });
+
+        if (mConversationsAdapter.getItemCount() == 0) {
+            emptyConversationsBackground.setVisibility(View.VISIBLE);
+        } else {
+            emptyConversationsBackground.setVisibility(View.GONE);
+        }
 
         conversationsView.setLayoutManager(mConversationsManager);
         conversationsView.setAdapter(mConversationsAdapter);

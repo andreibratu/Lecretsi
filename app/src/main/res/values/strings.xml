@@ -50,4 +50,6 @@
 
     <string name="friend_requests">Demandes d\'ami</string>
     <string name="largonji_friends">Lecretsi copains</string>
+    <string name="no_conversations_yet">Aucune conversation encore</string>
+    <string name="friend_request_pending">You have a pending friend request from this user</string>
 </resources>
