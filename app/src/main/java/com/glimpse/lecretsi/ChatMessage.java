@@ -5,15 +5,17 @@ public class ChatMessage {
 
     private String id;
     private String text;
-    private String date_time;
+    private String date;
+    private String time;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String id, String text, String date_time) {
+    public ChatMessage(String id, String text, String date, String time) {
         this.id = id;
         this.text = text;
-        this.date_time = date_time;
+        this.date = date;
+        this.time = time;
     }
 
     public String getId() {
@@ -32,11 +34,19 @@ public class ChatMessage {
         return text;
     }
 
-    public void setDateTime(String date_time) {
-        this.date_time = date_time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getDateTime() {
-        return date_time;
+    public String getDate() {
+        return date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getTime() {
+        return time;
     }
 }

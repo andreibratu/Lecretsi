@@ -2,6 +2,7 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -30,20 +31,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     static final User LOGGED_USER = ConversationsActivity.loggedInUser;
-
-    public static String lastMessage = "";
-    //TODO This warning sounds kinda bad
-    static TextView lastMessageSelected = null;
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder{
         TextView messageTextView;
@@ -57,23 +59,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
             messageLayout = (LinearLayout) itemView.findViewById(R.id.messageLayout);
             messagePosition = (LinearLayout) itemView.findViewById(R.id.messagePosition);
-
-            messageDateTime.setVisibility(View.GONE);
-            messageTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(lastMessageSelected != null)
-                        lastMessageSelected.setVisibility(View.GONE);
-                    if(messageDateTime.getVisibility() != View.VISIBLE){
-                        messageDateTime.setVisibility(View.VISIBLE);
-                    } else {
-                        messageDateTime.setVisibility(View.GONE);
-                    }
-                    lastMessageSelected = messageDateTime;
-                }
-            });
-
-            lastMessage = messageTextView.getText().toString();
         }
     }
 
@@ -96,10 +81,17 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private String userId;
 
+    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.getDefault());
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+    String date, time, dateTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        // TODO: Set recycler views for every group of messages
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -117,8 +109,26 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 MessageViewHolder.class,
                 mConversationReference.child("chatMessages")) {
 
+            TextView lastMessageSelected = null;
+
             @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
+            protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
+                viewHolder.messageDateTime.setVisibility(View.GONE);
+                viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(lastMessageSelected != null)
+                            lastMessageSelected.setVisibility(View.GONE);
+                        if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
+                            viewHolder.messageDateTime.setVisibility(View.VISIBLE);
+                        } else {
+                            viewHolder.messageDateTime.setVisibility(View.GONE);
+                        }
+                        lastMessageSelected = viewHolder.messageDateTime;
+                    }
+                });
+
+
                 /*
                 if(firstMessage){
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -131,15 +141,14 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     viewHolder.messageLayout.setGravity(Gravity.END);
                     viewHolder.messagePosition.setGravity(Gravity.END);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
-                    viewHolder.messageTextView.setText(chatMessage.getText());
-                    viewHolder.messageDateTime.setText(chatMessage.getDateTime());
                 } else {
                     viewHolder.messageLayout.setGravity(Gravity.START);
                     viewHolder.messagePosition.setGravity(Gravity.START);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
-                    viewHolder.messageTextView.setText(chatMessage.getText());
-                    viewHolder.messageDateTime.setText(chatMessage.getDateTime());
                 }
+
+                viewHolder.messageTextView.setText(chatMessage.getText());
+                viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
             }
         };
 
@@ -216,36 +225,62 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         //TODO @Adi how ab this ?
         Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
+        mConversationReference.child("lastMessageDate").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Long timestamp = Long.parseLong(snapshot.getValue().toString());
+                System.out.println(timestamp);
+                date = dateFormat.format(new Date(timestamp));
+                time = timeFormat.format(new Date(timestamp));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
+
         if(userId.equals("largonjiAssistant")) {
-            new Handler().postDelayed(new Runnable() {
+            mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void run() {
-                    if (lastMessage.isEmpty()) {
-                        onAssistantMessage(getString(R.string.assistant_greeting) + " " + LOGGED_USER.getName());
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue() == null) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                onAssistantMessage(getString(R.string.assistant_presentation));
+                                onAssistantMessage(getString(R.string.assistant_greeting) + " " + LOGGED_USER.getName());
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        onAssistantMessage(getString(R.string.assistant_expect_response));
+                                        onAssistantMessage(getString(R.string.assistant_presentation));
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                onAssistantMessage(getString(R.string.assistant_expect_response));
+                                            }
+                                        }, 1000);
                                     }
                                 }, 1000);
                             }
                         }, 1000);
                     }
                 }
-            }, 1000);
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
             final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
-            onUserMessage(text);
-            mMessageEditText.setText("");
             if(userId.equals("largonjiAssistant")) {
+                onUserMessage(mMessageEditText.getText().toString());
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -264,21 +299,22 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                         }, 500);
                     }
                 }, 500);
+            } else {
+                onUserMessage(text);
             }
+            mMessageEditText.setText("");
         }
+
     }
 
     public void onExpand(View view){
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
-    //Locale.getDefault for local time
-    DateFormat df = new SimpleDateFormat("d EEE • HH:mm", Locale.getDefault());
-    String date = df.format(Calendar.getInstance().getTime());
-
-    public void onUserMessage(String message){
-        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date);
+    public void onUserMessage(final String message){
+        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
+
         if(!userId.equals("largonjiAssistant")) {
             final Conversation conversation = new Conversation(LOGGED_USER, null, null);
             final DatabaseReference conversationReference = FirebaseDatabase.getInstance().getReference()
@@ -289,24 +325,26 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     if(dataSnapshot.getValue() == null) {
                         conversationReference.setValue(conversation);
                     }
-                    FirebaseDatabase.getInstance().getReference().child("users")
-                            .child(userId).child("conversations").child(LOGGED_USER.getId()).child("chatMessages").push().setValue(chatMessage);
-
+                    conversationReference.child("chatMessages").push().setValue(chatMessage);
+                    conversationReference.child("lastMessage").setValue(message);
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
-
         }
+
+        mConversationReference.child("lastMessage").setValue(message);
+        mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
     }
 
     public void onAssistantMessage(String message){
         if(message != null) {
-            ChatMessage chatMessage = new
-                    ChatMessage("largonjiAssistant", message, date);
+            ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
+            mConversationReference.child("lastMessage").setValue(message);
+            mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
         }
     }
 
