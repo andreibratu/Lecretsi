@@ -27,21 +27,20 @@
             android:id="@+id/messageBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="@android:color/background_light"
+            android:padding="12dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true">
 
             <EditText
                 android:id="@+id/messageText"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="48dp"
                 android:background="@drawable/message_box"
                 android:hint="Type a message..."
                 android:inputType="textMultiLine"
                 android:padding="7dp"
-                android:paddingEnd="25dp"
-                android:paddingStart="7dp"
+                android:paddingEnd="50dp"
+                android:paddingStart="10dp"
                 android:layout_alignParentStart="true" />
 
             <ImageButton

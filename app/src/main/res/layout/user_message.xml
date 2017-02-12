@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messageLayout"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true"
     android:gravity="end"
-    android:paddingTop="3dp"
-    android:paddingBottom="3dp"
+    android:paddingTop="1dp"
+    android:paddingBottom="1dp"
     android:paddingStart="15dp"
     android:paddingEnd="15dp">
 
@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/messagePosition"
         android:orientation="horizontal"
-        android:background="?android:selectableItemBackground"
         android:gravity="end"
         android:weightSum="1">
 
