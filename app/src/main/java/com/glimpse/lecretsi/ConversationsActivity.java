@@ -98,6 +98,7 @@ public class ConversationsActivity extends AppCompatActivity
                                 }
                             }
                             if (!userFound) {
+                                startActivity(new Intent(ConversationsActivity.this, LecretsiIntro.class));
                                 newUserListener.child(loggedInUser.getId()).setValue(loggedInUser);
                             }
                         }
@@ -264,14 +265,31 @@ public class ConversationsActivity extends AppCompatActivity
     }
 
 
+    boolean doubleBackToExitPressedOnce = false;
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, R.string.double_press_close, Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
         }
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -321,6 +339,8 @@ public class ConversationsActivity extends AppCompatActivity
     public void onDestroy() {
         super.onDestroy();
     }
+
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

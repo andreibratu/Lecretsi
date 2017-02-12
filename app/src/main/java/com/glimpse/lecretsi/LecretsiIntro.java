@@ -1,9 +1,11 @@
 package com.glimpse.lecretsi;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
@@ -50,7 +52,6 @@ public class LecretsiIntro extends AppIntro {
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
-        startActivity(new Intent(this,ConversationsActivity.class));
         finish();
     }
 
@@ -58,5 +59,23 @@ public class LecretsiIntro extends AppIntro {
     public void onSkipPressed(Fragment currentFragment) {
         startActivity(new Intent(this,ConversationsActivity.class));
         finish();
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if(!doubleBackToExitPressedOnce) {
+            Toast.makeText(this, "Please follow the tutorial or skip it", Toast.LENGTH_SHORT).show();
+        }
+        this.doubleBackToExitPressedOnce = true;
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 }
