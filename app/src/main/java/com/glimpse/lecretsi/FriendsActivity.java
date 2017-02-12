@@ -390,24 +390,44 @@ public class FriendsActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(DataSnapshot snapshot) {
                                                         if (snapshot.getValue() == null) {
-                                                            DatabaseReference friendNotAdded = FirebaseDatabase.getInstance().getReference()
-                                                                    .child("users").child(LOGGED_USER.getId()).child("friends").child(user.getId());
-                                                            friendNotAdded.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            DatabaseReference requestNotReceived = FirebaseDatabase.getInstance().getReference()
+                                                                    .child("users").child(LOGGED_USER.getId()).child("friend_requests").child(user.getId());
+                                                            requestNotReceived.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(DataSnapshot snapshot) {
-                                                                    if (snapshot.getValue() == null) {
-                                                                        friendRequest.child(user.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
-                                                                        Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
-                                                                        alertDialog.dismiss();
+                                                                    if(snapshot.getValue() == null){
+                                                                        DatabaseReference friendNotAdded = FirebaseDatabase.getInstance().getReference()
+                                                                                .child("users").child(LOGGED_USER.getId()).child("friends").child(user.getId());
+                                                                        friendNotAdded.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(DataSnapshot snapshot) {
+                                                                                if (snapshot.getValue() == null) {
+                                                                                    friendRequest.child(user.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
+                                                                                    Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
+                                                                                    alertDialog.dismiss();
+                                                                                } else {
+                                                                                    Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
+                                                                                }
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(DatabaseError databaseError) {
+                                                                            }
+                                                                        });
                                                                     } else {
-                                                                        Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
+                                                                        Toast.makeText(FriendsActivity.this, R.string.friend_request_pending, Toast.LENGTH_LONG).show();
                                                                     }
                                                                 }
 
                                                                 @Override
                                                                 public void onCancelled(DatabaseError databaseError) {
+
                                                                 }
                                                             });
+
+
+
+
                                                         } else {
                                                             Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
                                                         }
