@@ -40,10 +40,14 @@
     <string name="this_is_not_a_friend_add_one_from_button">
         Utiliser le bouton pour ajouter un ami</string>
 
-    <string name="activity_conversation">Conversations</string>
+    <string name="activity_conversation">Lecretsi</string>
     <string name="activity_friends">Copains</string>
     <string name="activity_about_us">Les auteurs</string>
     <string name="learn_activity">Practise</string>
     <string name="activity_log_out">Sortir</string>
     <string name="activity_settings">Préférences</string>
+    <string name="menu_interactivity">Interactivity</string>
+
+    <string name="friend_requests">Demandes d\'ami</string>
+    <string name="largonji_friends">Lecretsi copains</string>
 </resources>

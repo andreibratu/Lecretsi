@@ -5,7 +5,8 @@
         <item
             android:id="@+id/nav_conversations"
             android:icon="@drawable/ic_menu_conversations"
-            android:title="@string/activity_conversation" />
+            android:title="@string/activity_conversation"
+            android:checked="true" />
         <item
             android:id="@+id/nav_flashcards"
             android:icon="@drawable/ic_menu_flashcards"
@@ -16,15 +17,17 @@
             android:title="@string/activity_about_us"/>
     </group>
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_settings"
-            android:title="@string/activity_settings" />
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_menu_logout"
-            android:title="@string/activity_log_out"/>
-    </group>
+    <item android:title="@string/menu_interactivity">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_settings"
+                android:title="@string/activity_settings" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_menu_logout"
+                android:title="@string/activity_log_out"/>
+        </menu>
+    </item>
 
 </menu>

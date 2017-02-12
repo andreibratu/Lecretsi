@@ -59,7 +59,7 @@
         android:paddingStart="7dp"
         android:paddingEnd="7dp"
         android:layout_marginBottom="5dp"
-        android:text="Friend requests"
+        android:text="@string/friend_requests"
         android:textColor="@color/colorGrey"
         android:textSize="14sp"/>
 
@@ -78,7 +78,7 @@
         android:paddingEnd="7dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Largonji friends"
+        android:text="@string/largonji_friends"
         android:textColor="@color/colorGrey"
         android:textSize="14sp"/>
 
