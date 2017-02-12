@@ -2,6 +2,7 @@ package com.glimpse.lecretsi;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,7 +30,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -147,7 +154,7 @@ public class ConversationsActivity extends AppCompatActivity
         LinearLayoutManager mFConversationsManager = new LinearLayoutManager(this);
         mFConversationsManager.setStackFromEnd(true);
 
-        DatabaseReference mConversations = FirebaseDatabase.getInstance().getReference()
+        final DatabaseReference mConversations = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(loggedInUser.getId()).child("conversations");
 
         // This is the adapter for displaying user's friend requests
@@ -161,7 +168,8 @@ public class ConversationsActivity extends AppCompatActivity
                 Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
 
             @Override
-            protected void populateViewHolder(ConversationsHolder viewHolder, Conversation conversation, int position) {
+            protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
+                // TODO: Test if last message is responsive, when someone else sends one
                 viewHolder.conversationUsername.setText(conversation.getUser().getName());
                 if(conversation.getLastMessage() == null) {
                     viewHolder.lastMessage.setVisibility(View.GONE);
@@ -169,10 +177,36 @@ public class ConversationsActivity extends AppCompatActivity
                     viewHolder.lastMessage.setVisibility(View.VISIBLE);
                     viewHolder.lastMessage.setText(conversation.getLastMessage());
                 }
-                viewHolder.lastMessageDate.setText(conversation.getLastMessageDate());
+                mConversations.child(conversation.getUser().getId()).child("lastMessageDate")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Long timestamp = Long.parseLong(dataSnapshot.getValue().toString());
+                                DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.getDefault());
+                                viewHolder.lastMessageDate.setText(dateFormat.format(new Date(timestamp)));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                 Glide.with(ConversationsActivity.this)
                         .load(conversation.getUser().getPhotoURL())
                         .into(viewHolder.conversationPicture);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(ConversationsActivity.this, ChatActivity.class);
+                                intent.putExtra("userId", conversation.getUser().getId());
+                                startActivity(intent);
+                            }
+                        }, 500);
+                    }
+                });
             }
         };
 
