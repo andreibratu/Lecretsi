@@ -213,8 +213,72 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
             onUserMessage(text);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             mMessageEditText.setText("");
         }
 

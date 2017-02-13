@@ -15,6 +15,7 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 public class IntroActivity extends AppIntro {
     //Class that implements he first time tutorial
     //Kudos to @paolorotolo https://github.com/apl-devs/AppIntro
+    //BUG Images in the slide are known not to display properly on high resolution devices
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,14 +34,14 @@ public class IntroActivity extends AppIntro {
                 "Largonji ?",
                 "Vos messages sont chiffrés à l\'aide du Largonji",
                 R.drawable.question_mark,
-                getResources().getColor(R.color.lightBlue)
+                getResources().getColor(R.color.wonderous_teal)
         ));
 
         addSlide(AppIntroFragment.newInstance(
                 "Comment ?",
                 "béton => létonbi   larme =>lalmeri \n auteur =>lauleurti   l’abstrait => l’alstraitbi",
                 R.drawable.light_bulb,
-                getResources().getColor(R.color.green)
+                getResources().getColor(R.color.lightbulb_yellow)
         ));
 
         addSlide(AppIntroFragment.newInstance(
@@ -54,7 +55,7 @@ public class IntroActivity extends AppIntro {
                 "Entraine toi !",
                 "Utilisez l'assistant de Largonji pour pratiquer ... ou tout simplement déconner",
                 R.drawable.book,
-                getResources().getColor(R.color.yellow_book)
+                getResources().getColor(R.color.vast_blue)
         ));
     }
 

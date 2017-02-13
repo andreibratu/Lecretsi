@@ -234,7 +234,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
             timestampReference.setValue(ServerValue.TIMESTAMP);
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
             onUserMessage(mMessageEditText.getText().toString());
             new Handler().postDelayed(new Runnable() {
                 @Override
