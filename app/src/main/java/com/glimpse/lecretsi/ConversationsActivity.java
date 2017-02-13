@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,7 +37,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -373,24 +373,46 @@ public class ConversationsActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_conversations) {
-
-        } else if (id == R.id.nav_flashcards) {
-
+        Fragment fragment = null;
+        Class fragmentClass = null;
+        switch(item.getItemId()) {
+            case R.id.nav_conversations:
+                fragmentClass = ConversationsActivity.class;
+                break;
+            case R.id.nav_flashcards:
+                fragmentClass = ConversationsActivity.class;
+                break;
+            case R.id.nav_about:
+                fragmentClass = AboutActivity.class;
+                break;
+            case R.id.nav_logout:
+                mFirebaseAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
+            case R.id.nav_settings:
+                fragmentClass = ConversationsActivity.class;
+                break;
+            default:
+                fragmentClass = ConversationsActivity.class;
         }
 
-        else if (id == R.id.nav_about) {
-
-        } else if (id == R.id.nav_logout) {
-            mFirebaseAuth.signOut();
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        } else if (id == R.id.nav_settings) {
-
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // fragmentManager.beginTransaction().replace(R.id.content_conversations, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        item.setChecked(true);
+        // Set action bar title
+        setTitle(item.getTitle());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -24,15 +24,6 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/developers_text"
-        android:layout_marginTop="66dp"
-        android:layout_below="@+id/developers_title"
-        android:layout_alignStart="@+id/developers_title" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/testers_title"
         android:layout_below="@+id/developers_text"
         android:layout_alignStart="@+id/developers_text"
@@ -54,5 +45,31 @@
         android:layout_below="@+id/testers_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="59dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/cfa_logo"
+        android:id="@+id/imageView"
+        android:layout_alignTop="@+id/imageView3"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/developers_text"
+        android:layout_marginTop="54dp"
+        android:layout_below="@+id/developers_title"
+        android:layout_alignStart="@+id/developers_title" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/testers_text"
+        android:id="@+id/textView2" />
 
 </RelativeLayout>

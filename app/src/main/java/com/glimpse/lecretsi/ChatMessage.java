@@ -1,17 +1,16 @@
 package com.glimpse.lecretsi;
 
 
-public class ChatMessage {
+class ChatMessage {
 
     private String id;
     private String text;
     private String date;
     private String time;
 
-    public ChatMessage() {
-    }
+    //public ChatMessage() {}
 
-    public ChatMessage(String id, String text, String date, String time) {
+    ChatMessage(String id, String text, String date, String time) {
         this.id = id;
         this.text = text;
         this.date = date;
@@ -33,12 +32,12 @@ public class ChatMessage {
     public String getText() {
         return text;
     }
-
+    
     public void setDate(String date) {
         this.date = date;
     }
 
-    public String getDate() {
+    String getDate() {
         return date;
     }
 

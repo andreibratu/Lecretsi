@@ -10,20 +10,13 @@ class Largonji
     //TODO algorithmToNormal()
     private final static String VOWEL_CASE = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
     private final static String POSSIBLE_EXCEPTION = "'-";
-    private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_";
-    private static final String[] ignoreList =
+    private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_1234567890";
+    //To keep messages readable we chose not to codify these
+    private static final String[] IGNORE_LIST =
             new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
             "ils", "elles", "me", "te", "se", "en", "lui", "y",
             "nous", "vous", "leur", "moi", "toi", "elle", "soi", "eux", "l",
             "elles", "de", "du", "des", "j", "m", "t"};
-
-    /*
-        I'll leave these here in case we need them
-        "-le", "-la", "-les", "-lui", "-leur", "-moi", "-toi",
-            "-nous", "-vous", "-y", "-z-y", "-z-en", "-m", "-m'", "-t'",
-            "-m'en", "-moi-z-en", "-en-moi", "m'en", "-en-toi", "-en-nous", "-en-vous",
-            "-en-lui", "-en-leur", "-en-la", "-en-le", "-en-les",
-     */
 
     static private boolean isVowel(char x){
         return VOWEL_CASE.indexOf(x) != -1;
@@ -49,7 +42,7 @@ class Largonji
     private static String algorithmToLargonji(String input){
         String encodedText;
 
-        for(String x:ignoreList) {
+        for(String x: IGNORE_LIST) {
             if(Objects.equals(input.toLowerCase(), x))
                 return input;
         }
@@ -65,12 +58,13 @@ class Largonji
             }
 
             if(countExceptions>=2) {
-
+                //Constructions like Passes-les-me ; we don't codify the pronouns
                 Integer posException = input.indexOf(x);
                 return (algorithmToLargonji(input.substring(0,posException))+x)+
                         input.substring(posException+1,input.length());
 
             } else if(countExceptions==1) {
+                // Cases like J'ai, m'apelle
 
                 Integer posException = input.indexOf(x);
                 return (algorithmToLargonji(input.substring(0, posException)) + x) +
@@ -107,23 +101,28 @@ class Largonji
     }
 
     static String algorithmWrapper(String input) {
-        ///Input sanitisation
+        ///Remove beginning and ending whitespaces,tabs,empty lines
         input=input.trim();
         input=input.replaceAll("(?m)^\\s+$", "");
+        String answer = "";
 
+        //Handle punctuation,symbols,numbers
         for(Character x:PUNCTUATION.toCharArray())
             if (input.indexOf(x) != -1) {
                 if (input.indexOf(x) == input.length() - 1)
+                    //Exception at the end : madame?
                     return algorithmWrapper(input.substring(0, input.indexOf(x))) + x;
                 if (input.indexOf(x) == 0)
+                    //Exception at the start : ?madame
                     return x + algorithmWrapper(input.substring(1, input.indexOf(x)));
 
-
+                //Exception in the middle : mad?ame
+                //Handle parantheses nicely : ok{madame}
                 return algorithmWrapper(input.substring(0, input.indexOf(x))) + x +
                         algorithmWrapper(input.substring(input.indexOf(x) + 1, input.length()));
             }
 
-        String answer = "";
+        ///Seperate words and send them to the actual algorithm
         int whereIsWhiteSpace = input.indexOf(' ');
         while(whereIsWhiteSpace!=-1 && input.length()>0) {
             String aux = input.substring(0,whereIsWhiteSpace);
@@ -132,6 +131,7 @@ class Largonji
             whereIsWhiteSpace = input.indexOf(' ');
         }
 
+        //Only one word left in the input
         answer += algorithmToLargonji(input);
 
         return answer;

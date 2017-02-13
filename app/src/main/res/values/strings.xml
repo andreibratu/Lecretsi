@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Lecretsi</string>
-    <string name="title_activity_conversations">Lecretsi</string>
+    <string name="title_activity_conversations">Coversations</string>
 
 
     <string name="login_lecretsi_greeting">Bienvenue à Lecretsi</string>
@@ -55,10 +55,25 @@
     <string name="double_press_close">Press the back button again to close the app</string>
     <string name="menu_conversation">Conversation</string>
     <string name="conversation_menu">Conversation</string>
+
+
     <string name="archive">Archive</string>
     <string name="delete">Delete</string>
     <string name="block">Block</string>
     <string name="dialog_delete_message">Once you delete your copy of the conversation, it cannot be undone</string>
     <string name="dialog_delete_title">Delete this conversation?</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">cancel</string><string name="assistant_anything_else">Anything else?</string>
+
+
+    <string name="assistant_aything_else">Anything else?</string>
+    <string name="assistant_anything_else2">What else?</string>
+    <string name="error_self_request">You can\'t send a friend request to yourself ^_^</string>
+    <string name="assistant_start_phrase">Here\'s your phrase in Largonji</string>
+
+    <string name="about_dev_title">Les auteurs</string>
+    <string name="about_dev_text">
+        Bratu Andrei : https://github.com/andreibratu\nAdi Popa : https://github.com/AdiPoPa</string>
+    <string name="about_testers_title">Pour nos fidèles testeurs</string>
+    <string name="about_testers_text">Anca Diana\nPicovici Luca</string>
+    <string name="about_team_glimpse">Team Glimpse 2017</string>
 </resources>

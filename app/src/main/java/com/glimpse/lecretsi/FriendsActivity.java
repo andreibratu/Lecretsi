@@ -2,9 +2,6 @@ package com.glimpse.lecretsi;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -12,11 +9,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,23 +19,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide; //library for formatting string to URI and extract the photo
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsActivity extends AppCompatActivity {
 
-    static final User LOGGED_USER = ConversationsActivity.loggedInUser;
+    final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -364,60 +357,79 @@ public class FriendsActivity extends AppCompatActivity {
                                     return;
                                 }
 
-                                /*if (friendEmailText.equals(LOGGED_USER.getEmail())) {
-                                    // TODO: Andrei, schimba string-ul :P
-                                    Toast.makeText(FriendsActivity.this, "You can't send a friend request to yourself ^_^", Toast.LENGTH_LONG).show();
+                                //the user sent a friend request to themselves
+                                if (friendEmailText.equals(LOGGED_USER.getEmail())) {
+                                    Toast.makeText(FriendsActivity.this, R.string.error_self_request, Toast.LENGTH_LONG).show();
                                     return;
-                                }*/
+                                }
 
+
+                                //handling friend requests
                                 final DatabaseReference friendRequest = FirebaseDatabase.getInstance().getReference().child("users");
                                 friendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
+
                                         Boolean userFound = false;
                                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                            // TODO: check if the other user didnt send a request first
                                             final User user = postSnapshot.getValue(User.class);
+
                                             if (user.getEmail().equals(friendEmailText)) {
+                                                ///queried user exists in db
                                                 userFound = true;
+
+                                                //checking for conflicts
                                                 DatabaseReference requestNotSent = FirebaseDatabase.getInstance().getReference()
                                                         .child("users").child(user.getId()).child("friend_requests").child(LOGGED_USER.getId());
                                                 requestNotSent.addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot snapshot) {
                                                         if (snapshot.getValue() == null) {
+                                                            //check if this is not a duplicate friend request
+
+
                                                             DatabaseReference requestNotReceived = FirebaseDatabase.getInstance().getReference()
                                                                     .child("users").child(LOGGED_USER.getId()).child("friend_requests").child(user.getId());
                                                             requestNotReceived.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(DataSnapshot snapshot) {
+
+
                                                                     if(snapshot.getValue() == null){
+                                                                        //check if they are already friends
+
                                                                         DatabaseReference friendNotAdded = FirebaseDatabase.getInstance().getReference()
                                                                                 .child("users").child(LOGGED_USER.getId()).child("friends").child(user.getId());
                                                                         friendNotAdded.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                             @Override
                                                                             public void onDataChange(DataSnapshot snapshot) {
                                                                                 if (snapshot.getValue() == null) {
+                                                                                    //everything is ok
+
                                                                                     friendRequest.child(user.getId()).child("friend_requests").child(LOGGED_USER.getId()).setValue(LOGGED_USER);
                                                                                     Toast.makeText(getApplicationContext(), R.string.friend_request_sent, Toast.LENGTH_LONG).show();
                                                                                     alertDialog.dismiss();
                                                                                 } else {
+                                                                                    //they are already friends
+
                                                                                     Toast.makeText(FriendsActivity.this, R.string.friend_already_added, Toast.LENGTH_LONG).show();
                                                                                 }
                                                                             }
 
                                                                             @Override
                                                                             public void onCancelled(DatabaseError databaseError) {
+                                                                                //db errors would be handled here
                                                                             }
                                                                         });
                                                                     } else {
+                                                                        //the queried user had already sent a friend request to LOGGED_USER
                                                                         Toast.makeText(FriendsActivity.this, R.string.friend_request_pending, Toast.LENGTH_LONG).show();
                                                                     }
                                                                 }
 
                                                                 @Override
                                                                 public void onCancelled(DatabaseError databaseError) {
-
+                                                                    //ditto
                                                                 }
                                                             });
 
@@ -425,6 +437,7 @@ public class FriendsActivity extends AppCompatActivity {
 
 
                                                         } else {
+                                                            //a friend request to this user had already been sent
                                                             Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
                                                         }
                                                     }
@@ -436,13 +449,15 @@ public class FriendsActivity extends AppCompatActivity {
                                             }
                                         }
                                         if (!userFound) {
+                                            //queried user does not exist
+
                                             Toast.makeText(getApplicationContext(), R.string.user_not_found, Toast.LENGTH_LONG).show();
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
-
+                                        //ditto
                                     }
                                 });
                             }
@@ -497,8 +512,4 @@ public class FriendsActivity extends AppCompatActivity {
         ConversationsActivity.userActive = false;
     }
 
-    /* TODO acceptFriendRequest
-    void acceptFriendRequest(User whoseFriendRequest, User receiverFriendRequest) {
-
-    }*/
 }

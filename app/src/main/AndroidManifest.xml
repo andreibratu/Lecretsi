@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".NewMessageService" />
 
-        <activity android:name=".LecretsiIntro" />
+        <activity android:name=".IntroActivity" />
         <activity
             android:name=".ConversationsActivity"
             android:label="@string/activity_conversation"
@@ -48,7 +48,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ConversationsActivity" />
         </activity>
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".AboutActivity" android:label="@string/activity_about_us"/>
+
     </application>
 
 </manifest>
