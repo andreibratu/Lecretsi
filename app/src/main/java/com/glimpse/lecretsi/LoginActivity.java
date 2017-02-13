@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements
                                     getString(R.string.login_connection_failed),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(LoginActivity.this, ConversationsActivity.class));
+                            startActivity(new Intent(LoginActivity.this, LecretsiIntro.class));
                             finish();
                         }
                     }

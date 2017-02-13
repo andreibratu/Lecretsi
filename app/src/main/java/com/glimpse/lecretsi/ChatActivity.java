@@ -55,6 +55,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    public static Boolean inChat;
+
     // This is the activity that's gonna enlist all the different conversations
 
     ImageButton mSendButton, expandButton;
@@ -326,7 +328,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                     conversationReference.child("chatMessages").push().setValue(chatMessage);
                     conversationReference.child("lastMessage").setValue(message);
-                    mConversationReference.child("lastMessageDate").setValue(date);
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -336,7 +337,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         mConversationReference.child("lastMessage").setValue(message);
-        mConversationReference.child("lastMessageDate").setValue(date);
     }
 
     public void onAssistantMessage(String message){
@@ -346,7 +346,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
-            mConversationReference.child("lastMessageDate").setValue(date);
         }
     }
 
@@ -373,13 +372,16 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onPause() {
         super.onPause();
+        inChat = false;
+        ConversationsActivity.userActive = false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        ConversationsActivity.userActive = true;
+        inChat = true;
         databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
-
     }
 
     @Override
