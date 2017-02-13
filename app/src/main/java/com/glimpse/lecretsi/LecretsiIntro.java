@@ -52,6 +52,7 @@ public class LecretsiIntro extends AppIntro {
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
+        startActivity(new Intent(this,ConversationsActivity.class));
         finish();
     }
 

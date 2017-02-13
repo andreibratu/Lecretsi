@@ -374,7 +374,7 @@ public class FriendsActivity extends AppCompatActivity {
                                 friendRequest.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        boolean userFound = false;
+                                        Boolean userFound = false;
                                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                             // TODO: check if the other user didnt send a request first
                                             final User user = postSnapshot.getValue(User.class);
@@ -483,6 +483,18 @@ public class FriendsActivity extends AppCompatActivity {
             friendRequestsText = (TextView) itemView.findViewById(R.id.friendRequestsText);
             friendsText = (TextView) itemView.findViewById(R.id.friendsText);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ConversationsActivity.userActive = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ConversationsActivity.userActive = false;
     }
 
     /* TODO acceptFriendRequest

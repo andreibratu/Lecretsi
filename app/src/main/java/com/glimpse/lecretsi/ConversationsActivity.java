@@ -40,6 +40,11 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationsActivity extends AppCompatActivity
@@ -103,7 +108,6 @@ public class ConversationsActivity extends AppCompatActivity
                                 }
                             }
                             if (!userFound) {
-                                startActivity(new Intent(ConversationsActivity.this, LecretsiIntro.class));
                                 newUserListener.child(loggedInUser.getId()).setValue(loggedInUser);
                             }
                         }
@@ -113,14 +117,13 @@ public class ConversationsActivity extends AppCompatActivity
 
                         }
                     });
+
+            startService(new Intent(this,NewMessageService.class));
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
-
-
-        startService(new Intent(this,NewMessageService.class));
 
         // TODO: Set version and make the user update
 
@@ -185,7 +188,7 @@ public class ConversationsActivity extends AppCompatActivity
         emptyConversationsBackground.setVisibility(View.GONE);
 
         mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
-                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
+                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations.orderByChild("lastMessageDate")) {
 
             @Override
             protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
@@ -213,7 +216,9 @@ public class ConversationsActivity extends AppCompatActivity
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                //viewHolder.lastMessageDate.setText(dataSnapshot.getValue().toString());
+                                Long timestamp = Long.parseLong(dataSnapshot.getValue().toString());
+                                DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
+                                viewHolder.lastMessageDate.setText(dateFormat.format(new Date(timestamp)));
                             }
 
                             @Override
@@ -399,14 +404,14 @@ public class ConversationsActivity extends AppCompatActivity
 
     @Override
     public void onPause() {
-        userActive = false;
         super.onPause();
+        userActive = false;
     }
 
     @Override
     public void onResume() {
-        userActive = true;
         super.onResume();
+        userActive = true;
     }
 
     @Override

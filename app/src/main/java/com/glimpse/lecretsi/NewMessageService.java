@@ -1,12 +1,19 @@
 package com.glimpse.lecretsi;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -18,25 +25,33 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.ExecutionException;
 
 
-public class NewMessageService extends Service implements Runnable {
+public class NewMessageService extends Service{
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(getApplicationContext(), "New message service started", Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void run() {
-
+    public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseReference mReference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("conversations");
 
+        final NotificationCompat.Builder newNotificationBuilder = new NotificationCompat.Builder(getApplicationContext());
+        final NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        final Uri notifSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Intent openConversationActivity = new Intent(getApplicationContext()
+                , ConversationsActivity.class);
+        final PendingIntent resultPendingActivity =
+                PendingIntent.getActivity(
+                        getApplicationContext(), 0, openConversationActivity,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        newNotificationBuilder.setContentIntent(resultPendingActivity);
 
         mReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -64,34 +79,32 @@ public class NewMessageService extends Service implements Runnable {
                                 } catch (InterruptedException | ExecutionException e) {
                                     e.printStackTrace();
                                 }
-                                Intent openConversationActivity = new Intent(getApplicationContext()
-                                        , ConversationsActivity.class);
-                                PendingIntent resultPendingActivity =
-                                        PendingIntent.getActivity(
-                                                getApplicationContext(), 0, openConversationActivity,
-                                                PendingIntent.FLAG_UPDATE_CURRENT
-                                        );
 
-                                NotificationCompat.Builder newNotificationBuilder
-                                        = new NotificationCompat.Builder(getApplicationContext());
-                                newNotificationBuilder.setSmallIcon(R.drawable.ic_menu_conversations);
+                                newNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                                 newNotificationBuilder.setLargeIcon(bitmap);
                                 newNotificationBuilder.setContentTitle(sender.getName());
                                 newNotificationBuilder.setContentText(text);
-                                newNotificationBuilder.setContentIntent(resultPendingActivity);
+                                newNotificationBuilder.setSound(notifSound);
+                                newNotificationBuilder.setVibrate(new long[] { 1000, 1000 });
+                                newNotificationBuilder.setLights(Color.GREEN, 3000, 3000);
 
-                                // Sets an ID for the notification
-                                int mNotificationId = 1;
-                                // Gets an instance of the NotificationManager service
-                                NotificationManager mNotifyMgr =
-                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                Notification notification = newNotificationBuilder.build();
+                                notification.flags = Notification.FLAG_AUTO_CANCEL;
                                 // Builds the notification and issues it.
-                                mNotifyMgr.notify(mNotificationId, newNotificationBuilder.build());
+                                mNotifyMgr.notify(0, notification);
                             }
                         });
-
-
-
+                    }
+                } else {
+                    if(!ChatActivity.inChat) {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+                        builder.setSound(notifSound);
+                        Notification notification = newNotificationBuilder.build();
+                        notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE;
+                        mNotifyMgr.notify(1234, notification);
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        // Vibrate for 500 milliseconds
+                        v.vibrate(500);
                     }
                 }
             }
@@ -111,18 +124,12 @@ public class NewMessageService extends Service implements Runnable {
 
             }
         });
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        run();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(getApplicationContext(),"New message service stopped", Toast.LENGTH_LONG).show();
     }
 
     @Nullable
