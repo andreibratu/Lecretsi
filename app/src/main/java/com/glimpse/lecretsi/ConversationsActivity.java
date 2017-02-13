@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -47,8 +48,8 @@ public class ConversationsActivity extends AppCompatActivity
     // This is the activity that's gonna contain all the conversations
 
     public static User loggedInUser;
-
     private GoogleApiClient mGoogleApiClient;
+    public static Boolean userActive=false;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -118,7 +119,8 @@ public class ConversationsActivity extends AppCompatActivity
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
 
-        // TODO: startService(new Intent(this, NewMessageService.class));
+
+        startService(new Intent(this,NewMessageService.class));
 
         // TODO: Set version and make the user update
 
@@ -183,7 +185,7 @@ public class ConversationsActivity extends AppCompatActivity
         emptyConversationsBackground.setVisibility(View.GONE);
 
         mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
-                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations.orderByPriority()) {
+                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations) {
 
             @Override
             protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
@@ -211,7 +213,7 @@ public class ConversationsActivity extends AppCompatActivity
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                viewHolder.lastMessageDate.setText(dataSnapshot.getValue().toString());
+                                //viewHolder.lastMessageDate.setText(dataSnapshot.getValue().toString());
                             }
 
                             @Override
@@ -331,6 +333,7 @@ public class ConversationsActivity extends AppCompatActivity
 
         conversationsView.setLayoutManager(mConversationsManager);
         conversationsView.setAdapter(mConversationsAdapter);
+
     }
 
 
@@ -396,11 +399,13 @@ public class ConversationsActivity extends AppCompatActivity
 
     @Override
     public void onPause() {
+        userActive = false;
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        userActive = true;
         super.onResume();
     }
 

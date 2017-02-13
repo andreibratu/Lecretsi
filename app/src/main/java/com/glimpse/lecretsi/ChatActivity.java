@@ -79,6 +79,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     String date, time;
 
+    private Long timestamp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,10 +236,21 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         databaseReference.child("serverTimestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Long timestamp = Long.parseLong(snapshot.getValue().toString());
+                timestamp = Long.parseLong(snapshot.getValue().toString());
                 System.out.println(timestamp);
                 date = dateFormat.format(new Date(timestamp));
                 time = timeFormat.format(new Date(timestamp));
+                mConversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -245,6 +258,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
+
 
         if(userId.equals("largonjiAssistant")) {
             mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -316,7 +330,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void onUserMessage(final String message){
-        databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
 
