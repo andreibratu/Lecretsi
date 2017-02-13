@@ -56,8 +56,8 @@ public class NewMessageService extends Service{
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     final Conversation mConversation = dataSnapshot.getValue(Conversation.class);
-                    if (!ConversationsActivity.userActive) {
-                        if (mConversation != null) {
+                    if (!MainActivity.userActive) {
+                        if (mConversation != null && !mConversation.getUser().getId().equals("largonjiAssistant")) {
                             Glide.with(getApplicationContext())
                                     .load(mConversation.getUser().getPhotoURL())
                                     .asBitmap()

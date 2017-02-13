@@ -17,10 +17,8 @@ public class IntroActivity extends AppIntro {
     //Kudos to @paolorotolo https://github.com/apl-devs/AppIntro
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         ///Setting the tutorial slides
         ///Yea that simple - this guy is a hero
@@ -60,13 +58,13 @@ public class IntroActivity extends AppIntro {
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
-        startActivity(new Intent(this,ConversationsActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
     @Override
     public void onSkipPressed(Fragment currentFragment) {
-        startActivity(new Intent(this,ConversationsActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 

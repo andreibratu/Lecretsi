@@ -9,44 +9,9 @@
     tools:context="com.glimpse.lecretsi.ConversationsActivity"
     tools:showIn="@layout/app_bar_conversations">
 
-    <LinearLayout
-        android:id="@+id/emptyConversationsBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/gentleman_figure"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_conversations_yet"
-            android:layout_marginBottom="5dp"
-            android:textSize="18sp"
-            android:textColor="@color/colorDarkGrey"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Open up a chat and it will show up here"
-            android:textSize="14sp"
-            android:textColor="@color/colorGrey"/>
-
-
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/conversationsView"
-        android:layout_width="match_parent"
+    <FrameLayout
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_width="match_parent"
+        android:id="@+id/fragmentContent" />
 
 </RelativeLayout>

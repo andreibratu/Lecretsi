@@ -17,30 +17,21 @@
         android:theme="@style/AppTheme">
         <service android:name=".NewMessageService" />
 
-        <activity android:name=".IntroActivity" />
-        <activity
-            android:name=".ConversationsActivity"
-            android:label="@string/activity_conversation"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".IntroActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ChatActivity"
-            android:parentActivityName=".ConversationsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ConversationsActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".AssistantActivity"
-            android:parentActivityName=".ConversationsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ConversationsActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".LoginActivity"
@@ -49,15 +40,18 @@
         <activity
             android:name=".FriendsActivity"
             android:label="@string/activity_friends"
-            android:parentActivityName=".ConversationsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ConversationsActivity" />
+                android:value=".MainActivity" />
         </activity>
-        <activity
-            android:name=".AboutActivity"
-            android:label="@string/activity_about_us" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter></activity>
     </application>
 
 </manifest>

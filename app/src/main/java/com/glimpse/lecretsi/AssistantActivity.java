@@ -233,6 +233,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
 
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
+            mMessageRecyclerView.scrollToPosition(mFirebaseAdapter.getItemCount() - 1);
             timestampReference.setValue(ServerValue.TIMESTAMP);
             final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
             onUserMessage(mMessageEditText.getText().toString());
@@ -249,11 +250,11 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
                                 public void run() {
                                     randomEndPhrase();
                                 }
-                            }, 1000);
+                            }, 500);
                         }
-                    }, 1000);
+                    }, 500);
                 }
-            }, 1000);
+            }, 500);
             mMessageEditText.setText("");
         }
 
@@ -293,25 +294,21 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onStart() {
         super.onStart();
-        ConversationsActivity.userActive = true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        ConversationsActivity.userActive = false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ConversationsActivity.userActive = true;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ConversationsActivity.userActive = false;
     }
 
     @Override

@@ -501,13 +501,13 @@ public class FriendsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ConversationsActivity.userActive = true;
+        MainActivity.userActive = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ConversationsActivity.userActive = false;
+        MainActivity.userActive = false;
     }
 
 }
