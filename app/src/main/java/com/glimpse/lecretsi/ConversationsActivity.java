@@ -240,6 +240,7 @@ public class ConversationsActivity extends AppCompatActivity
                                     intent = new Intent(ConversationsActivity.this, AssistantActivity.class);
                                 } else {
                                     intent = new Intent(ConversationsActivity.this, ChatActivity.class);
+                                    intent.putExtra("friendUserID", conversation.getUser().getId());
                                 }
                                 startActivity(intent);
                             }

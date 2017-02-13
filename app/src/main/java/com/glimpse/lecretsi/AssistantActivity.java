@@ -59,7 +59,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     private LinearLayoutManager mLinearLayoutManager;
     private EditText mMessageEditText;
 
-    private DatabaseReference mConversationReference, databaseReference;
+    private DatabaseReference mConversationReference, timestampReference;
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
 
@@ -75,12 +75,11 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // TODO: Set recycler views for every group of messages
+        setTitle("Largonji Activity");
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
-        mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         mConversationReference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(LOGGED_USER.getId()).child("conversations").child("largonjiAssistant");
@@ -95,7 +94,21 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
             ChatMessage lastMessage = null;
 
             @Override
-            protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
+            protected void populateViewHolder(final MessageViewHolder viewHolder, final ChatMessage chatMessage, int position) {
+                viewHolder.messageTextView.setText(chatMessage.getText());
+                viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
+
+                if (chatMessage.getId().equals(LOGGED_USER.getId())) {
+                    viewHolder.messageLayout.setGravity(Gravity.END);
+                    viewHolder.messagePosition.setGravity(Gravity.END);
+                    viewHolder.messagePosition.setPadding(150, 0, 0, 0);
+                    viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
+                } else {
+                    viewHolder.messageLayout.setGravity(Gravity.START);
+                    viewHolder.messagePosition.setGravity(Gravity.START);
+                    viewHolder.messagePosition.setPadding(0, 0, 150, 0);
+                    viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
+                }
                 viewHolder.messageDateTime.setVisibility(View.GONE);
                 viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -116,28 +129,12 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
                     }
                 });
 
-                viewHolder.messageTextView.setText(chatMessage.getText());
-                viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
-
-                if (chatMessage.getId().equals(LOGGED_USER.getId())) {
-                    viewHolder.messageLayout.setGravity(Gravity.END);
-                    viewHolder.messagePosition.setGravity(Gravity.END);
-                    viewHolder.messagePosition.setPadding(100, 0, 0, 0);
-                    viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
-                } else {
-                    viewHolder.messageLayout.setGravity(Gravity.START);
-                    viewHolder.messagePosition.setGravity(Gravity.START);
-                    viewHolder.messagePosition.setPadding(0, 0, 100, 0);
-                    viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
-                }
-
                 lastMessage = chatMessage;
 
             }
         };
 
         mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            //adapter that queries and displays messages from db
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -153,38 +150,15 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
             }
         });
 
+        mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
 
         mMessageEditText = (EditText) findViewById(R.id.messageText);
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         expandButton = (ImageButton) findViewById(R.id.expandButton);
 
-        mMessageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = mMessageEditText.getText().toString();
-                if(text.isEmpty()){
-                    expandButton.setVisibility(View.VISIBLE);
-                    mSendButton.setVisibility(View.GONE);
-                } else {
-                    mSendButton.setVisibility(View.VISIBLE);
-                    expandButton.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-        databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").addValueEventListener(new ValueEventListener() {
+        timestampReference = FirebaseDatabase.getInstance().getReference().child("users").child(LOGGED_USER.getId()).child("serverTimestamp");
+        timestampReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 timestamp = Long.parseLong(snapshot.getValue().toString());
@@ -198,17 +172,25 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
             }
         });
 
-        databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+        timestampReference.setValue(ServerValue.TIMESTAMP);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = mMessageEditText.getText().toString();
+                if(text.isEmpty()){
+                    expandButton.setVisibility(View.VISIBLE);
+                    mSendButton.setVisibility(View.GONE);
+                } else {
+                    mSendButton.setVisibility(View.VISIBLE);
+                    expandButton.setVisibility(View.GONE);
+                }
+                timestampReference.setValue(ServerValue.TIMESTAMP);
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
@@ -249,10 +231,9 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
         });
     }
 
-
-    //code that handles the translation of phrase by the assistant
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
+            timestampReference.setValue(ServerValue.TIMESTAMP);
             final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
             onUserMessage(mMessageEditText.getText().toString());
             new Handler().postDelayed(new Runnable() {
@@ -287,7 +268,6 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
 
     public void onAssistantMessage(String message){
         if(message != null) {
-            databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
@@ -313,6 +293,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onStart() {
         super.onStart();
+        ConversationsActivity.userActive = true;
     }
 
     @Override
@@ -330,6 +311,12 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ConversationsActivity.userActive = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
