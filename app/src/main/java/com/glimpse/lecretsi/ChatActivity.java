@@ -216,8 +216,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         //TODO @Adi how ab this ?
         //Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(LOGGED_USER.getId());
-        databaseReference.child("serverTimestamp").addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 timestamp = Long.parseLong(snapshot.getValue().toString());
@@ -228,6 +228,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+                        databaseReference.child(userId).child("conversations").child("lastMessageDate").setValue(timestamp.toString());
                     }
 
                     @Override
@@ -282,7 +283,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     //code that handles the translation of phrase by the assistant
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
             if(userId.equals("largonjiAssistant")) {
                 onUserMessage(mMessageEditText.getText().toString());
                 new Handler().postDelayed(new Runnable() {
