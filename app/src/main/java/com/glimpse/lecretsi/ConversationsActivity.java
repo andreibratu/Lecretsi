@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,7 +35,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -103,7 +101,7 @@ public class ConversationsActivity extends AppCompatActivity
                                 }
                             }
                             if (!userFound) {
-                                startActivity(new Intent(ConversationsActivity.this, LecretsiIntro.class));
+                                startActivity(new Intent(ConversationsActivity.this, IntroActivity.class));
                                 newUserListener.child(loggedInUser.getId()).setValue(loggedInUser);
                             }
                         }

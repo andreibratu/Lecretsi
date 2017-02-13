@@ -1,17 +1,14 @@
 package com.glimpse.lecretsi;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +21,7 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,9 +34,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+//We will use the db to sync all clients' message dates else messages won't appear in order
+
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    static final User LOGGED_USER = ConversationsActivity.loggedInUser;
+    final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder{
         TextView messageTextView;
@@ -59,9 +59,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     ImageButton mSendButton, expandButton;
     RelativeLayout chatLayout;
-    private BottomSheetBehavior mBottomSheetBehavior;
-
-    private static final String TAG = "ChatActivity";
 
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -69,10 +66,9 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private DatabaseReference mConversationReference, databaseReference;
 
-    private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder>
-            mFirebaseAdapter;
+    private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
 
-    private String userId;
+    private String userId; //id of the chat partner
 
     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
     DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
@@ -113,6 +109,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ///Tap a message to see/hide the date it was sent
 
                         if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
                             viewHolder.messageDateTime.setVisibility(View.VISIBLE);
@@ -126,6 +123,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                         lastMessageSelected = viewHolder;
                     }
                 });
+
+                //display the message in chat
 
                 viewHolder.messageTextView.setText(chatMessage.getText());
                 viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
@@ -160,6 +159,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         };
 
         mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            //adapter that queries and displays messages from db
+
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
@@ -177,11 +178,11 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
+        //TODO @Adi document the code starting from here
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
 
         chatLayout = (RelativeLayout) findViewById(R.id.chatLayout);
-        //messagesLayout = (LinearLayout)findViewById(R.id.messagesLayout);
 
         mMessageEditText = (EditText) findViewById(R.id.messageText);
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
@@ -211,26 +212,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-        View bottomSheet = findViewById( R.id.bottom_sheet );
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        mBottomSheetBehavior.setPeekHeight(0);
-
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mBottomSheetBehavior.setPeekHeight(0);
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            }
-        });
-
         //TODO @Adi how ab this ?
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
+        //Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/assistantfont.ttf");
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(LOGGED_USER.getId());
         databaseReference.child("serverTimestamp").addValueEventListener(new ValueEventListener() {
@@ -259,7 +242,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-
+        //code for handling assistant's logic
         if(userId.equals("largonjiAssistant")) {
             mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -294,6 +277,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+
+    //code that handles the translation of phrase by the assistant
     public void onSend(View view){
         if(!mMessageEditText.getText().toString().isEmpty()) {
             final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
@@ -323,10 +308,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             mMessageEditText.setText("");
         }
 
-    }
-
-    public void onExpand(View view){
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     public void onUserMessage(final String message){
@@ -360,6 +341,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void onAssistantMessage(String message){
         if(message != null) {
+            //get time from server
             databaseReference.child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
@@ -371,15 +353,15 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     public void randomStartPhrase(){
         int randomNum = 1 + (int)(Math.random() * 3);
         String startPhrases[] = new String[4];
-        startPhrases[1] = "Here's your phrase in Largonji";
+        startPhrases[1] = getString(R.string.assistant_start_phrase);
         onAssistantMessage(startPhrases[randomNum]);
     }
 
     public void randomEndPhrase(){
         int randomNum = 1 + (int)(Math.random() * 3);
         String endPhrases[] = new String[4];
-        endPhrases[1] = "Anything else?";
-        endPhrases[2] = "What else?";
+        endPhrases[1] = getString(R.string.assistant_aything_else);
+        endPhrases[2] = getString(R.string.assistant_anything_else2);
         onAssistantMessage(endPhrases[randomNum]);
     }
 
@@ -407,9 +389,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        // An unresolvable error has occurred and Google APIs
+        // (including Sign-In) will not be available
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 

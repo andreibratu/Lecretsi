@@ -60,5 +60,9 @@
     <string name="block">Block</string>
     <string name="dialog_delete_message">Once you delete your copy of the conversation, it cannot be undone</string>
     <string name="dialog_delete_title">Delete this conversation?</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">cancel</string><string name="assistant_anything_else">Anything else?</string>
+    <string name="assistant_aything_else">Anything else?</string>
+    <string name="assistant_anything_else2">What else?</string>
+    <string name="error_self_request">You can\'t send a friend request to yourself ^_^</string>
+    <string name="assistant_start_phrase">Here\'s your phrase in Largonji</string>
 </resources>
