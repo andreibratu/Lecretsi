@@ -1,6 +1,5 @@
 package com.glimpse.lecretsi;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,9 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-//We will use the db to sync all clients' message dates else messages won't appear in order
-
-public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class AssistantActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
 
@@ -62,11 +59,9 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     private LinearLayoutManager mLinearLayoutManager;
     private EditText mMessageEditText;
 
-    private DatabaseReference myConversationReference, friendConversationReference, databaseReference;
+    private DatabaseReference mConversationReference, timestampReference;
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
-
-    private String friendUserID;
 
     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
     DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
@@ -80,31 +75,26 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // TODO: Set recycler views for every group of messages
+        setTitle("Largonji Activity");
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
 
-        Intent intent = getIntent();
-        friendUserID = intent.getStringExtra("friendUserID");
-
-        myConversationReference = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(LOGGED_USER.getId()).child("conversations").child(friendUserID);
-        friendConversationReference = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(friendUserID).child("conversations").child(LOGGED_USER.getId());
+        mConversationReference = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(LOGGED_USER.getId()).child("conversations").child("largonjiAssistant");
 
         mFirebaseAdapter = new FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder>(
                 ChatMessage.class,
                 R.layout.user_message,
                 MessageViewHolder.class,
-                myConversationReference.child("chatMessages")) {
+                mConversationReference.child("chatMessages")) {
 
             MessageViewHolder lastMessageSelected = null;
             ChatMessage lastMessage = null;
 
             @Override
-            protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
+            protected void populateViewHolder(final MessageViewHolder viewHolder, final ChatMessage chatMessage, int position) {
                 viewHolder.messageTextView.setText(chatMessage.getText());
                 viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
 
@@ -167,8 +157,8 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
         expandButton = (ImageButton) findViewById(R.id.expandButton);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-        databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").addValueEventListener(new ValueEventListener() {
+        timestampReference = FirebaseDatabase.getInstance().getReference().child("users").child(LOGGED_USER.getId()).child("serverTimestamp");
+        timestampReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 timestamp = Long.parseLong(snapshot.getValue().toString());
@@ -182,20 +172,20 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-        databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+        timestampReference.setValue(ServerValue.TIMESTAMP);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = mMessageEditText.getText().toString();
-                if (text.isEmpty()) {
+                if(text.isEmpty()){
                     expandButton.setVisibility(View.VISIBLE);
                     mSendButton.setVisibility(View.GONE);
                 } else {
                     mSendButton.setVisibility(View.VISIBLE);
                     expandButton.setVisibility(View.GONE);
                 }
-                friendConversationReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+                timestampReference.setValue(ServerValue.TIMESTAMP);
             }
 
             @Override
@@ -209,33 +199,31 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-    }
-
-    public void onSend(View view){
-        if(!mMessageEditText.getText().toString().isEmpty()) {
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
-            onUserMessage(text);
-            mMessageEditText.setText("");
-        }
-
-    }
-
-    public void onUserMessage(final String message){
-        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
-        myConversationReference.child("chatMessages").push().setValue(chatMessage);
-        myConversationReference.child("lastMessage").setValue(message);
-        myConversationReference.child("lastMessageDate").setValue(timestamp.toString());
-        friendConversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null) {
-                    Conversation conversation = new Conversation(LOGGED_USER, null, null);
-                    friendConversationReference.setValue(conversation);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAssistantMessage(getString(R.string.assistant_greeting) + " " + LOGGED_USER.getName());
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onAssistantMessage(getString(R.string.assistant_presentation));
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            onAssistantMessage(getString(R.string.assistant_expect_response));
+                                        }
+                                    }, 1000);
+                                }
+                            }, 1000);
+                        }
+                    }, 1000);
                 }
-                friendConversationReference.child("chatMessages").push().setValue(chatMessage);
-                friendConversationReference.child("lastMessage").setValue(message);
-                friendConversationReference.child("lastMessageDate").setValue(timestamp.toString());
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -243,9 +231,69 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+    public void onSend(View view){
+        if(!mMessageEditText.getText().toString().isEmpty()) {
+            timestampReference.setValue(ServerValue.TIMESTAMP);
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
+            onUserMessage(mMessageEditText.getText().toString());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    randomStartPhrase();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAssistantMessage(text);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    randomEndPhrase();
+                                }
+                            }, 1000);
+                        }
+                    }, 1000);
+                }
+            }, 1000);
+            mMessageEditText.setText("");
+        }
+
+    }
+
+    public void onUserMessage(final String message){
+        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
+        mConversationReference.child("chatMessages").push().setValue(chatMessage);
+        mConversationReference.child("lastMessage").setValue(message);
+        mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+    }
+
+    public void onAssistantMessage(String message){
+        if(message != null) {
+            ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
+            mConversationReference.child("chatMessages").push().setValue(chatMessage);
+            mConversationReference.child("lastMessage").setValue(message);
+            mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+        }
+    }
+
+    public void randomStartPhrase(){
+        int randomNum = 1 + (int)(Math.random() * 3);
+        String startPhrases[] = new String[4];
+        startPhrases[1] = getString(R.string.assistant_start_phrase);
+        onAssistantMessage(startPhrases[randomNum]);
+    }
+
+    public void randomEndPhrase(){
+        int randomNum = 1 + (int)(Math.random() * 3);
+        String endPhrases[] = new String[4];
+        endPhrases[1] = getString(R.string.assistant_aything_else);
+        endPhrases[2] = getString(R.string.assistant_anything_else2);
+        onAssistantMessage(endPhrases[randomNum]);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+        ConversationsActivity.userActive = true;
     }
 
     @Override
@@ -263,6 +311,12 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ConversationsActivity.userActive = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

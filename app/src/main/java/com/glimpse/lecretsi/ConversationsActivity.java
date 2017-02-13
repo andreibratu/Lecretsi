@@ -235,8 +235,13 @@ public class ConversationsActivity extends AppCompatActivity
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(ConversationsActivity.this, ChatActivity.class);
-                                intent.putExtra("userId", conversation.getUser().getId());
+                                Intent intent;
+                                if(conversation.getUser().getId().equals("largonjiAssistant")) {
+                                    intent = new Intent(ConversationsActivity.this, AssistantActivity.class);
+                                } else {
+                                    intent = new Intent(ConversationsActivity.this, ChatActivity.class);
+                                    intent.putExtra("friendUserID", conversation.getUser().getId());
+                                }
                                 startActivity(intent);
                             }
                         }, 500);

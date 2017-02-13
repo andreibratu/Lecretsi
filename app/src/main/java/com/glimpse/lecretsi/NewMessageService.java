@@ -3,22 +3,17 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -26,9 +21,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class NewMessageService extends Service{
@@ -86,19 +78,6 @@ public class NewMessageService extends Service{
                                             mNotifyMgr.notify(0, notification);
                                         }
                                     });
-                        }
-                    } else {
-                        if (!ChatActivity.inChat) {
-                            try {
-                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notifSound);
-                                r.play();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            mNotifyMgr.cancel(1);
-                            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                            // Vibrate for 500 milliseconds
-                            v.vibrate(500);
                         }
                     }
             }
