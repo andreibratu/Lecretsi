@@ -9,7 +9,6 @@
      Set custom default icon. This is used when no icon is set for incoming notification messages.
      See README(https://goo.gl/l4GJaQ) for more.
     -->
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/lecretsi_list_icon"
@@ -37,9 +36,16 @@
                 android:value=".ConversationsActivity" />
         </activity>
         <activity
+            android:name=".AssistantActivity"
+            android:parentActivityName=".ConversationsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ConversationsActivity" />
+        </activity>
+        <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoTitle"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTitle" />
         <activity
             android:name=".FriendsActivity"
             android:label="@string/activity_friends"
@@ -48,8 +54,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ConversationsActivity" />
         </activity>
-        <activity android:name=".AboutActivity" android:label="@string/activity_about_us"/>
-
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/activity_about_us" />
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

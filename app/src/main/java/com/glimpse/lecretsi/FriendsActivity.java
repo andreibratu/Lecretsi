@@ -85,8 +85,7 @@ public class FriendsActivity extends AppCompatActivity {
 
                                     }
                                 });
-                                startActivity(new Intent(FriendsActivity.this, ChatActivity.class).
-                                        putExtra("userId", largonjiConversation.getUser().getId()));
+                                startActivity(new Intent(FriendsActivity.this, AssistantActivity.class));
                                 finish();
                             }
                         }, 500);

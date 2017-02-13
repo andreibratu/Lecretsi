@@ -62,7 +62,8 @@
     <string name="block">Block</string>
     <string name="dialog_delete_message">Once you delete your copy of the conversation, it cannot be undone</string>
     <string name="dialog_delete_title">Delete this conversation?</string>
-    <string name="cancel">cancel</string><string name="assistant_anything_else">Anything else?</string>
+    <string name="cancel">cancel</string>
+    <string name="assistant_anything_else">Anything else?</string>
 
 
     <string name="assistant_aything_else">Anything else?</string>
