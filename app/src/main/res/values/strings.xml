@@ -27,13 +27,17 @@
     <string name="login_connection_failed"> La connexion a échoué</string>
     <string name="play_services_connection_error">
         Impossible de se connecter au service du Google."</string>
-    <string name="login_to_continue">Connectez-vous pour continuer s\'il vous plaît</string>
+    <string name="login_to_continue">Connectez-tes pour continuer s\'il tous plaît</string>
 
 
-    <string name="assistant_greeting">Bonjour </string>
+    <string name="assistant_greeting">Bonjour</string>
     <string name="assistant_presentation">
         Je suis votre assistant personnel de Largonji</string>
     <string name="assistant_expect_response">Que voulez-vous que je traduise?</string>
+    <string name="assistant_anything_else">Autre chose?</string>
+    <string name="assistant_anything_else2">Que dois-je traduire?</string>
+    <string name="error_self_request">Ce n\'était pas très spirituel</string>
+    <string name="assistant_start_phrase">Voici ton phrase dans Largonji</string>
 
 
     <string name="this_is_not_a_friend">Ce n\'est pas un ami</string>
@@ -46,35 +50,27 @@
     <string name="learn_activity">Practise</string>
     <string name="activity_log_out">Sortir</string>
     <string name="activity_settings">Préférences</string>
-    <string name="menu_interactivity">Interactivity</string>
+    <string name="menu_interactivity">Interactivité</string>
 
     <string name="friend_requests">Demandes d\'ami</string>
     <string name="largonji_friends">Lecretsi copains</string>
     <string name="no_conversations_yet">Aucune conversation encore</string>
-    <string name="friend_request_pending">Vous avez une demande d\'amitié en attente de cet utilisateur</string>
+    <string name="friend_request_pending">Tu as une demande d\'amitié en attente de cet utilisateur</string>
     <string name="double_press_close">Press the back button again to close the app</string>
     <string name="menu_conversation">Conversation</string>
     <string name="conversation_menu">Conversation</string>
 
 
-    <string name="archive">Archive</string>
-    <string name="delete">Delete</string>
-    <string name="block">Block</string>
-    <string name="dialog_delete_message">Once you delete your copy of the conversation, it cannot be undone</string>
-    <string name="dialog_delete_title">Delete this conversation?</string>
-    <string name="cancel">cancel</string>
-    <string name="assistant_anything_else">Anything else?</string>
-
-
-    <string name="assistant_aything_else">Anything else?</string>
-    <string name="assistant_anything_else2">What else?</string>
-    <string name="error_self_request">You can\'t send a friend request to yourself ^_^</string>
-    <string name="assistant_start_phrase">Here\'s your phrase in Largonji</string>
+    <string name="archive">Archiver</string>
+    <string name="delete">Effacer</string>
+    <string name="block">Bloc</string>
+    <string name="dialog_delete_message">La suppression ne peut pas être annulée</string>
+    <string name="dialog_delete_title">Supprimer cette conversation?</string>
+    <string name="cancel">Cancel</string>
 
     <string name="about_dev_title">Les auteurs</string>
     <string name="about_dev_text">
         Bratu Andrei : https://github.com/andreibratu\nAdi Popa : https://github.com/AdiPoPa</string>
     <string name="about_testers_title">Pour nos fidèles testeurs</string>
     <string name="about_testers_text">Anca Diana\nPicovici Luca</string>
-    <string name="about_team_glimpse">Team Glimpse 2017</string>
 </resources>

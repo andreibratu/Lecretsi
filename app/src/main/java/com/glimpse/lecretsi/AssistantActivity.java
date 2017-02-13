@@ -235,7 +235,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
         if(!mMessageEditText.getText().toString().isEmpty()) {
             mMessageRecyclerView.scrollToPosition(mFirebaseAdapter.getItemCount() - 1);
             timestampReference.setValue(ServerValue.TIMESTAMP);
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString());
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
             onUserMessage(mMessageEditText.getText().toString());
             new Handler().postDelayed(new Runnable() {
                 @Override

@@ -64,12 +64,4 @@
         android:layout_below="@+id/developers_title"
         android:layout_alignStart="@+id/developers_title" />
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/testers_text"
-        android:id="@+id/textView2" />
-
 </RelativeLayout>
