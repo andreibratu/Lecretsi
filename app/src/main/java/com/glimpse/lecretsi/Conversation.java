@@ -1,15 +1,17 @@
 package com.glimpse.lecretsi;
 
-class Conversation {
+public class Conversation {
 
     private User user;
     private String lastMessage;
     private String lastMessageDate;
 
     //default constructor needed for the database
-    public Conversation() {}
+    public Conversation() {
 
-    Conversation(User user, String lastMessage, String lastMessageDate) {
+    }
+
+    public Conversation(User user, String lastMessage, String lastMessageDate) {
         this.user = user;
         this.lastMessage = lastMessage;
         this.lastMessageDate = lastMessageDate;
@@ -27,7 +29,7 @@ class Conversation {
         this.lastMessage = lastMessage;
     }
 
-    String getLastMessage(){
+    public String getLastMessage(){
         return lastMessage;
     }
 

@@ -1,7 +1,7 @@
 package com.glimpse.lecretsi;
 import com.google.firebase.auth.FirebaseUser;
 
-class User {
+public class User {
     private String id;
     private String email;
     private String name;
@@ -11,14 +11,14 @@ class User {
 
     }
 
-    User(String id, String name, String email, String photoURL){
+    public User(String id, String name, String email, String photoURL){
         this.id = id;
         this.name = name;
         this.email = email;
         this.photoURL = photoURL;
     }
 
-    User(FirebaseUser acct) {
+    public User(FirebaseUser acct) {
         this.id = acct.getUid();
         this.name = acct.getDisplayName();
         this.email = acct.getEmail();
@@ -29,9 +29,36 @@ class User {
 
     // TODO: Save all the info in a SavedSharedPreference
 
-    public String getId() {return id;}
-    public String getEmail() {return email;}
-    public String getName() {return name;}
-    public String getPhotoURL() {return photoURL;}
+    public void setId(String id){
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setPhotoURL(String photoURL){
+        this.photoURL = photoURL;
+    }
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
 
 }

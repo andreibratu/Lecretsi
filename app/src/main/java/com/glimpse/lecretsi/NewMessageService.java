@@ -15,15 +15,18 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.ExecutionException;
 
@@ -37,7 +40,7 @@ public class NewMessageService extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        DatabaseReference mReference = FirebaseDatabase.getInstance().getReference()
+        final DatabaseReference mReference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("conversations");
 
         final NotificationCompat.Builder newNotificationBuilder = new NotificationCompat.Builder(getApplicationContext());
@@ -60,52 +63,44 @@ public class NewMessageService extends Service{
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (!ConversationsActivity.userActive) {
-                    Conversation mConversation = dataSnapshot.getValue(Conversation.class);
-                    final String text = mConversation.getLastMessage();
-                    final User sender = mConversation.getUser();
-                    if(sender != null) {
+                    final Conversation mConversation = dataSnapshot.getValue(Conversation.class);
+                    if (!ConversationsActivity.userActive) {
+                        if (mConversation != null) {
+                            Glide.with(getApplicationContext())
+                                    .load(mConversation.getUser().getPhotoURL())
+                                    .asBitmap()
+                                    .into(new SimpleTarget<Bitmap>(128,128) {
+                                        @Override
+                                        public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                                            newNotificationBuilder.setLargeIcon(resource);
+                                            newNotificationBuilder.setSmallIcon(R.drawable.ic_menu_conversations);
+                                            newNotificationBuilder.setContentTitle(mConversation.getUser().getName());
+                                            newNotificationBuilder.setContentText(mConversation.getLastMessage());
+                                            newNotificationBuilder.setSound(notifSound);
+                                            newNotificationBuilder.setVibrate(new long[]{500, 500, 500});
+                                            newNotificationBuilder.setLights(Color.GREEN, 3000, 3000);
 
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Bitmap bitmap = null;
-                                try {
-                                    bitmap = Glide.with(getApplicationContext())
-                                            .load(sender.getPhotoURL())
-                                            .asBitmap()
-                                            .into(64, 64).get();
-                                } catch (InterruptedException | ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-
-                                newNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
-                                newNotificationBuilder.setLargeIcon(bitmap);
-                                newNotificationBuilder.setContentTitle(sender.getName());
-                                newNotificationBuilder.setContentText(text);
-                                newNotificationBuilder.setSound(notifSound);
-                                newNotificationBuilder.setVibrate(new long[] { 1000, 1000 });
-                                newNotificationBuilder.setLights(Color.GREEN, 3000, 3000);
-
-                                Notification notification = newNotificationBuilder.build();
-                                notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                // Builds the notification and issues it.
-                                mNotifyMgr.notify(0, notification);
+                                            Notification notification = newNotificationBuilder.build();
+                                            notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                            // Builds the notification and issues it.
+                                            mNotifyMgr.notify(0, notification);
+                                        }
+                                    });
+                        }
+                    } else {
+                        if (!ChatActivity.inChat) {
+                            try {
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notifSound);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        });
+                            mNotifyMgr.cancel(1);
+                            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                            // Vibrate for 500 milliseconds
+                            v.vibrate(500);
+                        }
                     }
-                } else {
-                    if(!ChatActivity.inChat) {
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-                        builder.setSound(notifSound);
-                        Notification notification = newNotificationBuilder.build();
-                        notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE;
-                        mNotifyMgr.notify(1234, notification);
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        // Vibrate for 500 milliseconds
-                        v.vibrate(500);
-                    }
-                }
             }
 
             @Override

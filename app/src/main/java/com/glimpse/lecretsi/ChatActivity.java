@@ -89,6 +89,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
+        mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
@@ -183,8 +184,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         //TODO @Adi document the code starting from here
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
-
-        chatLayout = (RelativeLayout) findViewById(R.id.chatLayout);
 
         mMessageEditText = (EditText) findViewById(R.id.messageText);
         mSendButton = (ImageButton) findViewById(R.id.sendButton);
