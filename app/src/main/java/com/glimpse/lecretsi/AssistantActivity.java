@@ -43,6 +43,7 @@ public class AssistantActivity extends AppCompatActivity {
     private String DECRYPT;
 
     class AssistantPreferences {
+        ///We hold the assistant translation mode between app sessions using PreferenceManager
         private String prefAssistantMode = ENCRYPT;
 
         SharedPreferences getSharedPreference(Context ctx) {

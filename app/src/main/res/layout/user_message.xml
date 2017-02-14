@@ -31,7 +31,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:gravity="clip_horizontal"
-            android:text="The quick brown fox jumped over the lazy dog"
+            android:text="@string/the_quick_brown_fox_jumped_over_the_lazy_dog"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:background="@drawable/user_text_box"/>

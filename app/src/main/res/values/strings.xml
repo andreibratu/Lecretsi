@@ -58,11 +58,11 @@
     <string name="activity_settings">Préférences</string>
     <string name="menu_interactivity">Interactivité</string>
 
-    <string name="friend_requests">Demandes d\'ami</string>
+    <string name="friend_requests">Demandes d\'amitié</string>
     <string name="largonji_friends">Lecretsi copains</string>
     <string name="no_conversations_yet">Aucune conversation encore</string>
     <string name="friend_request_pending">Tu as une demande d\'amitié en attente de cet utilisateur</string>
-    <string name="double_press_close">Press the back button again to close the app</string>
+    <string name="double_press_close">Appuye de nouveau le buton de retour pour sortir</string>
     <string name="menu_conversation">Conversation</string>
     <string name="conversation_menu">Conversation</string>
 
@@ -78,7 +78,15 @@
         Bratu Andrei\nhttps://github.com/andreibratu\nAdi Popa\nhttps://github.com/AdiPoPa</string>
     <string name="about_testers_title">Pour nos fidèles testeurs</string>
     <string name="about_testers_text">Anca Diana\nPicovici Luca</string>
-    <string name="no_conversations_tip">Open up a chat and it will show up here</string>
-    <string name="could_not_decrypt1">Sorry, I couldn\'t decrypt this message</string>
-    <string name="could_not_decrypt2">Please try typing a valid largonji statement</string>
+
+    <string name="no_conversations_tip">Les conversations ouvertes doivent y apparaître</string>
+    <string name="could_not_decrypt1">Je ne peux pas decrypter le message</string>
+    <string name="could_not_decrypt2">Je t'en prie d'introduire un phrase en Largonji</string>
+    <string name="type_a_message">Ècris un message…</string>
+
+
+    <string name="largonji_assistant">Largonji Assistant</string>
+    <string name="firstname_lastname">Firstname Lastname</string>
+    <string name="the_quick_brown_fox_jumped_over_the_lazy_dog">The quick brown fox jumped over the lazy dog</string>
+
 </resources>
