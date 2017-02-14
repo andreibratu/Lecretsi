@@ -4,7 +4,8 @@ package com.glimpse.lecretsi;
 public class ChatMessage {
 
     private String id;
-    private String text;
+    private String normalText;
+    private String largonjiText;
     private String date;
     private String time;
 
@@ -12,9 +13,10 @@ public class ChatMessage {
 
     }
 
-    public ChatMessage(String id, String text, String date, String time) {
+    public ChatMessage(String id, String normalText, String largonjiText, String date, String time) {
         this.id = id;
-        this.text = text;
+        this.normalText = normalText;
+        this.largonjiText = largonjiText;
         this.date = date;
         this.time = time;
     }
@@ -27,12 +29,20 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setNormalText(String normalText) {
+        this.normalText = normalText;
     }
 
-    public String getText() {
-        return text;
+    public String getNormalText() {
+        return normalText;
+    }
+
+    public void setLargonjiTextText(String largonjiText) {
+        this.largonjiText = largonjiText;
+    }
+
+    public String getLargonjiText() {
+        return largonjiText;
     }
     
     public void setDate(String date) {

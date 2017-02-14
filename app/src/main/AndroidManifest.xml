@@ -13,8 +13,9 @@
         android:theme="@style/AppTheme">
         <service android:name=".NewMessageService" />
 
-        <activity android:name=".IntroActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".IntroActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ChatActivity"
             android:parentActivityName=".MainActivity">
@@ -23,8 +24,8 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:label="Assistant"
             android:name=".AssistantActivity"
+            android:label="Assistant"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -37,13 +38,14 @@
         <activity
             android:name=".FriendsActivity"
             android:label="@string/activity_friends"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -52,6 +54,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RequestUpdateActivity"></activity>
     </application>
 
 </manifest>

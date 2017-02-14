@@ -96,12 +96,12 @@ public class ChatActivity extends AppCompatActivity {
                 MessageViewHolder.class,
                 myConversationReference.child("chatMessages")) {
 
-            MessageViewHolder lastMessageSelected = null;
+            MessageViewHolder lastMessageSelected, lastMessageLongClicked;
             ChatMessage lastMessage = null;
 
             @Override
-            protected void populateViewHolder(final MessageViewHolder viewHolder, ChatMessage chatMessage, int position) {
-                viewHolder.messageTextView.setText(chatMessage.getText());
+            protected void populateViewHolder(final MessageViewHolder viewHolder, final ChatMessage chatMessage, int position) {
+                viewHolder.messageTextView.setText(chatMessage.getLargonjiText());
                 viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
 
                 if (chatMessage.getId().equals(LOGGED_USER.getId())) {
@@ -115,6 +115,22 @@ public class ChatActivity extends AppCompatActivity {
                     viewHolder.messagePosition.setPadding(0, 0, 150, 0);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                 }
+
+                viewHolder.messageTextView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if(lastMessageLongClicked != null){
+                            lastMessageLongClicked.messageTextView.setText(chatMessage.getLargonjiText());
+                        }
+                        if(viewHolder.messageTextView.getText().equals(chatMessage.getLargonjiText())) {
+                            viewHolder.messageTextView.setText(chatMessage.getNormalText());
+                        } else {
+                            viewHolder.messageTextView.setText(chatMessage.getLargonjiText());
+                        }
+                        lastMessageLongClicked = viewHolder;
+                        return false;
+                    }
+                });
 
                 viewHolder.messageDateTime.setVisibility(View.GONE);
                 viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +231,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void onUserMessage(final String message){
-        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
+        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), mMessageEditText.getText().toString(), message, date, time);
         myConversationReference.child("chatMessages").push().setValue(chatMessage);
         myConversationReference.child("lastMessage").setValue(message);
         myConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);

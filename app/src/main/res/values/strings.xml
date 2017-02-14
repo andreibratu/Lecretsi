@@ -89,4 +89,6 @@
     <string name="firstname_lastname">Firstname Lastname</string>
     <string name="the_quick_brown_fox_jumped_over_the_lazy_dog">The quick brown fox jumped over the lazy dog</string>
 
+    <string name="request_update">You\'re using an older version of this application, please consider updating</string>
+    <string name="update_link"><u>https://github.com/andreibratu/Lecretsi/releases</u></string>
 </resources>

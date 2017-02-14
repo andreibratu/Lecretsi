@@ -122,7 +122,7 @@ public class AssistantActivity extends AppCompatActivity {
 
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder, final ChatMessage chatMessage, int position) {
-                viewHolder.messageTextView.setText(chatMessage.getText());
+                viewHolder.messageTextView.setText(chatMessage.getNormalText());
                 viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
 
                 if (chatMessage.getId().equals(LOGGED_USER.getId())) {
@@ -251,15 +251,15 @@ public class AssistantActivity extends AppCompatActivity {
                                                         public void run() {
                                                             onAssistantMessage(getString(R.string.assistant_expect_response));
                                                         }
-                                                    }, 1000);
+                                                    }, 500);
                                                 }
                                             }, 500);
                                         }
                                     }, 500);
                                 }
-                            }, 1000);
+                            }, 500);
                         }
-                    }, 1000);
+                    }, 500);
                 }
             }
 
@@ -348,7 +348,7 @@ public class AssistantActivity extends AppCompatActivity {
     }
 
     public void onUserMessage(final String message){
-        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
+        final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, null, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
         mConversationReference.child("lastMessage").setValue(message);
         mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
@@ -356,7 +356,7 @@ public class AssistantActivity extends AppCompatActivity {
 
     public void onAssistantMessage(String message){
         if(message != null) {
-            ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
+            ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, null, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
             mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
