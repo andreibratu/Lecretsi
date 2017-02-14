@@ -37,7 +37,13 @@
     <string name="assistant_anything_else">Autre chose?</string>
     <string name="assistant_anything_else2">Que dois-je traduire?</string>
     <string name="error_self_request">Ce n\'était pas très spirituel</string>
-    <string name="assistant_start_phrase">Voici ton phrase dans Largonji</string>
+    <string name="assistant_start_phrase">Voilà</string>
+    <string name="assistant_code_hint">Tapez #encrypt et je chiffrerai tous les messages qui suivent dans Largonji</string>
+    <string name="assistant_decode_hint">Tapez #decrypt et je vais les déchiffrer</string>
+    <string name="to_normal">#decrypt</string>
+    <string name="to_largonji">#encrypt</string>
+    <string name="assistant_was_set_decrypt">Je décrypterai les messages</string>
+    <string name="assistant_was_set_to_encrypt">Je vais chiffrer les messages</string>
 
 
     <string name="this_is_not_a_friend">Ce n\'est pas un ami</string>
@@ -60,7 +66,6 @@
     <string name="menu_conversation">Conversation</string>
     <string name="conversation_menu">Conversation</string>
 
-
     <string name="archive">Archiver</string>
     <string name="delete">Effacer</string>
     <string name="block">Bloc</string>
@@ -70,7 +75,7 @@
 
     <string name="about_dev_title">Les auteurs</string>
     <string name="about_dev_text">
-        Bratu Andrei : https://github.com/andreibratu\nAdi Popa : https://github.com/AdiPoPa</string>
+        Bratu Andrei\nhttps://github.com/andreibratu\nAdi Popa\nhttps://github.com/AdiPoPa</string>
     <string name="about_testers_title">Pour nos fidèles testeurs</string>
     <string name="about_testers_text">Anca Diana\nPicovici Luca</string>
 </resources>

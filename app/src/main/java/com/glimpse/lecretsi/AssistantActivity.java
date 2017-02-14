@@ -1,7 +1,10 @@
 package com.glimpse.lecretsi;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,10 +34,31 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class AssistantActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
+    final String ENCRYPT = getResources().getString(R.string.to_largonji);
+    final String DECRYPT = getResources().getString(R.string.to_normal);
+
+    class AssistantPreferences {
+        private String prefAssistantMode = ENCRYPT;
+
+        SharedPreferences getSharedPreference(Context ctx) {
+            return PreferenceManager.getDefaultSharedPreferences(ctx);
+        }
+
+        void setAssistantMode(Context ctx, String mode) {
+            SharedPreferences.Editor editor = getSharedPreference(ctx).edit();
+            editor.putString(prefAssistantMode, mode);
+            editor.apply();
+        }
+
+        String getAssistantMode(Context ctx) {
+            return getSharedPreference(ctx).getString(prefAssistantMode, ENCRYPT);
+        }
+    }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder{
         TextView messageTextView;
@@ -74,7 +98,6 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
         setTitle("Largonji Activity");
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
@@ -214,9 +237,21 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            onAssistantMessage(getString(R.string.assistant_expect_response));
+                                            onAssistantMessage(getString(R.string.assistant_code_hint));
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    onAssistantMessage(getString(R.string.assistant_decode_hint));
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            onAssistantMessage(getString(R.string.assistant_expect_response));
+                                                        }
+                                                    }, 1000);
+                                                }
+                                            }, 500);
                                         }
-                                    }, 1000);
+                                    }, 500);
                                 }
                             }, 1000);
                         }
@@ -232,32 +267,66 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     public void onSend(View view){
+
         if(!mMessageEditText.getText().toString().isEmpty()) {
             mMessageRecyclerView.scrollToPosition(mFirebaseAdapter.getItemCount() - 1);
             timestampReference.setValue(ServerValue.TIMESTAMP);
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
-            onUserMessage(mMessageEditText.getText().toString());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    randomStartPhrase();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onAssistantMessage(text);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    randomEndPhrase();
-                                }
-                            }, 500);
-                        }
-                    }, 500);
-                }
-            }, 500);
-            mMessageEditText.setText("");
         }
 
+        AssistantPreferences updateAssistantMode;
+        switch (mMessageEditText.getText().toString()) {
+            case "#decrypt" :
+                updateAssistantMode = new AssistantPreferences();
+                updateAssistantMode.setAssistantMode(getApplicationContext(), DECRYPT);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onAssistantMessage(getString(R.string.assistant_was_set_decrypt));
+                    }
+                }, 500);
+
+                break;
+
+            case "#encrypt" :
+                updateAssistantMode = new AssistantPreferences();
+                updateAssistantMode.setAssistantMode(getApplicationContext(), ENCRYPT);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onAssistantMessage(getString(R.string.assistant_was_set_to_encrypt));
+                    }
+                }, 500);
+
+                break;
+            default:
+                AssistantPreferences assistantMode = new AssistantPreferences();
+                Boolean isSetEncrypt =
+                        Objects.equals(assistantMode.getAssistantMode(getApplicationContext()), ENCRYPT);
+                final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),isSetEncrypt);
+                onUserMessage(mMessageEditText.getText().toString());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        randomStartPhrase();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onAssistantMessage(text);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        randomEndPhrase();
+                                    }
+                                }, 500);
+                            }
+                        }, 500);
+                    }
+                }, 500);
+                mMessageEditText.setText("");
+                break;
+        }
     }
 
     public void onUserMessage(final String message){
@@ -286,7 +355,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     public void randomEndPhrase(){
         int randomNum = 1 + (int)(Math.random() * 3);
         String endPhrases[] = new String[4];
-        endPhrases[1] = getString(R.string.assistant_aything_else);
+        endPhrases[1] = getString(R.string.assistant_anything_else);
         endPhrases[2] = getString(R.string.assistant_anything_else2);
         onAssistantMessage(endPhrases[randomNum]);
     }
