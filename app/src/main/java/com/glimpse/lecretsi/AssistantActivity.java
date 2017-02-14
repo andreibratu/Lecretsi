@@ -250,15 +250,15 @@ public class AssistantActivity extends AppCompatActivity {
                                                         public void run() {
                                                             onAssistantMessage(getString(R.string.assistant_expect_response));
                                                         }
-                                                    }, 1000);
+                                                    }, 500);
                                                 }
                                             }, 500);
                                         }
                                     }, 500);
                                 }
-                            }, 1000);
+                            }, 500);
                         }
-                    }, 1000);
+                    }, 500);
                 }
             }
 
