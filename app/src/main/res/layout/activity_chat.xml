@@ -33,7 +33,7 @@
             android:layout_height="48dp"
             android:background="@drawable/message_box"
             android:hint="@string/type_a_message"
-            android:inputType="textMultiLine"
+            android:inputType="textCapSentences|textMultiLine"
             android:padding="7dp"
             android:paddingEnd="50dp"
             android:paddingStart="10dp" />

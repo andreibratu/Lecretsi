@@ -53,7 +53,7 @@ public class AssistantActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        setTitle("Largonji Activity");
+        setTitle("Largonji Assistant");
 
         ENCRYPT = getString(R.string.to_largonji);
         DECRYPT = getString(R.string.to_normal);
