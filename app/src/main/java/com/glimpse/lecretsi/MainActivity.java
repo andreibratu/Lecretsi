@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mFirebaseAuth;
     public static FirebaseUser mFirebaseUser;
 
-    public TextView usernameText, emailText;
-    public CircleImageView userImage;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,24 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.hide();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fab.show();
-            }
-        }, 1000);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-                startActivity(intent);
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -129,27 +112,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View header = navigationView.getHeaderView(0);
 
-        usernameText = (TextView) header.findViewById(R.id.usernameText);
+        TextView usernameText = (TextView) header.findViewById(R.id.usernameText);
         usernameText.setText(mFirebaseUser.getDisplayName());
 
-        emailText = (TextView) header.findViewById(R.id.emailText);
+        TextView emailText = (TextView) header.findViewById(R.id.emailText);
         emailText.setText(mFirebaseUser.getEmail());
 
-        userImage = (CircleImageView) header.findViewById(R.id.userImage);
+        CircleImageView userImage = (CircleImageView) header.findViewById(R.id.userImage);
         Glide.with(MainActivity.this)
                 .load(mFirebaseUser.getPhotoUrl())
                 .into(userImage);
 
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.hide();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.replace(R.id.fragmentContent, new ConversationsActivity());
         tx.commit();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fab.show();
+                Animation fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+                fab.startAnimation(fab_open);
+            }
+        }, 1000);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         switch(item.getItemId()) {
@@ -158,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 tx.commit();
                 setTitle(item.getTitle());
                 item.setChecked(true);
+                fab.show();
                 break;
             case R.id.nav_flashcards:
 
@@ -168,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 tx.commit();
                 setTitle(item.getTitle());
                 item.setChecked(true);
+                fab.hide();
                 break;
             case R.id.nav_logout:
                 stopService(new Intent(this, NewMessageService.class));
@@ -179,8 +184,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_settings:
 
                 break;
-            default:
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

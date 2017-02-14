@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public class AssistantActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class AssistantActivity extends AppCompatActivity {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
     final String ENCRYPT = getResources().getString(R.string.to_largonji);
@@ -333,7 +333,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
         mConversationReference.child("lastMessage").setValue(message);
-        mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+        mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
     }
 
     public void onAssistantMessage(String message){
@@ -341,7 +341,7 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
-            mConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+            mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
         }
     }
 
@@ -383,13 +383,6 @@ public class AssistantActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs
-        // (including Sign-In) will not be available
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
 }

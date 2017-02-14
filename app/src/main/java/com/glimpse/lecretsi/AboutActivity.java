@@ -18,22 +18,22 @@ public class AboutActivity extends Fragment {
 
         TextView developerTitle = (TextView) view.findViewById(R.id.developers_title);
         developerTitle.setText(R.string.about_dev_title);
-        developerTitle.setTextSize(30);
+        developerTitle.setTextSize(20);
         developerTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         TextView developerText = (TextView) view.findViewById(R.id.developers_text);
         developerText.setText(R.string.about_dev_text);
-        developerText.setTextSize(20);
+        developerText.setTextSize(10);
         developerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         TextView testerTitle = (TextView) view.findViewById(R.id.testers_title);
         testerTitle.setText(R.string.about_testers_title);
-        testerTitle.setTextSize(30);
+        testerTitle.setTextSize(20);
         testerTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         TextView testerText = (TextView) view.findViewById(R.id.testers_text);
         testerText.setText(R.string.about_testers_text);
-        testerText.setTextSize(20);
+        testerText.setTextSize(10);
         testerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         return view;
     }

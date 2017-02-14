@@ -78,4 +78,5 @@
         Bratu Andrei\nhttps://github.com/andreibratu\nAdi Popa\nhttps://github.com/AdiPoPa</string>
     <string name="about_testers_title">Pour nos fidèles testeurs</string>
     <string name="about_testers_text">Anca Diana\nPicovici Luca</string>
+    <string name="no_conversations_tip">Open up a chat and it will show up here</string>
 </resources>

@@ -80,6 +80,7 @@ public class ConversationsActivity extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_conversations, container, false);
+
         conversationsView = (RecyclerView) view.findViewById(R.id.conversationsView);
         emptyConversationsBackground = (LinearLayout) view.findViewById(R.id.emptyConversationsBackground);
 
@@ -117,10 +118,10 @@ public class ConversationsActivity extends Fragment {
                             }
                         });
                 mConversations.child(conversation.getUser().getId()).child("lastMessageDate")
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                        .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot != null) {
+                                if(dataSnapshot.getValue() != null) {
                                     Long timestamp = Long.parseLong(dataSnapshot.getValue().toString());
                                     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
                                     viewHolder.lastMessageDate.setText(dateFormat.format(new Date(timestamp)));
@@ -150,6 +151,7 @@ public class ConversationsActivity extends Fragment {
                                 } else {
                                     intent = new Intent(getActivity(), ChatActivity.class);
                                     intent.putExtra("friendUserID", conversation.getUser().getId());
+                                    intent.putExtra("friendUsername", conversation.getUser().getName());
                                 }
                                 startActivity(intent);
                             }
