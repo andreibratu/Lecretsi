@@ -38,9 +38,9 @@ import java.util.Objects;
 
 public class AssistantActivity extends AppCompatActivity {
 
-    final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
-    final String ENCRYPT = getResources().getString(R.string.to_largonji);
-    final String DECRYPT = getResources().getString(R.string.to_normal);
+    private User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
+    private String ENCRYPT;
+    private String DECRYPT;
 
     class AssistantPreferences {
         private String prefAssistantMode = ENCRYPT;
@@ -99,6 +99,9 @@ public class AssistantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         setTitle("Largonji Activity");
+
+        ENCRYPT = getString(R.string.to_largonji);
+        DECRYPT = getString(R.string.to_normal);
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -273,6 +276,7 @@ public class AssistantActivity extends AppCompatActivity {
             timestampReference.setValue(ServerValue.TIMESTAMP);
         }
 
+        onUserMessage(mMessageEditText.getText().toString());
         AssistantPreferences updateAssistantMode;
         switch (mMessageEditText.getText().toString()) {
             case "#decrypt" :
@@ -302,31 +306,44 @@ public class AssistantActivity extends AppCompatActivity {
                 break;
             default:
                 AssistantPreferences assistantMode = new AssistantPreferences();
-                Boolean isSetEncrypt =
-                        Objects.equals(assistantMode.getAssistantMode(getApplicationContext()), ENCRYPT);
-                final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),isSetEncrypt);
-                onUserMessage(mMessageEditText.getText().toString());
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        randomStartPhrase();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                onAssistantMessage(text);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        randomEndPhrase();
-                                    }
-                                }, 500);
-                            }
-                        }, 500);
-                    }
-                }, 500);
-                mMessageEditText.setText("");
+                Boolean isSetEncrypt = assistantMode.getAssistantMode(getApplicationContext()).equals(ENCRYPT);
+                final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(), isSetEncrypt);
+                if(!text.equals("invalid_input")) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            randomStartPhrase();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onAssistantMessage(text);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            randomEndPhrase();
+                                        }
+                                    }, 500);
+                                }
+                            }, 500);
+                        }
+                    }, 500);
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAssistantMessage(getString(R.string.could_not_decrypt1));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onAssistantMessage(getString(R.string.could_not_decrypt2));
+                                }
+                            }, 500);
+                        }
+                    }, 500);
+                }
                 break;
         }
+        mMessageEditText.setText("");
     }
 
     public void onUserMessage(final String message){

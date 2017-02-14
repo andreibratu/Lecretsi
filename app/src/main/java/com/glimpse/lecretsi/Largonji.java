@@ -3,7 +3,7 @@ package com.glimpse.lecretsi;
 import com.vdurmont.emoji.EmojiParser;
 import java.util.Objects;
 
-class Largonji
+public class Largonji
 {
     /**
      *  This class handles the coding/decoding of the algorithm
@@ -13,7 +13,7 @@ class Largonji
     private final static String VOWEL_CASE = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
     private final static String POSSIBLE_EXCEPTION = "'-";
     private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_1234567890";
-    public static String LARGONJI_INVALID_INPUT = "ufh92hf92f92NDFQISJUW#$@";
+    public static String LARGONJI_INVALID_INPUT = "invalid_input";
     //To keep messages readable we chose not to codify these
     private static final String[] IGNORE_LIST =
             new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
@@ -160,7 +160,7 @@ class Largonji
         String answer = "";
 
         for(String x: IGNORE_LIST) {
-            if(Objects.equals(input.toLowerCase(), x))
+            if(input.toLowerCase().equals(x))
                 return input;
         }
 
@@ -195,15 +195,15 @@ class Largonji
 
         String aux = input.toLowerCase();
         int posSecondL = aux.substring(1).indexOf('l');
-        Boolean isConsonantOnRightPos = isVowel(input.charAt(aux.length()-2));
+        Boolean isConsonantOnRightPos = !isVowel(input.charAt(aux.length()-2));
         Boolean wordEndsI = (aux.charAt(input.length()-1))=='i';
 
-        if(isConsonantOnRightPos&&wordEndsI) {
+        if(isConsonantOnRightPos && wordEndsI) {
             if(posSecondL==-1) {
-                answer = aux.charAt(aux.length()-2)+aux.substring(2,input.length()-2);
+                answer = aux.charAt(aux.length()-2)+aux.substring(1,input.length()-2);
 
             } else {
-                answer = aux.substring(1,posSecondL)+aux.charAt(input.length()-2)+input.substring(posSecondL,aux.length()-2);
+                answer = aux.substring(1,posSecondL+1)+aux.charAt(input.length()-2)+input.substring(posSecondL+2,aux.length()-2);
             }
         } else {
             answer = LARGONJI_INVALID_INPUT;

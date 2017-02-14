@@ -130,8 +130,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-                startActivity(intent);
+                if(fab.isShown()) {
+                    Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
