@@ -234,6 +234,9 @@ public class ChatActivity extends AppCompatActivity {
                     Conversation conversation = new Conversation(LOGGED_USER, null, null);
                     friendConversationReference.setValue(conversation);
                 }
+                friendConversationReference.child("chatMessages").push().setValue(chatMessage);
+                friendConversationReference.child("lastMessage").setValue(message);
+                friendConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
             }
 
             @Override
@@ -241,9 +244,6 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-        friendConversationReference.child("chatMessages").push().setValue(chatMessage);
-        friendConversationReference.child("lastMessage").setValue(message);
-        friendConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
     }
 
     @Override
