@@ -90,7 +90,11 @@ public class Largonji
         }
 
         if( inputHasOnlyVowels(input) ) {
-            encodedText = addLEncode( input.charAt(0) ) + input;
+            encodedText = addLEncode( input.charAt(0) ) + input ;
+            encodedText=encodedText.toLowerCase();
+            if(isUppercase) {
+                encodedText = Character.toLowerCase(encodedText.charAt(0))+encodedText.substring(1,encodedText.length());
+            }
             return encodedText;
         }
 
@@ -229,7 +233,6 @@ public class Largonji
 
         if(isConsonantOnRightPos && wordEndsI && wordStartsL) {
             if(posSecondL==-1) {
-                aux = aux.substring(1,aux.length());
                 answer = aux.charAt(aux.length()-2)+aux.substring(1,input.length()-2);
 
             } else {
