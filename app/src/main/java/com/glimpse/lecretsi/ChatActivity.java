@@ -35,7 +35,7 @@ import java.util.Locale;
 
 //We will use the db to sync all clients' message dates else messages won't appear in order
 
-public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class ChatActivity extends AppCompatActivity {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
 
@@ -66,8 +66,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
 
-    private String friendUserID;
-
     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
     DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
 
@@ -80,14 +78,15 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // TODO: Set recycler views for every group of messages
+        Intent intent = getIntent();
+        String friendUserID = intent.getStringExtra("friendUserID");
+        String friendUsername = intent.getStringExtra("friendUsername");
+
+        setTitle(friendUsername);
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
-
-        Intent intent = getIntent();
-        friendUserID = intent.getStringExtra("friendUserID");
 
         myConversationReference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(LOGGED_USER.getId()).child("conversations").child(friendUserID);
@@ -119,13 +118,12 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     viewHolder.messagePosition.setPadding(0, 0, 150, 0);
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                 }
+
                 viewHolder.messageDateTime.setVisibility(View.GONE);
                 viewHolder.messageTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         // Tap a message to see / hide the date it was sent
-
                         if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
                             viewHolder.messageDateTime.setVisibility(View.VISIBLE);
                         } else {
@@ -138,9 +136,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                         lastMessageSelected = viewHolder;
                     }
                 });
-
                 lastMessage = chatMessage;
-
             }
         };
 
@@ -195,7 +191,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     mSendButton.setVisibility(View.VISIBLE);
                     expandButton.setVisibility(View.GONE);
                 }
-                friendConversationReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
+                databaseReference.child(LOGGED_USER.getId()).child("serverTimestamp").setValue(ServerValue.TIMESTAMP);
             }
 
             @Override
@@ -225,7 +221,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, date, time);
         myConversationReference.child("chatMessages").push().setValue(chatMessage);
         myConversationReference.child("lastMessage").setValue(message);
-        myConversationReference.child("lastMessageDate").setValue(timestamp.toString());
+        myConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
         friendConversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -233,15 +229,15 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                     Conversation conversation = new Conversation(LOGGED_USER, null, null);
                     friendConversationReference.setValue(conversation);
                 }
-                friendConversationReference.child("chatMessages").push().setValue(chatMessage);
-                friendConversationReference.child("lastMessage").setValue(message);
-                friendConversationReference.child("lastMessageDate").setValue(timestamp.toString());
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+        friendConversationReference.child("chatMessages").push().setValue(chatMessage);
+        friendConversationReference.child("lastMessage").setValue(message);
+        friendConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
     }
 
     @Override
@@ -264,13 +260,6 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs
-        // (including Sign-In) will not be available
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
 }
