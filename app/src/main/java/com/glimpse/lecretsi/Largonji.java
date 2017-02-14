@@ -52,6 +52,8 @@ public class Largonji
 
     private static String algorithmToLargonji(String input){
         String encodedText;
+        input=input.trim();
+        input=input.replaceAll("(?m)^\\s+$", "");
 
         Boolean isUppercase = Character.isUpperCase(input.charAt(0));
 
@@ -122,7 +124,7 @@ public class Largonji
         ///Remove beginning and ending whitespaces,tabs,empty lines
         input=input.trim();
         input=input.replaceAll("(?m)^\\s+$", "");
-        input= EmojiParser.removeAllEmojis(input);
+        input=EmojiParser.removeAllEmojis(input);
 
         if(input.equals("")) return "";
         if(inputContainsOnlySymbols(input)) return input;
@@ -175,6 +177,8 @@ public class Largonji
 
     private static String algorithmToNormal(String input) {
         String answer;
+        input=input.trim();
+        input=input.replaceAll("(?m)^\\s+$", "");
 
         Boolean isUppercase = Character.isUpperCase(input.charAt(0));
 
@@ -211,15 +215,16 @@ public class Largonji
             }
         }
 
-        if(inputHasOnlyVowels(input.substring(1,input.length()-2)))
-            return  input.substring(1,input.length()-2);
+        if(inputHasOnlyVowels(input))
+            return input.substring(1,input.length()-2);
 
         String aux = input.toLowerCase();
         int posSecondL = aux.substring(1).indexOf('l');
         Boolean isConsonantOnRightPos = !isVowel(input.charAt(aux.length()-2));
         Boolean wordEndsI = (aux.charAt(input.length()-1))=='i';
+        Boolean wordStartsL = aux.charAt(0)=='l';
 
-        if(isConsonantOnRightPos && wordEndsI) {
+        if(isConsonantOnRightPos && wordEndsI && wordStartsL) {
             if(posSecondL==-1) {
                 answer = aux.charAt(aux.length()-2)+aux.substring(1,input.length()-2);
 
@@ -227,7 +232,7 @@ public class Largonji
                 answer = aux.substring(1,posSecondL+1)+aux.charAt(input.length()-2)+input.substring(posSecondL+2,aux.length()-2);
             }
         } else {
-            answer = LARGONJI_INVALID_INPUT;
+            return LARGONJI_INVALID_INPUT;
         }
         answer=answer.toLowerCase();
         if(isUppercase) {
