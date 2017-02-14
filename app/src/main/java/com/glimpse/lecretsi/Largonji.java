@@ -164,18 +164,18 @@ public class Largonji
             //Largonji to Normal
             while(whereIsWhiteSpace!=-1 && input.length()>0) {
                 String aux = input.substring(0,whereIsWhiteSpace);
-                answer += algorithmToNormal(aux) + ' ';
+                answer += algorithmToNormal(aux,false) + ' ';
                 input = input.substring(whereIsWhiteSpace + 1, input.length());
                 whereIsWhiteSpace = input.indexOf(' ');
             }
 
             //Only one word left in the input
-            answer += algorithmToNormal(input);
+            answer += algorithmToNormal(input,false);
         }
         return answer;
     }
 
-    private static String algorithmToNormal(String input) {
+    private static String algorithmToNormal(String input,Boolean calledRecursive) {
         String answer;
         input=input.trim();
         input=input.replaceAll("(?m)^\\s+$", "");
@@ -203,19 +203,19 @@ public class Largonji
             if(countExceptions>=2) {
                 //Constructions like Passes-les-me ; we don't codify the pronouns
                 Integer posException = input.indexOf(x);
-                return (algorithmToNormal(input.substring(0,posException))+x)+
+                return (algorithmToNormal(input.substring(0,posException),true)+x)+
                         input.substring(posException+1,input.length());
 
             } else if(countExceptions==1) {
                 // Cases like J'ai, m'apelle
 
                 Integer posException = input.indexOf(x);
-                return (algorithmToNormal(input.substring(0, posException)) + x) + input.charAt(posException+1) +
-                        algorithmToNormal(input.substring(posException + 2, input.length()));
+                return (algorithmToNormal(input.substring(0, posException),true) + x) + input.charAt(posException+1) +
+                        algorithmToNormal(input.substring(posException + 2, input.length()),true);
             }
         }
 
-        if(inputHasOnlyVowels(input))
+        if(inputHasOnlyVowels(input.substring(1,input.length()-2))&&calledRecursive)
             return input.substring(1,input.length()-2);
 
         String aux = input.toLowerCase();
@@ -224,8 +224,12 @@ public class Largonji
         Boolean wordEndsI = (aux.charAt(input.length()-1))=='i';
         Boolean wordStartsL = aux.charAt(0)=='l';
 
+        if(inputHasOnlyVowels(aux.substring(1,aux.length())))
+            return aux.substring(1,aux.length());
+
         if(isConsonantOnRightPos && wordEndsI && wordStartsL) {
             if(posSecondL==-1) {
+                aux = aux.substring(1,aux.length());
                 answer = aux.charAt(aux.length()-2)+aux.substring(1,input.length()-2);
 
             } else {
