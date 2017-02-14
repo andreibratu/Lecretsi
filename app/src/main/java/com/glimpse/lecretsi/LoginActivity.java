@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements
         TextView title = (TextView)findViewById(R.id.login_greater);
         title.setText(R.string.login_lecretsi_greeting);
         title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        title.setTextColor(getResources().getColor(R.color.colorWhite));
+        title.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
         title.setTypeface(mFont);
         title.setTextSize(50);
         title.setAnimation(fadeTextIn);
@@ -77,14 +78,14 @@ public class LoginActivity extends AppCompatActivity implements
         final TextView subTitle = (TextView)findViewById(R.id.login_subtitle);
         subTitle.setText(R.string.login_lecretsi_subtitle);
         subTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        subTitle.setTextColor(getResources().getColor(R.color.colorWhite));
+        subTitle.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
         subTitle.setTextSize(25);
         subTitle.setTypeface(mFont);
         subTitle.setVisibility(View.INVISIBLE);
 
         pleaseProceed.setText(R.string.login_to_continue);
         pleaseProceed.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        pleaseProceed.setTextColor(getResources().getColor(R.color.colorWhite));
+        pleaseProceed.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
         pleaseProceed.setTextSize(14);
         pleaseProceed.setTypeface(mFont);
         pleaseProceed.setVisibility(View.INVISIBLE);

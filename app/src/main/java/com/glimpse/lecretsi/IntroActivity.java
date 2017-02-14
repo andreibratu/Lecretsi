@@ -1,10 +1,11 @@
 package com.glimpse.lecretsi;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.Window;
+import android.support.v4.content.ContextCompat;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -13,12 +14,14 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 
 
 public class IntroActivity extends AppIntro {
+    boolean doubleBackToExitPressedOnce = false;
+
     //Class that implements he first time tutorial
     //Kudos to @paolorotolo https://github.com/apl-devs/AppIntro
     //BUG Images in the slide are known not to display properly on high resolution devices
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
 
         ///Setting the tutorial slides
@@ -32,28 +35,28 @@ public class IntroActivity extends AppIntro {
                 "Largonji ?",
                 "Vos messages sont chiffrés à l\'aide du Largonji",
                 R.drawable.question_mark,
-                getResources().getColor(R.color.wonderous_teal)
+                ContextCompat.getColor(this, R.color.wonderous_teal)
         ));
 
         addSlide(AppIntroFragment.newInstance(
                 "Comment ?",
                 "béton => létonbi   larme =>lalmeri \n auteur =>lauleurti   l’abstrait => l’alstraitbi",
                 R.drawable.light_bulb,
-                getResources().getColor(R.color.lightbulb_yellow)
+                ContextCompat.getColor(this, R.color.lightbulb_yellow)
         ));
 
         addSlide(AppIntroFragment.newInstance(
                 "Ton copains attendant !",
                 "Ajouter vos amis en utilisant leur adresse e-mail",
                 R.drawable.gentleman_figure,
-                getResources().getColor(R.color.gentleman_blue)
+                ContextCompat.getColor(this, R.color.gentleman_blue)
         ));
 
         addSlide(AppIntroFragment.newInstance(
                 "Entraine toi !",
                 "Utilisez l'assistant de Largonji pour pratiquer ... ou tout simplement déconner",
                 R.drawable.book,
-                getResources().getColor(R.color.vast_blue)
+                ContextCompat.getColor(this, R.color.vast_blue)
         ));
     }
 
@@ -69,11 +72,9 @@ public class IntroActivity extends AppIntro {
         finish();
     }
 
-    boolean doubleBackToExitPressedOnce = false;
-
     @Override
     public void onBackPressed() {
-        if(!doubleBackToExitPressedOnce) {
+        if (!doubleBackToExitPressedOnce) {
             Toast.makeText(this, "Please follow the tutorial or skip it", Toast.LENGTH_SHORT).show();
         }
         this.doubleBackToExitPressedOnce = true;

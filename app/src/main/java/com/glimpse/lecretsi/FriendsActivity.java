@@ -10,8 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,7 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide; //library for formatting string to URI and extract the photo
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,12 +31,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsActivity extends AppCompatActivity {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
+
+    private FloatingActionButton addFriends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +184,7 @@ public class FriendsActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         alertDialog.show();
-                                        if(alertDialog.getWindow() != null) {
+                                        if (alertDialog.getWindow() != null) {
                                             alertDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         }
                                     }
@@ -323,7 +327,18 @@ public class FriendsActivity extends AppCompatActivity {
         friendsViewList.setLayoutManager(mFriendsListManager);
         friendsViewList.setAdapter(friendsViewAdapter);
 
-        FloatingActionButton addFriends = (FloatingActionButton) findViewById(R.id.addFriends);
+        addFriends = (FloatingActionButton) findViewById(R.id.addFriends);
+        addFriends.hide();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addFriends.show();
+                Animation fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+                addFriends.startAnimation(fab_open);
+            }
+        }, 500);
+
         addFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -395,7 +410,7 @@ public class FriendsActivity extends AppCompatActivity {
                                                                 public void onDataChange(DataSnapshot snapshot) {
 
 
-                                                                    if(snapshot.getValue() == null){
+                                                                    if (snapshot.getValue() == null) {
                                                                         //check if they are already friends
 
                                                                         DatabaseReference friendNotAdded = FirebaseDatabase.getInstance().getReference()
@@ -434,8 +449,6 @@ public class FriendsActivity extends AppCompatActivity {
                                                             });
 
 
-
-
                                                         } else {
                                                             //a friend request to this user had already been sent
                                                             Toast.makeText(FriendsActivity.this, R.string.friend_req_already_sent, Toast.LENGTH_LONG).show();
@@ -470,6 +483,47 @@ public class FriendsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        Animation fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        addFriends.startAnimation(fab_close);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(FriendsActivity.this, MainActivity.class));
+                finish();
+            }
+        }, 300);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            Animation fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+            addFriends.startAnimation(fab_close);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(FriendsActivity.this, MainActivity.class));
+                    finish();
+                }
+            }, 300);
+        }
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.userActive = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainActivity.userActive = false;
+    }
+
     public static class FriendsListHolder extends RecyclerView.ViewHolder {
 
         TextView friendUsername;
@@ -498,18 +552,6 @@ public class FriendsActivity extends AppCompatActivity {
             friendRequestsText = (TextView) itemView.findViewById(R.id.friendRequestsText);
             friendsText = (TextView) itemView.findViewById(R.id.friendsText);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MainActivity.userActive = true;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        MainActivity.userActive = false;
     }
 
 }

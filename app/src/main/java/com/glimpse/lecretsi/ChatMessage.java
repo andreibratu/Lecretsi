@@ -29,12 +29,12 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public void setNormalText(String normalText) {
-        this.normalText = normalText;
-    }
-
     public String getNormalText() {
         return normalText;
+    }
+
+    public void setNormalText(String normalText) {
+        this.normalText = normalText;
     }
 
     public void setLargonjiTextText(String largonjiText) {
@@ -44,20 +44,20 @@ public class ChatMessage {
     public String getLargonjiText() {
         return largonjiText;
     }
-    
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public String getDate() {
         return date;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTime() {
         return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

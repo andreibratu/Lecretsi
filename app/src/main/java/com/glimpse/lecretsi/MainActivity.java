@@ -1,18 +1,16 @@
 package com.glimpse.lecretsi;
 
-import android.app.FragmentManager;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,17 +36,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient mGoogleApiClient;
     private static final String APP_VERSION = "1.0.6";
-
     public static User loggedInUser;
-
     public static Boolean userActive = false;
-
+    public static FirebaseUser mFirebaseUser;
+    boolean doubleBackToExitPressedOnce = false;
+    private GoogleApiClient mGoogleApiClient;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
-    public static FirebaseUser mFirebaseUser;
-
     private FloatingActionButton fab;
 
     @Override
@@ -60,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         versionCheck.child("version").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.getValue().toString().equals(APP_VERSION)){
+                if (!dataSnapshot.getValue().toString().equals(APP_VERSION)) {
                     startActivity(new Intent(MainActivity.this, RequestUpdateActivity.class));
                     finish();
                 }
@@ -91,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     boolean userFound = false;
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        if(postSnapshot.getKey().equals(loggedInUser.getId())){
+                        if (postSnapshot.getKey().equals(loggedInUser.getId())) {
                             userFound = true;
                         }
                     }
@@ -106,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
-            startService(new Intent(this,NewMessageService.class));
+            startService(new Intent(this, NewMessageService.class));
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -147,9 +142,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(fab.isShown()) {
-                    Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-                    startActivity(intent);
+                if (fab.isShown()) {
+                    Animation fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+                    fab.startAnimation(fab_close);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+                            startActivity(intent);
+                        }
+                    }, 300);
                 }
             }
         });
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Animation fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
                 fab.startAnimation(fab_open);
             }
-        }, 1000);
+        }, 500);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -174,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.nav_conversations:
                 tx.replace(R.id.fragmentContent, new ConversationsActivity());
                 tx.commit();
@@ -209,8 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {

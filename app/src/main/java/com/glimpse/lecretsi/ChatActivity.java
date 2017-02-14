@@ -33,39 +33,17 @@ import java.util.Locale;
 public class ChatActivity extends AppCompatActivity {
 
     final User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
-
-    public static class MessageViewHolder extends RecyclerView.ViewHolder{
-        TextView messageTextView;
-        TextView messageDateTime;
-        LinearLayout messageLayout;
-        LinearLayout messagePosition;
-
-        public MessageViewHolder(View v) {
-            super(v);
-            messageTextView = (TextView) itemView.findViewById(R.id.userMessage);
-            messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
-            messageLayout = (LinearLayout) itemView.findViewById(R.id.messageLayout);
-            messagePosition = (LinearLayout) itemView.findViewById(R.id.messagePosition);
-        }
-    }
-
-    // This is the activity that's gonna enlist all the different conversations
-
     ImageButton mSendButton, expandButton;
 
+    // This is the activity that's gonna enlist all the different conversations
+    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
+    String date, time;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private EditText mMessageEditText;
-
     private DatabaseReference myConversationReference, friendConversationReference, databaseReference;
-
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
-
-    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
-
-    String date, time;
-
     private Long timestamp;
 
     @Override
@@ -94,39 +72,54 @@ public class ChatActivity extends AppCompatActivity {
                 MessageViewHolder.class,
                 myConversationReference.child("chatMessages")) {
 
-            MessageViewHolder lastMessageSelected, lastMessageLongClicked;
-            ChatMessage lastMessage = null;
+            MessageViewHolder lastMessageSelected, lastLongClickedItem;
+            ChatMessage lastLongClickedChat;
+
+            @Override
+            public int getItemCount() {
+                return super.getItemCount();
+            }
 
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder, final ChatMessage chatMessage, int position) {
+
                 viewHolder.messageTextView.setText(chatMessage.getLargonjiText());
                 viewHolder.messageDateTime.setText(chatMessage.getDate() + " • " + chatMessage.getTime());
 
                 if (chatMessage.getId().equals(LOGGED_USER.getId())) {
                     viewHolder.messageLayout.setGravity(Gravity.END);
                     viewHolder.messagePosition.setGravity(Gravity.END);
-                    viewHolder.messagePosition.setPadding(150, 0, 0, 0);
+                    if (position == 0) {
+                        viewHolder.messagePosition.setPadding(150, 25, 0, 0);
+                    } else {
+                        viewHolder.messagePosition.setPadding(150, 0, 0, 0);
+                    }
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
                 } else {
                     viewHolder.messageLayout.setGravity(Gravity.START);
                     viewHolder.messagePosition.setGravity(Gravity.START);
-                    viewHolder.messagePosition.setPadding(0, 0, 150, 0);
+                    if (position == 0) {
+                        viewHolder.messagePosition.setPadding(0, 25, 150, 0);
+                    } else {
+                        viewHolder.messagePosition.setPadding(0, 0, 150, 0);
+                    }
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                 }
 
                 viewHolder.messageTextView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        if(lastMessageLongClicked != null){
-                            lastMessageLongClicked.messageTextView.setText(chatMessage.getLargonjiText());
-                        }
-                        if(viewHolder.messageTextView.getText().equals(chatMessage.getLargonjiText())) {
+                        if (viewHolder.messageTextView.getText().equals(chatMessage.getLargonjiText())) {
                             viewHolder.messageTextView.setText(chatMessage.getNormalText());
                         } else {
                             viewHolder.messageTextView.setText(chatMessage.getLargonjiText());
                         }
-                        lastMessageLongClicked = viewHolder;
-                        return false;
+                        if (lastLongClickedItem != null && lastLongClickedItem != viewHolder) {
+                            lastLongClickedItem.messageTextView.setText(lastLongClickedChat.getLargonjiText());
+                        }
+                        lastLongClickedItem = viewHolder;
+                        lastLongClickedChat = chatMessage;
+                        return true;
                     }
                 });
 
@@ -135,19 +128,20 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // Tap a message to see / hide the date it was sent
-                        if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
+
+                        if (viewHolder.messageDateTime.getVisibility() != View.VISIBLE) {
                             viewHolder.messageDateTime.setVisibility(View.VISIBLE);
                         } else {
                             viewHolder.messageDateTime.setVisibility(View.GONE);
 
                         }
-                        if(lastMessageSelected != null && lastMessageSelected != viewHolder)
+                        if (lastMessageSelected != null && lastMessageSelected != viewHolder) {
                             lastMessageSelected.messageDateTime.setVisibility(View.GONE);
+                        }
 
                         lastMessageSelected = viewHolder;
                     }
                 });
-                lastMessage = chatMessage;
             }
         };
 
@@ -218,9 +212,9 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    public void onSend(View view){
-        if(!mMessageEditText.getText().toString().isEmpty()) {
-            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(),true);
+    public void onSend(View view) {
+        if (!mMessageEditText.getText().toString().isEmpty()) {
+            final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(), true);
             mMessageRecyclerView.scrollToPosition(mFirebaseAdapter.getItemCount() - 1);
             onUserMessage(text);
             mMessageEditText.setText("");
@@ -228,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    public void onUserMessage(final String message){
+    public void onUserMessage(final String message) {
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), mMessageEditText.getText().toString(), message, date, time);
         myConversationReference.child("chatMessages").push().setValue(chatMessage);
         myConversationReference.child("lastMessage").setValue(message);
@@ -236,11 +230,12 @@ public class ChatActivity extends AppCompatActivity {
         friendConversationReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null) {
+                if (dataSnapshot.getValue() == null) {
                     Conversation conversation = new Conversation(LOGGED_USER, null, null);
                     friendConversationReference.setValue(conversation);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -271,6 +266,21 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView messageTextView;
+        TextView messageDateTime;
+        LinearLayout messageLayout;
+        LinearLayout messagePosition;
+
+        public MessageViewHolder(View v) {
+            super(v);
+            messageTextView = (TextView) itemView.findViewById(R.id.userMessage);
+            messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
+            messageLayout = (LinearLayout) itemView.findViewById(R.id.messageLayout);
+            messagePosition = (LinearLayout) itemView.findViewById(R.id.messagePosition);
+        }
     }
 
 }

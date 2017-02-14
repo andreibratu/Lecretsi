@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,65 +30,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 public class AssistantActivity extends AppCompatActivity {
 
+    ImageButton mSendButton, expandButton;
+    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
+    String date, time;
     private User LOGGED_USER = new User(FirebaseAuth.getInstance().getCurrentUser());
-    private String ENCRYPT;
-    private String DECRYPT;
-
-    class AssistantPreferences {
-        ///We hold the assistant translation mode between app sessions using PreferenceManager
-        private String prefAssistantMode = ENCRYPT;
-
-        SharedPreferences getSharedPreference(Context ctx) {
-            return PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
-
-        void setAssistantMode(Context ctx, String mode) {
-            SharedPreferences.Editor editor = getSharedPreference(ctx).edit();
-            editor.putString(prefAssistantMode, mode);
-            editor.apply();
-        }
-
-        String getAssistantMode(Context ctx) {
-            return getSharedPreference(ctx).getString(prefAssistantMode, ENCRYPT);
-        }
-    }
-
-    public static class MessageViewHolder extends RecyclerView.ViewHolder{
-        TextView messageTextView;
-        TextView messageDateTime;
-        LinearLayout messageLayout;
-        LinearLayout messagePosition;
-
-        public MessageViewHolder(View v) {
-            super(v);
-            messageTextView = (TextView) itemView.findViewById(R.id.userMessage);
-            messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
-            messageLayout = (LinearLayout) itemView.findViewById(R.id.messageLayout);
-            messagePosition = (LinearLayout) itemView.findViewById(R.id.messagePosition);
-        }
-    }
 
     // This is the activity that's gonna enlist all the different conversations
-
-    ImageButton mSendButton, expandButton;
-
+    private String ENCRYPT;
+    private String DECRYPT;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private EditText mMessageEditText;
-
     private DatabaseReference mConversationReference, timestampReference;
-
     private FirebaseRecyclerAdapter<ChatMessage, MessageViewHolder> mFirebaseAdapter;
-
-    DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
-
-    String date, time;
-
     private Long timestamp;
 
     @Override
@@ -128,12 +82,20 @@ public class AssistantActivity extends AppCompatActivity {
                 if (chatMessage.getId().equals(LOGGED_USER.getId())) {
                     viewHolder.messageLayout.setGravity(Gravity.END);
                     viewHolder.messagePosition.setGravity(Gravity.END);
-                    viewHolder.messagePosition.setPadding(150, 0, 0, 0);
+                    if (position == 0) {
+                        viewHolder.messagePosition.setPadding(150, 25, 0, 0);
+                    } else {
+                        viewHolder.messagePosition.setPadding(150, 0, 0, 0);
+                    }
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.user_text_box);
                 } else {
                     viewHolder.messageLayout.setGravity(Gravity.START);
                     viewHolder.messagePosition.setGravity(Gravity.START);
-                    viewHolder.messagePosition.setPadding(0, 0, 150, 0);
+                    if (position == 0) {
+                        viewHolder.messagePosition.setPadding(0, 25, 150, 0);
+                    } else {
+                        viewHolder.messagePosition.setPadding(0, 0, 150, 0);
+                    }
                     viewHolder.messageTextView.setBackgroundResource(R.drawable.friend_text_box);
                 }
                 viewHolder.messageDateTime.setVisibility(View.GONE);
@@ -143,13 +105,13 @@ public class AssistantActivity extends AppCompatActivity {
 
                         // Tap a message to see / hide the date it was sent
 
-                        if(viewHolder.messageDateTime.getVisibility() != View.VISIBLE){
+                        if (viewHolder.messageDateTime.getVisibility() != View.VISIBLE) {
                             viewHolder.messageDateTime.setVisibility(View.VISIBLE);
                         } else {
                             viewHolder.messageDateTime.setVisibility(View.GONE);
 
                         }
-                        if(lastMessageSelected != null && lastMessageSelected != viewHolder)
+                        if (lastMessageSelected != null && lastMessageSelected != viewHolder)
                             lastMessageSelected.messageDateTime.setVisibility(View.GONE);
 
                         lastMessageSelected = viewHolder;
@@ -205,7 +167,7 @@ public class AssistantActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = mMessageEditText.getText().toString();
-                if(text.isEmpty()){
+                if (text.isEmpty()) {
                     expandButton.setVisibility(View.VISIBLE);
                     mSendButton.setVisibility(View.GONE);
                 } else {
@@ -229,7 +191,7 @@ public class AssistantActivity extends AppCompatActivity {
         mConversationReference.child("chatMessages").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null) {
+                if (dataSnapshot.getValue() == null) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -270,9 +232,9 @@ public class AssistantActivity extends AppCompatActivity {
         });
     }
 
-    public void onSend(View view){
+    public void onSend(View view) {
 
-        if(!mMessageEditText.getText().toString().isEmpty()) {
+        if (!mMessageEditText.getText().toString().isEmpty()) {
             mMessageRecyclerView.scrollToPosition(mFirebaseAdapter.getItemCount() - 1);
             timestampReference.setValue(ServerValue.TIMESTAMP);
         }
@@ -280,7 +242,7 @@ public class AssistantActivity extends AppCompatActivity {
         onUserMessage(mMessageEditText.getText().toString());
         AssistantPreferences updateAssistantMode;
         switch (mMessageEditText.getText().toString()) {
-            case "#decrypt" :
+            case "#decrypt":
                 updateAssistantMode = new AssistantPreferences();
                 updateAssistantMode.setAssistantMode(getApplicationContext(), DECRYPT);
 
@@ -293,7 +255,7 @@ public class AssistantActivity extends AppCompatActivity {
 
                 break;
 
-            case "#encrypt" :
+            case "#encrypt":
                 updateAssistantMode = new AssistantPreferences();
                 updateAssistantMode.setAssistantMode(getApplicationContext(), ENCRYPT);
 
@@ -309,7 +271,7 @@ public class AssistantActivity extends AppCompatActivity {
                 AssistantPreferences assistantMode = new AssistantPreferences();
                 Boolean isSetEncrypt = assistantMode.getAssistantMode(getApplicationContext()).equals(ENCRYPT);
                 final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(), isSetEncrypt);
-                if(!text.equals("invalid_input")) {
+                if (!text.equals("invalid_input")) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -347,15 +309,15 @@ public class AssistantActivity extends AppCompatActivity {
         mMessageEditText.setText("");
     }
 
-    public void onUserMessage(final String message){
+    public void onUserMessage(final String message) {
         final ChatMessage chatMessage = new ChatMessage(LOGGED_USER.getId(), message, null, date, time);
         mConversationReference.child("chatMessages").push().setValue(chatMessage);
         mConversationReference.child("lastMessage").setValue(message);
         mConversationReference.child("lastMessageDate").setValue(ServerValue.TIMESTAMP);
     }
 
-    public void onAssistantMessage(String message){
-        if(message != null) {
+    public void onAssistantMessage(String message) {
+        if (message != null) {
             ChatMessage chatMessage = new ChatMessage("largonjiAssistant", message, null, date, time);
             mConversationReference.child("chatMessages").push().setValue(chatMessage);
             mConversationReference.child("lastMessage").setValue(message);
@@ -363,15 +325,15 @@ public class AssistantActivity extends AppCompatActivity {
         }
     }
 
-    public void randomStartPhrase(){
-        int randomNum = 1 + (int)(Math.random() * 3);
+    public void randomStartPhrase() {
+        int randomNum = 1 + (int) (Math.random() * 3);
         String startPhrases[] = new String[4];
         startPhrases[1] = getString(R.string.assistant_start_phrase);
         onAssistantMessage(startPhrases[randomNum]);
     }
 
-    public void randomEndPhrase(){
-        int randomNum = 1 + (int)(Math.random() * 3);
+    public void randomEndPhrase() {
+        int randomNum = 1 + (int) (Math.random() * 3);
         String endPhrases[] = new String[4];
         endPhrases[1] = getString(R.string.assistant_anything_else);
         endPhrases[2] = getString(R.string.assistant_anything_else2);
@@ -401,6 +363,40 @@ public class AssistantActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView messageTextView;
+        TextView messageDateTime;
+        LinearLayout messageLayout;
+        LinearLayout messagePosition;
+
+        public MessageViewHolder(View v) {
+            super(v);
+            messageTextView = (TextView) itemView.findViewById(R.id.userMessage);
+            messageDateTime = (TextView) itemView.findViewById(R.id.messageDateTime);
+            messageLayout = (LinearLayout) itemView.findViewById(R.id.messageLayout);
+            messagePosition = (LinearLayout) itemView.findViewById(R.id.messagePosition);
+        }
+    }
+
+    class AssistantPreferences {
+        ///We hold the assistant translation mode between app sessions using PreferenceManager
+        private String prefAssistantMode = ENCRYPT;
+
+        SharedPreferences getSharedPreference(Context ctx) {
+            return PreferenceManager.getDefaultSharedPreferences(ctx);
+        }
+
+        void setAssistantMode(Context ctx, String mode) {
+            SharedPreferences.Editor editor = getSharedPreference(ctx).edit();
+            editor.putString(prefAssistantMode, mode);
+            editor.apply();
+        }
+
+        String getAssistantMode(Context ctx) {
+            return getSharedPreference(ctx).getString(prefAssistantMode, ENCRYPT);
+        }
     }
 
 }

@@ -17,27 +17,27 @@ public class Conversation {
         this.lastMessageDate = lastMessageDate;
     }
 
-    public void setUser(User user){
-        this.user = user;
-    }
-
-    public User getUser(){
+    public User getUser() {
         return user;
     }
 
-    public void setLastMessage(String lastMessage){
-        this.lastMessage = lastMessage;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getLastMessage(){
+    public String getLastMessage() {
         return lastMessage;
     }
 
-    public void setLastMessageDate(Long lastMessageDate){
-        this.lastMessageDate = lastMessageDate;
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 
-    public Long getLastMessageDate(){
+    public Long getLastMessageDate() {
         return lastMessageDate;
+    }
+
+    public void setLastMessageDate(Long lastMessageDate) {
+        this.lastMessageDate = lastMessageDate;
     }
 }

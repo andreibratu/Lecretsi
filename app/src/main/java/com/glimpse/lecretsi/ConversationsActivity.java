@@ -1,46 +1,26 @@
 package com.glimpse.lecretsi;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,22 +32,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ConversationsActivity extends Fragment {
 
     // This is the activity that's gonna contain all the conversations
-
-    public static class ConversationsHolder extends RecyclerView.ViewHolder {
-
-        TextView conversationUsername;
-        TextView lastMessage;
-        TextView lastMessageDate;
-        CircleImageView conversationPicture;
-
-        public ConversationsHolder(View itemView) {
-            super(itemView);
-            conversationUsername = (TextView) itemView.findViewById(R.id.conversationUsername);
-            lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
-            lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
-            conversationPicture = (CircleImageView) itemView.findViewById(R.id.conversationPicture);
-        }
-    }
 
     public RecyclerView conversationsView;
     public LinearLayout emptyConversationsBackground;
@@ -93,7 +57,7 @@ public class ConversationsActivity extends Fragment {
 
         emptyConversationsBackground.setVisibility(View.GONE);
         mConversationsAdapter = new FirebaseRecyclerAdapter<Conversation, ConversationsHolder>(
-                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations.orderByChild("lastMessageDate")) {
+                Conversation.class, R.layout.conversations_item, ConversationsHolder.class, mConversations.orderByValue()) {
 
             @Override
             protected void populateViewHolder(final ConversationsHolder viewHolder, final Conversation conversation, int position) {
@@ -104,7 +68,7 @@ public class ConversationsActivity extends Fragment {
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.getValue() == null) {
+                                if (dataSnapshot.getValue() == null) {
                                     viewHolder.lastMessage.setVisibility(View.GONE);
                                 } else {
                                     viewHolder.lastMessage.setVisibility(View.VISIBLE);
@@ -121,7 +85,7 @@ public class ConversationsActivity extends Fragment {
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.getValue() != null) {
+                                if (dataSnapshot.getValue() != null) {
                                     Long timestamp = Long.parseLong(dataSnapshot.getValue().toString());
                                     DateFormat dateFormat = new SimpleDateFormat("d EEE", Locale.FRANCE);
                                     viewHolder.lastMessageDate.setText(dateFormat.format(new Date(timestamp)));
@@ -146,7 +110,7 @@ public class ConversationsActivity extends Fragment {
                             @Override
                             public void run() {
                                 Intent intent;
-                                if(conversation.getUser().getId().equals("largonjiAssistant")) {
+                                if (conversation.getUser().getId().equals("largonjiAssistant")) {
                                     intent = new Intent(getActivity(), AssistantActivity.class);
                                 } else {
                                     intent = new Intent(getActivity(), ChatActivity.class);
@@ -260,6 +224,22 @@ public class ConversationsActivity extends Fragment {
         conversationsView.setLayoutManager(mConversationsManager);
         conversationsView.setAdapter(mConversationsAdapter);
         return view;
+    }
+
+    public static class ConversationsHolder extends RecyclerView.ViewHolder {
+
+        TextView conversationUsername;
+        TextView lastMessage;
+        TextView lastMessageDate;
+        CircleImageView conversationPicture;
+
+        public ConversationsHolder(View itemView) {
+            super(itemView);
+            conversationUsername = (TextView) itemView.findViewById(R.id.conversationUsername);
+            lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
+            lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
+            conversationPicture = (CircleImageView) itemView.findViewById(R.id.conversationPicture);
+        }
     }
 
 }
