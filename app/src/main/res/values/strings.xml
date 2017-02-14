@@ -81,4 +81,6 @@
     <string name="no_conversations_tip">Open up a chat and it will show up here</string>
     <string name="could_not_decrypt1">Sorry, I couldn\'t decrypt this message</string>
     <string name="could_not_decrypt2">Please try typing a valid largonji statement</string>
+    <string name="request_update">You\'re using an older version of this application, please consider updating</string>
+    <string name="update_link"><u>https://github.com/andreibratu/Lecretsi/releases</u></string>
 </resources>
