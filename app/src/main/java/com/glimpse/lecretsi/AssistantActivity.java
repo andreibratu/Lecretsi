@@ -271,7 +271,7 @@ public class AssistantActivity extends AppCompatActivity {
                 AssistantPreferences assistantMode = new AssistantPreferences();
                 Boolean isSetEncrypt = assistantMode.getAssistantMode(getApplicationContext()).equals(ENCRYPT);
                 final String text = Largonji.algorithmWrapper(mMessageEditText.getText().toString(), isSetEncrypt);
-                if (!text.equals("invalid_input")) {
+                if (!text.contains("invalid_input")) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
