@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -18,7 +17,6 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/dividerLine"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:src="@color/colorDarkGrey" />

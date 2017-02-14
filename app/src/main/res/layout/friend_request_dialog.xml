@@ -6,7 +6,6 @@
     android:paddingTop="30dp"
     android:paddingBottom="50dp"
     android:orientation="vertical"
-    android:id="@+id/friendRequestLayout"
     android:weightSum="1">
 
     <RelativeLayout

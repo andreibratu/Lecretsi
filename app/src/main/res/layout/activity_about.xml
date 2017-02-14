@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_about"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -21,8 +20,7 @@
         android:layout_height="wrap_content"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:layout_weight="0.2"
-        android:id="@+id/developers_title" />
+        android:layout_weight="0.2" />
 
     <TextView
         android:gravity="center"
@@ -30,8 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_weight="0.2"
-        android:id="@+id/testers_title" />
+        android:layout_weight="0.2" />
 
     <TextView
         android:gravity="center"
@@ -40,23 +37,20 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
         android:textStyle="bold"
-        android:textSize="24sp"
-        android:id="@+id/testers_text" />
+        android:textSize="24sp" />
 
     <TextView
         android:text="@string/about_testers_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
-        android:textSize="16sp"
-        android:id="@+id/developers_text" />
+        android:textSize="16sp" />
 
     <ImageView
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="128dp"
         app:srcCompat="@drawable/cfa_logo"
-        android:layout_weight="0.2"
-        android:id="@+id/imageView" />
+        android:layout_weight="0.2" />
 
 </LinearLayout>

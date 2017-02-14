@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="textViewBackground">#d4c1ba</color>
     <color name="white">#ffffff</color>
     <color name="colorPrimary">#ffc107</color>
     <color name="colorPrimaryDark">#ffa000</color>
     <color name="colorAccent">#7c4dff</color>
 
     <color name="colorUserMessage">#f9a825</color>
-    <color name="colorUserMessageSelected">#f59404</color>
     <color name="colorUserMessageBorder">#fd9802</color>
 
     <color name="colorFriendMessage">#0091ea</color>
-    <color name="colorFriendMessageSelected">#007cc9</color>
     <color name="colorFriendMessageBorder">#0095f1</color>
 
     <color name="wonderous_teal">#009688</color>

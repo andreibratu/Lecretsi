@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Lecretsi</string>
-    <string name="title_activity_conversations">Coversations</string>
 
 
     <string name="login_lecretsi_greeting">Bienvenue à Lecretsi</string>
@@ -9,9 +8,6 @@
 
     <string name="navigation_drawer_open">Ouvrir le menu latéral</string>
     <string name="navigation_drawer_close">Fermez le menu latéral</string>
-
-
-    <string name="action_settings">Préférences</string>
 
 
     <string name="user_not_found">Nous n\'avons pas trouvé votre ami</string>
@@ -46,10 +42,6 @@
     <string name="assistant_was_set_to_encrypt">Je vais chiffrer les messages</string>
 
 
-    <string name="this_is_not_a_friend">Ce n\'est pas un ami</string>
-    <string name="this_is_not_a_friend_add_one_from_button">
-        Utiliser le bouton pour ajouter un ami</string>
-
     <string name="activity_conversation">Lecretsi</string>
     <string name="activity_friends">Copains</string>
     <string name="activity_about_us">Les auteurs</string>
@@ -63,7 +55,6 @@
     <string name="no_conversations_yet">Aucune conversation encore</string>
     <string name="friend_request_pending">Tu as une demande d\'amitié en attente de cet utilisateur</string>
     <string name="double_press_close">Appuye de nouveau le buton de retour pour sortir</string>
-    <string name="menu_conversation">Conversation</string>
     <string name="conversation_menu">Conversation</string>
 
     <string name="archive">Archiver</string>

@@ -229,6 +229,10 @@ public class Largonji
         } else {
             answer = LARGONJI_INVALID_INPUT;
         }
+        answer=answer.toLowerCase();
+        if(isUppercase) {
+            answer = Character.toUpperCase(answer.charAt(0))+answer.substring(1,answer.length());
+        }
         return answer;
     }
 }
