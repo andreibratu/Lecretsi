@@ -90,7 +90,7 @@ public class Largonji
         }
 
         if( inputHasOnlyVowels(input) ) {
-            encodedText = addLEncode( input.charAt(0) ) + input + 'i';
+            encodedText = addLEncode( input.charAt(0) ) + input;
             return encodedText;
         }
 
