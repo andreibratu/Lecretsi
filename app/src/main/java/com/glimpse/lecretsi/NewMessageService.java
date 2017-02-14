@@ -38,8 +38,7 @@ public class NewMessageService extends Service{
         final NotificationCompat.Builder newNotificationBuilder = new NotificationCompat.Builder(getApplicationContext());
         final NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         final Uri notifSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Intent openConversationActivity = new Intent(getApplicationContext()
-                , ConversationsActivity.class);
+        Intent openConversationActivity = new Intent(getApplicationContext(), MainActivity.class);
         final PendingIntent resultPendingActivity =
                 PendingIntent.getActivity(
                         getApplicationContext(), 0, openConversationActivity,
@@ -74,6 +73,8 @@ public class NewMessageService extends Service{
                                                 newNotificationBuilder.setLights(Color.GREEN, 3000, 3000);
 
                                                 Notification notification = newNotificationBuilder.build();
+                                                notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                                                notification.flags |= Notification.FLAG_AUTO_CANCEL;
                                                 // Builds the notification and issues it.
                                                 mNotifyMgr.notify(0, notification);
                                             }
