@@ -53,6 +53,8 @@ public class Largonji
     private static String algorithmToLargonji(String input){
         String encodedText;
 
+        Boolean isUppercase = Character.isUpperCase(input.charAt(0));
+
         if(input.equals("")) return "";
 
         for(String x: IGNORE_LIST) {
@@ -110,6 +112,9 @@ public class Largonji
 
         if( charIsL( encodedText.charAt(0) ) && charIsL(encodedText.charAt(1) ) )
             encodedText = encodedText.charAt(0)+encodedText.substring(2,encodedText.length());
+        encodedText = encodedText.toLowerCase();
+        if(isUppercase) encodedText = Character.toUpperCase(encodedText.charAt(0))+
+                encodedText.substring(1,encodedText.length());
         return encodedText;
     }
 
@@ -171,6 +176,8 @@ public class Largonji
     private static String algorithmToNormal(String input) {
         String answer;
 
+        Boolean isUppercase = Character.isUpperCase(input.charAt(0));
+
         if(input.equals("")) return "";
 
         for(String x: IGNORE_LIST) {
@@ -222,6 +229,8 @@ public class Largonji
         } else {
             answer = LARGONJI_INVALID_INPUT;
         }
+        answer = answer.toLowerCase();
+        if(isUppercase) answer = Character.toUpperCase(answer.charAt(0))+answer.substring(1,answer.length());
         return answer;
     }
 }
