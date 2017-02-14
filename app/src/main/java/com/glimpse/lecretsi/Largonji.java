@@ -10,9 +10,9 @@ public class Largonji
     **/
 
     //TODO algorithmToNormal()
-    private final static String VOWEL_CASE = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸÀÂÆÉÈÊËÏÎÔŒL";
+    private final static String VOWEL_CASE = "aeiouùûüÿàâæéèêëïîôœlAEIOUÙÛÜŸ;ÀÂÆÉÈÊËÏÎÔŒL";
     private final static String POSSIBLE_EXCEPTION = "'-";
-    private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_1234567890";
+    private final static String PUNCTUATION = "{[()]}<>,.?/;:-+=!_1234567890$*&^:%#@!`~|";
     public static String LARGONJI_INVALID_INPUT = "invalid_input";
     //To keep messages readable we chose not to codify these
     private static final String[] IGNORE_LIST =
@@ -27,6 +27,14 @@ public class Largonji
 
     private static boolean charIsL(Character x) {
         return java.lang.Character.toLowerCase(x)=='l';
+    }
+
+    private static boolean inputContainsOnlySymbols(String input) {
+        for(Character x:input.toCharArray()) {
+            if(PUNCTUATION.indexOf(x)==-1)
+                return false;
+        }
+        return true;
     }
 
     private static boolean inputHasOnlyVowels(String input) {
@@ -44,6 +52,8 @@ public class Largonji
 
     private static String algorithmToLargonji(String input){
         String encodedText;
+
+        if(input.equals("")) return "";
 
         for(String x: IGNORE_LIST) {
             if(Objects.equals(input.toLowerCase(), x))
@@ -109,6 +119,8 @@ public class Largonji
         input=input.replaceAll("(?m)^\\s+$", "");
         input= EmojiParser.removeAllEmojis(input);
 
+        if(input.equals("")) return "";
+        if(inputContainsOnlySymbols(input)) return input;
         String answer = "";
 
         //Handle punctuation,symbols,numbers
@@ -116,15 +128,15 @@ public class Largonji
             if (input.indexOf(x) != -1) {
                 if (input.indexOf(x) == input.length() - 1)
                     //Exception at the end : madame?
-                    return algorithmWrapper(input.substring(0, input.indexOf(x)),toLargonji) + x;
+                    return (algorithmWrapper(input.substring(0, input.indexOf(x)),toLargonji) + x);
                 if (input.indexOf(x) == 0)
                     //Exception at the start : ?madame
-                    return x + algorithmWrapper(input.substring(1, input.indexOf(x)),toLargonji);
+                    return (x + algorithmWrapper(input.substring(1, input.length()),toLargonji));
 
                 //Exception in the middle : mad?ame
                 //Handles parentheses nicely : ok{madame}
-                return algorithmWrapper(input.substring(0, input.indexOf(x)),toLargonji) + x +
-                        algorithmWrapper(input.substring(input.indexOf(x) + 1, input.length()),toLargonji);
+                return ( algorithmWrapper(input.substring(0, input.indexOf(x)),toLargonji) + x +
+                        algorithmWrapper(input.substring(input.indexOf(x) + 1, input.length()),toLargonji));
             }
 
         ///Seperate words and send them to the actual algorithm
@@ -157,7 +169,9 @@ public class Largonji
     }
 
     private static String algorithmToNormal(String input) {
-        String answer = "";
+        String answer;
+
+        if(input.equals("")) return "";
 
         for(String x: IGNORE_LIST) {
             if(input.toLowerCase().equals(x))

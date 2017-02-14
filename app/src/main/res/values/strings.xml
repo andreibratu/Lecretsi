@@ -81,14 +81,14 @@
 
     <string name="no_conversations_tip">Les conversations ouvertes doivent y apparaître</string>
     <string name="could_not_decrypt1">Je ne peux pas decrypter le message</string>
-    <string name="could_not_decrypt2">Je t'en prie d'introduire un phrase en Largonji</string>
+    <string name="could_not_decrypt2">Je t\'en prie d\'introduire un phrase en Largonji</string>
     <string name="type_a_message">Ècris un message…</string>
 
 
     <string name="largonji_assistant">Largonji Assistant</string>
     <string name="firstname_lastname">Firstname Lastname</string>
-    <string name="the_quick_brown_fox_jumped_over_the_lazy_dog">The quick brown fox jumped over the lazy dog</string>
+    <string name="the_quick_brown_fox_jumped_over_the_lazy_dog">Le rapide renard brun sauta par dessus le chien paresseux</string>
 
-    <string name="request_update">You\'re using an older version of this application, please consider updating</string>
+    <string name="request_update">Vous utilisez une ancienne version de cette application, pensez à la mettre à jour</string>
     <string name="update_link"><u>https://github.com/andreibratu/Lecretsi/releases</u></string>
 </resources>
