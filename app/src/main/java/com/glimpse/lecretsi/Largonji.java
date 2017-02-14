@@ -19,7 +19,7 @@ public class Largonji
             new String[] {"le", "la", "les", "je", "tu", "il", "elle", "on",
             "ils", "elles", "me", "te", "se", "en", "lui", "y",
             "nous", "vous", "leur", "moi", "toi", "elle", "soi", "eux", "l",
-            "elles", "de", "du", "des", "j", "m", "t"};
+            "elles", "de", "du", "des", "j", "m", "t", "un", "une"};
 
     static private boolean isVowel(char x){
         return VOWEL_CASE.indexOf(x) != -1;
