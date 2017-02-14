@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -35,6 +37,7 @@ public class NewMessageService extends Service {
 
         final NotificationCompat.Builder newNotificationBuilder = new NotificationCompat.Builder(getApplicationContext());
         final NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        final Uri notifSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Intent openConversationActivity = new Intent(getApplicationContext(), MainActivity.class);
         final PendingIntent resultPendingActivity =
                 PendingIntent.getActivity(
@@ -66,7 +69,8 @@ public class NewMessageService extends Service {
                                                     .setContentTitle(mConversation.getUser().getName())
                                                     .setContentText(mConversation.getLastMessage())
                                                     .setAutoCancel(true)
-                                                    .setDefaults(Notification.DEFAULT_ALL);
+                                                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                                                    .setSound(notifSound);
                                             // Builds the notification and issues it.
                                             mNotifyMgr.notify(0, newNotificationBuilder.build());
                                         }
